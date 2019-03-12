@@ -31,8 +31,6 @@ import android.widget.TextView;
 
 import java.io.BufferedReader;
 
-
-public class GameActivity extends AppCompatActivity {
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -100,8 +98,6 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
         });
 
 
-
-    }
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -123,8 +119,8 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
         name.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
         email.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
 
-
     }
+
 
     @Override
     public void onBackPressed() {
