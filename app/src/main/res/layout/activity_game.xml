@@ -22,17 +22,4 @@
         app:headerLayout="@layout/nav_header_game"
         app:menu="@menu/activity_game_drawer" />
 
-    <com.miguelcatalan.materialsearchview.MaterialSearchView
-        android:id="@+id/search_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:searchBackground="@color/searchWhite"
-        app:searchCloseIcon="@drawable/ic_action_close_dark"
-        app:searchBackIcon="@drawable/ic_action_back_dark"
-        app:searchSuggestionBackground="@drawable/ic_suggestion"
-        android:textColor="#000"
-        android:textColorHint="#000"
-        />
-
-
 </android.support.v4.widget.DrawerLayout>

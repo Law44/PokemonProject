@@ -12,6 +12,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
+
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -24,11 +25,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class GameActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -74,6 +77,18 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        View header = navigationView.getHeaderView(0);
+        ImageView photo = header.findViewById(R.id.userPhoto);
+        TextView name = header.findViewById(R.id.userName);
+        TextView email = header.findViewById(R.id.userEmail);
+
+        GlideApp.with(this)
+                .load(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl().toString())
+                .circleCrop()
+                .into(photo);
+        name.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+        email.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
+
 
     }
 
@@ -93,7 +108,7 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        Log.e("Item", String.valueOf(item.getItemId()));
+
         switch (item.getItemId()) {
 
             case R.id.nav_camera: {
@@ -110,7 +125,6 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
             }
 
             case R.id.sign_out: {
-                Log.e("ABC", "signout");
 
                 AuthUI.getInstance()
                         .signOut(GameActivity.this)
@@ -131,12 +145,6 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_game, menu);
-        return true;
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
