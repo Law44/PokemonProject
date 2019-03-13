@@ -65,7 +65,7 @@
                 android:id="@+id/tabItem5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:icon="@drawable/icons8_pokedex_filled_50"/>
+                android:icon="@drawable/icons8_pokedex_52"/>
 
         </android.support.design.widget.TabLayout>
     </android.support.design.widget.AppBarLayout>
