@@ -108,6 +108,7 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
 
         View header = navigationView.getHeaderView(0);
+        header.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
         ImageView photo = header.findViewById(R.id.userPhoto);
         TextView name = header.findViewById(R.id.userName);
         TextView email = header.findViewById(R.id.userEmail);
