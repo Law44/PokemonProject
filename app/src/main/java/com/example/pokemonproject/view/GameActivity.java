@@ -1,12 +1,9 @@
-package com.example.pokemonproject;
+package com.example.pokemonproject.view;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.net.Uri;
 import android.support.design.widget.TabLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -21,7 +18,6 @@ import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,18 +25,36 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.BufferedReader;
-
+import com.example.pokemonproject.GlideApp;
+import com.example.pokemonproject.R;
+import com.example.pokemonproject.api.PokemonApi;
+import com.example.pokemonproject.api.PokemonModule;
+import com.example.pokemonproject.model.Pokemon;
+import com.example.pokemonproject.model.Stats;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class GameActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
     private ViewPager mViewPager;
+
+    PokemonApi pokemonApi = PokemonModule.getAPI();
+    final Executor executor = Executors.newFixedThreadPool(2);
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,6 +185,7 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
                 break;
             }
             case R.id.nav_gallery: {
+                //readApi();
                 break;
             }
             case R.id.nav_manage: {
@@ -287,6 +302,39 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
         public int getCount() {
             // Show 3 total pages.
             return 5;
+        }
+    }
+
+    public void readApi(){
+
+        for (int i = 1; i < 152; i++) {
+            pokemonApi.getPokemon(i).enqueue(new Callback<Pokemon>() {
+                @Override
+                public void onResponse(Call<Pokemon> call, final Response<Pokemon> response) {
+                    executor.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(response.body()!=null) {
+                                for (int j = 0; j < response.body().stats.size(); j++) {
+                                    if (j == 5) {
+                                        response.body().stats.get(j).base_stat+= 60;
+                                    }
+                                    else {
+                                        response.body().stats.get(j).base_stat+= 5;
+                                    }
+                                }
+                                Pokemon pokemon = new Pokemon(response.body().id, response.body().name, response.body().sprites, response.body().stats);
+                                db.collection("ListaPokemon")
+                                        .add(pokemon);
+                            }
+                        }
+                    });
+                }
+
+                @Override
+                public void onFailure(Call<Pokemon> call, Throwable t) {
+                }
+            });
         }
     }
 }

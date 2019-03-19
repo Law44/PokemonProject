@@ -1,4 +1,4 @@
-package com.example.pokemonproject;
+package com.example.pokemonproject.view;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
+import com.example.pokemonproject.R;
 
 public  class HomeFragment extends Fragment {
 
