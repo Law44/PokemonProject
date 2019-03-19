@@ -57,7 +57,7 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
 
         final TextView title = findViewById(R.id.toolbar_title);
         title.setText("INCIO");
@@ -65,22 +65,48 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 switch (tab.getPosition()){
                     case 0:
+                        tab.setIcon(R.drawable.icons8_home_48_red);
+                        tabLayout.getTabAt(1).setIcon(R.drawable.icons8_leaderboard_52);
+                        tabLayout.getTabAt(2).setIcon(R.drawable.icons8_pokeball_48);
+                        tabLayout.getTabAt(3).setIcon(R.drawable.icons8_explosion_filled_50);
+                        tabLayout.getTabAt(4).setIcon(R.drawable.icons8_pokedex_52);
                         title.setText(R.string.inicioCaps);
                         break;
                     case 1:
+                        tab.setIcon(R.drawable.icons8_leaderboard_filled_50_red);
+                        tabLayout.getTabAt(0).setIcon(R.drawable.icons8_home_48);
+                        tabLayout.getTabAt(2).setIcon(R.drawable.icons8_pokeball_48);
+                        tabLayout.getTabAt(3).setIcon(R.drawable.icons8_explosion_filled_50);
+                        tabLayout.getTabAt(4).setIcon(R.drawable.icons8_pokedex_52);
                         title.setText(R.string.clasificacionCaps);
                         break;
                     case 2:
+                        tab.setIcon(R.drawable.icons8_pokeball_48_red);
+                        tabLayout.getTabAt(0).setIcon(R.drawable.icons8_home_48);
+                        tabLayout.getTabAt(1).setIcon(R.drawable.icons8_leaderboard_52);
+                        tabLayout.getTabAt(3).setIcon(R.drawable.icons8_explosion_filled_50);
+                        tabLayout.getTabAt(4).setIcon(R.drawable.icons8_pokedex_52);
                         title.setText(R.string.mercadoCaps);
                         break;
                     case 3:
+                        tab.setIcon(R.drawable.icons8_explosion_filled_50_red);
+                        tabLayout.getTabAt(0).setIcon(R.drawable.icons8_home_48);
+                        tabLayout.getTabAt(1).setIcon(R.drawable.icons8_leaderboard_52);
+                        tabLayout.getTabAt(2).setIcon(R.drawable.icons8_pokeball_48);
+                        tabLayout.getTabAt(4).setIcon(R.drawable.icons8_pokedex_52);
                         title.setText(R.string.combateCaps);
                         break;
                     case 4:
+                        tab.setIcon(R.drawable.icons8_pokedex_filled_52_red);
+                        tabLayout.getTabAt(0).setIcon(R.drawable.icons8_home_48);
+                        tabLayout.getTabAt(1).setIcon(R.drawable.icons8_leaderboard_52);
+                        tabLayout.getTabAt(2).setIcon(R.drawable.icons8_pokeball_48);
+                        tabLayout.getTabAt(3).setIcon(R.drawable.icons8_explosion_filled_50);
                         title.setText(R.string.pokemonsCaps);
                 }
 
