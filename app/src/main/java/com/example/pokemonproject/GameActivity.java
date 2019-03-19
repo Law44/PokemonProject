@@ -148,9 +148,6 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_gallery: {
                 break;
             }
-            case R.id.nav_slideshow: {
-                break;
-            }
             case R.id.nav_manage: {
                 break;
             }
