@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.example.pokemonproject.GlideApp;
 import com.example.pokemonproject.R;
 
 public  class HomeFragment extends Fragment {

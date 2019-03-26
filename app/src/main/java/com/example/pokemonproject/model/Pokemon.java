@@ -7,10 +7,9 @@ import java.util.Map;
 
 public class Pokemon {
 
-    public int id;
-    public String name;
-    public Sprites sprites;
-    public List<Stats> stats;
+    private int id;
+    private String name;
+    private Sprites sprites;
 
     public Pokemon(int id, String name, Sprites sprites, List<Stats> stats) {
         this.id = id;
@@ -18,6 +17,47 @@ public class Pokemon {
         this.sprites = sprites;
         this.stats = stats;
     }
+    public Pokemon(){}
+
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setSprites(Sprites sprites) {
+        this.sprites = sprites;
+    }
+
+    public void setStats(List<Stats> stats) {
+        this.stats = stats;
+    }
+
+    private List<Stats> stats;
+
+
+
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Sprites getSprites() {
+        return sprites;
+    }
+
+    public List<Stats> getStats() {
+        return stats;
+    }
+
+
+
 }
 
 
