@@ -86,43 +86,28 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
             public void onTabSelected(TabLayout.Tab tab) {
                 switch (tab.getPosition()){
                     case 0:
+                        makeIconsWhite(tabLayout);
                         tab.setIcon(R.drawable.icons8_home_48_red);
-                        tabLayout.getTabAt(1).setIcon(R.drawable.icons8_leaderboard_52);
-                        tabLayout.getTabAt(2).setIcon(R.drawable.icons8_pokeball_48);
-                        tabLayout.getTabAt(3).setIcon(R.drawable.icons8_explosion_filled_50);
-                        tabLayout.getTabAt(4).setIcon(R.drawable.icons8_pokedex_52);
                         title.setText(R.string.inicioCaps);
                         break;
                     case 1:
+                        makeIconsWhite(tabLayout);
                         tab.setIcon(R.drawable.icons8_leaderboard_filled_50_red);
-                        tabLayout.getTabAt(0).setIcon(R.drawable.icons8_home_48);
-                        tabLayout.getTabAt(2).setIcon(R.drawable.icons8_pokeball_48);
-                        tabLayout.getTabAt(3).setIcon(R.drawable.icons8_explosion_filled_50);
-                        tabLayout.getTabAt(4).setIcon(R.drawable.icons8_pokedex_52);
                         title.setText(R.string.clasificacionCaps);
                         break;
                     case 2:
+                        makeIconsWhite(tabLayout);
                         tab.setIcon(R.drawable.icons8_pokeball_48_red);
-                        tabLayout.getTabAt(0).setIcon(R.drawable.icons8_home_48);
-                        tabLayout.getTabAt(1).setIcon(R.drawable.icons8_leaderboard_52);
-                        tabLayout.getTabAt(3).setIcon(R.drawable.icons8_explosion_filled_50);
-                        tabLayout.getTabAt(4).setIcon(R.drawable.icons8_pokedex_52);
                         title.setText(R.string.mercadoCaps);
                         break;
                     case 3:
+                        makeIconsWhite(tabLayout);
                         tab.setIcon(R.drawable.icons8_explosion_filled_50_red);
-                        tabLayout.getTabAt(0).setIcon(R.drawable.icons8_home_48);
-                        tabLayout.getTabAt(1).setIcon(R.drawable.icons8_leaderboard_52);
-                        tabLayout.getTabAt(2).setIcon(R.drawable.icons8_pokeball_48);
-                        tabLayout.getTabAt(4).setIcon(R.drawable.icons8_pokedex_52);
                         title.setText(R.string.combateCaps);
                         break;
                     case 4:
+                        makeIconsWhite(tabLayout);
                         tab.setIcon(R.drawable.icons8_pokedex_filled_52_red);
-                        tabLayout.getTabAt(0).setIcon(R.drawable.icons8_home_48);
-                        tabLayout.getTabAt(1).setIcon(R.drawable.icons8_leaderboard_52);
-                        tabLayout.getTabAt(2).setIcon(R.drawable.icons8_pokeball_48);
-                        tabLayout.getTabAt(3).setIcon(R.drawable.icons8_explosion_filled_50);
                         title.setText(R.string.pokemonsCaps);
                 }
 
@@ -175,6 +160,14 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
 
         email.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
 
+    }
+
+    private void makeIconsWhite(TabLayout tabLayout) {
+        tabLayout.getTabAt(0).setIcon(R.drawable.icons8_home_48);
+        tabLayout.getTabAt(1).setIcon(R.drawable.icons8_leaderboard_52);
+        tabLayout.getTabAt(2).setIcon(R.drawable.icons8_pokeball_48);
+        tabLayout.getTabAt(3).setIcon(R.drawable.icons8_explosion_filled_50);
+        tabLayout.getTabAt(4).setIcon(R.drawable.icons8_pokedex_52);
     }
 
     @Override
@@ -330,15 +323,15 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
                         @Override
                         public void run() {
                             if(response.body()!=null) {
-                                for (int j = 0; j < response.body().stats.size(); j++) {
+                                for (int j = 0; j < response.body().getStats().size(); j++) {
                                     if (j == 5) {
-                                        response.body().stats.get(j).base_stat+= 60;
+                                        response.body().getStats().get(j).base_stat+= 60;
                                     }
                                     else {
-                                        response.body().stats.get(j).base_stat+= 5;
+                                        response.body().getStats().get(j).base_stat+= 5;
                                     }
                                 }
-                                Pokemon pokemon = new Pokemon(response.body().id, response.body().name, response.body().sprites, response.body().stats);
+                                Pokemon pokemon = new Pokemon(response.body().getId(), response.body().getName(), response.body().getSprites(), response.body().getStats());
                                 db.collection("ListaPokemon")
                                         .add(pokemon);
                             }
