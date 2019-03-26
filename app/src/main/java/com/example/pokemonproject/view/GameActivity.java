@@ -36,6 +36,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.List;
 import java.util.Map;
@@ -150,14 +152,27 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
         View header = navigationView.getHeaderView(0);
         header.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
         ImageView photo = header.findViewById(R.id.userPhoto);
-        TextView name = header.findViewById(R.id.userName);
+        final TextView name = header.findViewById(R.id.userName);
         TextView email = header.findViewById(R.id.userEmail);
 
         GlideApp.with(this)
                 .load(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl().toString())
                 .circleCrop()
                 .into(photo);
-        name.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+        db.collection("Users")
+                .whereEqualTo("email", FirebaseAuth.getInstance().getCurrentUser().getEmail())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                name.setText(document.get("username").toString());
+                                }
+                        }
+                    }
+                });
+
         email.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
 
     }
