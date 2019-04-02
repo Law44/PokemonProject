@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 123;
     FirebaseFirestore db;
     boolean user = true;
+    int games;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
 
 
+
+
         findViewById(R.id.sign_in).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -42,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        comeIn();
     }
 
     void comeIn(){
@@ -55,12 +57,19 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             if (task.isSuccessful()) {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    games = Integer.parseInt(document.get("games").toString());
+                                }
                                 if (!task.getResult().isEmpty()) {
-                                    startActivity(new Intent(MainActivity.this, GameActivity.class));
+                                    Intent intent = new Intent(MainActivity.this, GameActivity.class);
+                                    intent.putExtra("games", games);
+                                    startActivity(intent);
                                     finish();
                                 }
                                 else {
-                                    startActivity(new Intent(MainActivity.this, UserActivity.class));
+                                    Intent intent = new Intent(MainActivity.this, UserActivity.class);
+                                    intent.putExtra("games", 0);
+                                    startActivity(intent);
                                     finish();
                                 }
 

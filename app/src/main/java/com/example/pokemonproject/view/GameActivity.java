@@ -57,6 +57,7 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
     PokemonApi pokemonApi = PokemonModule.getAPI();
     final Executor executor = Executors.newFixedThreadPool(2);
     FirebaseFirestore db = FirebaseFirestore.getInstance();
+    int games;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -183,7 +184,6 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
-
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
 
@@ -286,24 +286,30 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            switch (position){
-                case 0:
-                    HomeFragment homeFragment = new HomeFragment();
-                    return homeFragment;
-                case 1:
-                    CopaFragment copaFragment = new CopaFragment();
-                    return copaFragment;
-                case 2:
-                    MercadoFragment mercadoFragment = new MercadoFragment();
-                    return mercadoFragment;
-                case 3:
-                    JornadaFragment jornadaFragment = new JornadaFragment();
-                    return jornadaFragment;
-                case 4:
-                    ListaFragment listaFragment = new ListaFragment();
-                    return listaFragment;
+            if (getIntent().getIntExtra("games", 0) == 0){
+                NoLeagueFragment noLeagueFragment = new NoLeagueFragment();
+                return noLeagueFragment;
             }
-            return new HomeFragment();
+            else {
+                switch (position) {
+                    case 0:
+                        HomeFragment homeFragment = new HomeFragment();
+                        return homeFragment;
+                    case 1:
+                        CopaFragment copaFragment = new CopaFragment();
+                        return copaFragment;
+                    case 2:
+                        MercadoFragment mercadoFragment = new MercadoFragment();
+                        return mercadoFragment;
+                    case 3:
+                        JornadaFragment jornadaFragment = new JornadaFragment();
+                        return jornadaFragment;
+                    case 4:
+                        ListaFragment listaFragment = new ListaFragment();
+                        return listaFragment;
+                }
+                return new HomeFragment();
+            }
         }
 
         @Override
