@@ -21,7 +21,8 @@
             android:label="@string/title_activity_game"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".view.UserActivity" />
-        <activity android:name=".view.MainActivity"></activity>
+        <activity android:name=".view.MainActivity" />
+        <activity android:name=".view.NewLeagueActivity"></activity>
     </application>
 
 </manifest>
