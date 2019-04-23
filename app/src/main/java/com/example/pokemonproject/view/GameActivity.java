@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -38,6 +39,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import java.util.List;
 import java.util.Map;
@@ -175,12 +177,26 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
+        if (findViewById(R.id.search_view)!= null) {
+            MaterialSearchView searchView = findViewById(R.id.search_view);
+            if (drawer.isDrawerOpen(GravityCompat.START) || searchView.isSearchOpen() ) {
+                drawer.closeDrawer(GravityCompat.START);
+                searchView.closeSearch();
+                Button iconSearch =  findViewById(R.id.action_search);
+                iconSearch.setVisibility(View.VISIBLE);
 
-        } else {
-            super.onBackPressed();
+            } else {
+                super.onBackPressed();
+            }
+        }else{
+            if (drawer.isDrawerOpen(GravityCompat.START) ) {
+                drawer.closeDrawer(GravityCompat.START);
+
+            } else {
+                super.onBackPressed();
+            }
         }
+
 
     }
 
@@ -352,4 +368,5 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
             });
         }
     }
+
 }

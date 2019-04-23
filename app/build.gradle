@@ -53,5 +53,7 @@ dependencies {
 
     implementation 'android.arch.paging:runtime:1.0.1'
 
+    implementation 'com.miguelcatalan:materialsearchview:1.4.0'
+
 }
 apply plugin: 'com.google.gms.google-services'
