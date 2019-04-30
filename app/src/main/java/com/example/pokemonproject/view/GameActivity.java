@@ -59,12 +59,14 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
     PokemonApi pokemonApi = PokemonModule.getAPI();
     final Executor executor = Executors.newFixedThreadPool(2);
     FirebaseFirestore db = FirebaseFirestore.getInstance();
-    int games;
+    int numbergames;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+
+        numbergames = getIntent().getIntExtra("games", 0);
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -210,7 +212,7 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
                 break;
             }
             case R.id.nav_gallery: {
-                //readApi();
+                readApi();
                 break;
             }
             case R.id.nav_manage: {
@@ -303,7 +305,7 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            if (getIntent().getIntExtra("games", 0) == 0){
+            if (numbergames == 0){
                 NoLeagueFragment noLeagueFragment = new NoLeagueFragment();
                 return noLeagueFragment;
             }
@@ -336,6 +338,7 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+
     public void readApi(){
 
         for (int i = 1; i < 152; i++) {
@@ -354,7 +357,7 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
                                         response.body().getStats().get(j).base_stat+= 5;
                                     }
                                 }
-                                Pokemon pokemon = new Pokemon(response.body().getId(), response.body().getName(), response.body().getSprites(), response.body().getStats());
+                                Pokemon pokemon = new Pokemon(response.body().getId(), response.body().getName(), response.body().getSprites(), response.body().getStats(), response.body().getTypes());
                                 db.collection("ListaPokemon")
                                         .add(pokemon);
                             }

@@ -11,11 +11,12 @@ public class Pokemon {
     private String name;
     private Sprites sprites;
 
-    public Pokemon(int id, String name, Sprites sprites, List<Stats> stats) {
+    public Pokemon(int id, String name, Sprites sprites, List<Stats> stats, List<Types> types) {
         this.id = id;
         this.name = name;
         this.sprites = sprites;
         this.stats = stats;
+        this.types = types;
     }
     public Pokemon(){}
 
@@ -38,7 +39,7 @@ public class Pokemon {
 
     private List<Stats> stats;
 
-
+    private List<Types> types;
 
     public int getId() {
         return id;
@@ -56,8 +57,13 @@ public class Pokemon {
         return stats;
     }
 
+    public List<Types> getTypes() {
+        return types;
+    }
 
-
+    public void setTypes(List<Types> types) {
+        this.types = types;
+    }
 }
 
 

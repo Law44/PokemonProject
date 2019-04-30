@@ -1,5 +1,7 @@
 package com.example.pokemonproject.model;
 
+import com.firebase.ui.auth.data.model.User;
+
 public class Username {
     private String username;
     private String email;
@@ -27,6 +29,10 @@ public class Username {
 
     public void setGames(String games) {
         this.games = games;
+    }
+
+    public Username(){
+
     }
 
     public Username(String username, String email, String games) {
