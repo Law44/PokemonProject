@@ -1,10 +1,13 @@
 package com.example.pokemonproject.view;
 
 import android.arch.paging.PagedList;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -29,20 +32,36 @@ import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.support.v7.widget.RecyclerView.HORIZONTAL;
+import static android.support.v7.widget.RecyclerView.VERTICAL;
+
 public class ListaFragment extends Fragment {
-    private int limit = 15;
+
     private MaterialSearchView searchView;
     private Query query;
     private FirestorePagingOptions<Pokemon> options;
+    private RecyclerView recyclerView;
     private FirestorePagingAdapter<Pokemon, PokemonViewHolder> adapter;
+    int height;
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View mView = inflater.inflate(R.layout.fragment_pokemons, container, false);
+        final View mView = inflater.inflate(R.layout.fragment_pokemons, container, false);
 
         searchView =  mView.findViewById(R.id.search_view);
         searchView.setVoiceSearch(false);
+
+
+        mView.post(new Runnable() {
+           @Override
+               public void run() {
+                   height = mView.getMeasuredHeight(); // for instance
+               }
+           });
+
 
         Button search = mView.findViewById(R.id.action_search);
         search.setOnClickListener(new View.OnClickListener() {
@@ -52,13 +71,14 @@ public class ListaFragment extends Fragment {
             }
         });
 
-        final RecyclerView recyclerView = mView.findViewById(R.id.rvListaPokemon);
+        recyclerView = mView.findViewById(R.id.rvListaPokemon);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
+        DividerItemDecoration itemDecor = new DividerItemDecoration(mView.getContext(), VERTICAL);
+        recyclerView.addItemDecoration(itemDecor);
         FirebaseFirestore rootRef = FirebaseFirestore.getInstance();
         final CollectionReference productsRef = rootRef.collection("ListaPokemon");
 
-        loadList(recyclerView, productsRef);
+        recyclerView = loadList(recyclerView, productsRef);
 
 
         searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
@@ -70,14 +90,14 @@ public class ListaFragment extends Fragment {
             @Override
             public boolean onQueryTextChange(String newText) {
                 if(newText.isEmpty()){
-                    loadList(recyclerView,productsRef);
+
                 }else {
-                    query = productsRef.whereEqualTo("name", newText.toLowerCase()).limit(limit);
+                    query = productsRef.whereEqualTo("name", newText.toLowerCase());
                     Log.e("name", newText);
                     final PagedList.Config config = new PagedList.Config.Builder()
                             .setEnablePlaceholders(true)
-                            .setPrefetchDistance(15)
-                            .setPageSize(15)
+                            .setPrefetchDistance(151)
+                            .setPageSize(151)
                             .build();
                     options = new FirestorePagingOptions.Builder<Pokemon>()
                             .setLifecycleOwner(getViewLifecycleOwner())
@@ -96,7 +116,6 @@ public class ListaFragment extends Fragment {
                         @Override
                         protected void onBindViewHolder(@NonNull PokemonViewHolder holder, int position, @NonNull Pokemon model) {
                             holder.setPokemon(model);
-                            Log.e("pokemon", model.getName());
                         }
                     };
                     recyclerView.setAdapter(adapter);
@@ -108,12 +127,12 @@ public class ListaFragment extends Fragment {
         return mView;
     }
 
-    private void loadList(RecyclerView recyclerView, CollectionReference productsRef) {
-        query = productsRef.orderBy("id").limit(limit);
+    private RecyclerView loadList(RecyclerView recyclerView, CollectionReference productsRef) {
+        query = productsRef.orderBy("id");
         final PagedList.Config config = new PagedList.Config.Builder()
                 .setEnablePlaceholders(true)
-                .setPrefetchDistance(15)
-                .setPageSize(15)
+                .setPrefetchDistance(151)
+                .setPageSize(151)
                 .build();
         options = new FirestorePagingOptions.Builder<Pokemon>()
                 .setLifecycleOwner(getViewLifecycleOwner())
@@ -136,6 +155,7 @@ public class ListaFragment extends Fragment {
             }
         };
         recyclerView.setAdapter(adapter);
+        return recyclerView;
     }
 
     public  class PokemonViewHolder extends RecyclerView.ViewHolder {
@@ -147,12 +167,42 @@ public class ListaFragment extends Fragment {
         }
 
         void setPokemon(Pokemon pokemon) {
-            TextView textView = view.findViewById(R.id.tvPokemonNameList);
-            textView.setText(pokemon.getName());
+            TextView tvName = view.findViewById(R.id.tvPokemonNameList);
+            TextView tvId = view.findViewById(R.id.tvPokemonIdList);
+            TextView tvHp = view.findViewById(R.id.tvPokemonHpList);
+            TextView tvSpeed = view.findViewById(R.id.tvPokemonSpeedList);
+            TextView tvAtk = view.findViewById(R.id.tvPokemonAtkList);
+            TextView tvDef = view.findViewById(R.id.tvPokemonDefList);
+            TextView tvAtkSp = view.findViewById(R.id.tvPokemonAtkSpList);
+            TextView tvDefSp = view.findViewById(R.id.tvPokemonDefSpList);
+            ImageView tipo1 = view.findViewById(R.id.imgPokemonTipo1List);
+            ImageView tipo2 = view.findViewById(R.id.imgPokemonTipo2List);
+            ImageView tipounico = view.findViewById(R.id.imgPokemonTipoUnicoList);
 
-            textView = view.findViewById(R.id.tvPokemonIdList);
-            textView.setText(String.valueOf(pokemon.getId()));
 
+
+            tvName.setText(pokemon.getName());
+            tvId.setText(String.valueOf(pokemon.getId()));
+            tvHp.setText(String.valueOf(pokemon.getStats().get(5).base_stat));
+            tvSpeed.setText(String.valueOf(pokemon.getStats().get(0).base_stat));
+            tvAtk.setText(String.valueOf(pokemon.getStats().get(4).base_stat));
+            tvDef.setText(String.valueOf(pokemon.getStats().get(3).base_stat));
+            tvAtkSp.setText(String.valueOf(pokemon.getStats().get(2).base_stat));
+            tvDefSp.setText(String.valueOf(pokemon.getStats().get(1).base_stat));
+
+            if (pokemon.getTypes().size() == 2){
+                int id = tipo1.getContext().getResources().getIdentifier(pokemon.getTypes().get(0).getType().getName(), "drawable", tipo1.getContext().getPackageName());
+                GlideApp.with(getActivity()).load(id).into(tipo1);
+                int id2 = tipo1.getContext().getResources().getIdentifier(pokemon.getTypes().get(1).getType().getName(), "drawable", tipo2.getContext().getPackageName());
+                GlideApp.with(getActivity()).load(id2).into(tipo2);
+
+                GlideApp.with(getActivity()).load(0).into(tipounico);
+            }else {
+                int id = tipo1.getContext().getResources().getIdentifier(pokemon.getTypes().get(0).getType().getName(), "drawable", tipounico.getContext().getPackageName());
+                GlideApp.with(getActivity()).load(id).into(tipounico);
+                GlideApp.with(getActivity()).load(0).into(tipo1);
+                GlideApp.with(getActivity()).load(0).into(tipo2);
+            }
             GlideApp.with(view)
                     .load(pokemon.getSprites().front_default)
                     .circleCrop()

@@ -1,6 +1,10 @@
 package com.example.pokemonproject.model;
 
 public class Types {
-    public int slot;
-    public Type type;
+    private int slot;
+    private Type type;
+
+    public Type getType() {
+        return type;
+    }
 }

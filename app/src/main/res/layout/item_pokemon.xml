@@ -4,33 +4,183 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
+
     <ImageView
-            android:id="@+id/imgPokemonImageList"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            app:layout_constraintHorizontal_weight="1"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="100dp"
+        android:id="@+id/imgPokemonImageList"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:orientation="vertical"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvPokemonNameList" />
+
+    <ImageView
+        android:id="@+id/imgPokemonTipo1List"
+        android:layout_width="48dp"
+        android:layout_height="18dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toEndOf="@+id/imgPokemonTipo2List"
+        app:layout_constraintTop_toBottomOf="@+id/tvPokemonDefList" />
+
+    <ImageView
+        android:id="@+id/imgPokemonTipoUnicoList"
+        android:layout_width="48dp"
+        android:layout_height="18dp"
+        android:layout_marginStart="88dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toEndOf="@+id/tvPokemonIdList"
+        app:layout_constraintTop_toBottomOf="@+id/tvPokemonDefList" />
+
+    <ImageView
+        android:id="@+id/imgPokemonTipo2List"
+        android:layout_width="48dp"
+        android:layout_height="18dp"
+        android:layout_marginStart="56dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toEndOf="@+id/tvPokemonIdList"
+        app:layout_constraintTop_toBottomOf="@+id/tvPokemonSpeedList" />
+
+
+    <TextView
+        android:id="@+id/tvPokemonNameList"
+        android:layout_width="75dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvPokemonIdList"
+        android:layout_width="25dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imgPokemonImageList" />
+
+    <TextView
+        android:id="@+id/tvPokemonHpList"
+        android:layout_width="25dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toEndOf="@+id/textView4"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvPokemonAtkList"
+        android:layout_width="25dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toEndOf="@+id/textView5"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvPokemonDefList"
+        android:layout_width="25dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintStart_toEndOf="@+id/textView7"
+        app:layout_constraintTop_toBottomOf="@+id/tvPokemonAtkList" />
+
+    <TextView
+        android:id="@+id/tvPokemonAtkSpList"
+        android:layout_width="25dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toEndOf="@+id/textView3"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvPokemonDefSpList"
+        android:layout_width="25dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintStart_toEndOf="@+id/textView8"
+        app:layout_constraintTop_toBottomOf="@+id/tvPokemonAtkSpList" />
+
+    <TextView
+        android:id="@+id/tvPokemonSpeedList"
+        android:layout_width="25dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintStart_toEndOf="@+id/textView6"
+        app:layout_constraintTop_toBottomOf="@+id/tvPokemonHpList" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="35dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="Hp:"
+        app:layout_constraintStart_toEndOf="@+id/tvPokemonNameList"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="35dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="12dp"
+        android:text="Spe:"
         app:layout_constraintStart_toEndOf="@+id/imgPokemonImageList"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
-        <TextView
-            android:id="@+id/tvPokemonNameList"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="35dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="16dp"
+        android:text="Atk:"
+        app:layout_constraintStart_toEndOf="@+id/tvPokemonHpList"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/tvPokemonIdList"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="35dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
+        android:text="Def:"
+        app:layout_constraintStart_toEndOf="@+id/tvPokemonSpeedList"
+        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="35dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="16dp"
+        android:text="SpAt:"
+        app:layout_constraintStart_toEndOf="@+id/tvPokemonAtkList"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView8"
+        android:layout_width="35dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
+        android:text="SpDf:"
+        app:layout_constraintStart_toEndOf="@+id/tvPokemonDefList"
+        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+
+
+
+
 </android.support.constraint.ConstraintLayout>

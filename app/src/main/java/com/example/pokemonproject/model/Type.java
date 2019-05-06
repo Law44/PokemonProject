@@ -1,5 +1,9 @@
 package com.example.pokemonproject.model;
 
 public class Type {
-    public String name;
+    private String name;
+
+    public String getName() {
+        return name;
+    }
 }

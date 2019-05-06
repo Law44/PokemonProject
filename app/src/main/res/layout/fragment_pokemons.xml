@@ -41,12 +41,17 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvListaPokemon"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="420dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="24dp"
-        android:scrollbars="vertical"
+        android:layout_marginEnd="8dp"
+        android:scrollbars="none"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/action_search" />
+        app:layout_constraintTop_toBottomOf="@+id/action_search"
+        android:background="@drawable/border"
+
+
+        />
 
 
 </android.support.constraint.ConstraintLayout>
