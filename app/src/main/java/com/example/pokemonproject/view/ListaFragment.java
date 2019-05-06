@@ -1,6 +1,7 @@
 package com.example.pokemonproject.view;
 
 import android.arch.paging.PagedList;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -42,6 +43,8 @@ public class ListaFragment extends Fragment {
     private RecyclerView recyclerView;
     private FirestorePagingAdapter<Pokemon, PokemonViewHolder> adapter;
     int height;
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -174,6 +177,7 @@ public class ListaFragment extends Fragment {
             TextView tvDefSp = view.findViewById(R.id.tvPokemonDefSpList);
             ImageView tipo1 = view.findViewById(R.id.imgPokemonTipo1List);
             ImageView tipo2 = view.findViewById(R.id.imgPokemonTipo2List);
+            ImageView tipounico = view.findViewById(R.id.imgPokemonTipoUnicoList);
 
 
 
@@ -186,6 +190,19 @@ public class ListaFragment extends Fragment {
             tvAtkSp.setText(String.valueOf(pokemon.getStats().get(2).base_stat));
             tvDefSp.setText(String.valueOf(pokemon.getStats().get(1).base_stat));
 
+            if (pokemon.getTypes().size() == 2){
+                int id = tipo1.getContext().getResources().getIdentifier(pokemon.getTypes().get(0).getType().getName(), "drawable", tipo1.getContext().getPackageName());
+                GlideApp.with(getActivity()).load(id).into(tipo1);
+                int id2 = tipo1.getContext().getResources().getIdentifier(pokemon.getTypes().get(1).getType().getName(), "drawable", tipo2.getContext().getPackageName());
+                GlideApp.with(getActivity()).load(id2).into(tipo2);
+
+                GlideApp.with(getActivity()).load(0).into(tipounico);
+            }else {
+                int id = tipo1.getContext().getResources().getIdentifier(pokemon.getTypes().get(0).getType().getName(), "drawable", tipounico.getContext().getPackageName());
+                GlideApp.with(getActivity()).load(id).into(tipounico);
+                GlideApp.with(getActivity()).load(0).into(tipo1);
+                GlideApp.with(getActivity()).load(0).into(tipo2);
+            }
             GlideApp.with(view)
                     .load(pokemon.getSprites().front_default)
                     .circleCrop()

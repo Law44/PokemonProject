@@ -27,6 +27,16 @@
         app:layout_constraintTop_toBottomOf="@+id/tvPokemonDefList" />
 
     <ImageView
+        android:id="@+id/imgPokemonTipoUnicoList"
+        android:layout_width="48dp"
+        android:layout_height="18dp"
+        android:layout_marginStart="88dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toEndOf="@+id/tvPokemonIdList"
+        app:layout_constraintTop_toBottomOf="@+id/tvPokemonDefList" />
+
+    <ImageView
         android:id="@+id/imgPokemonTipo2List"
         android:layout_width="48dp"
         android:layout_height="18dp"
