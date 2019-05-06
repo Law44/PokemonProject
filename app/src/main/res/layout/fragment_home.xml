@@ -6,12 +6,120 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="140dp"
-        android:layout_marginTop="120dp"
-        android:text="PEPE"
+    <ImageView
+        android:id="@+id/imgCampoBatalla"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="68dp"
+        android:layout_marginTop="56dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imgCampoBatalla2"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="56dp"
+        app:layout_constraintStart_toEndOf="@+id/imgCampoBatalla"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imgCampoBatalla3"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="68dp"
+        android:layout_marginTop="36dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imgCampoBatalla" />
+
+    <ImageView
+        android:id="@+id/imgCampoBatalla4"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="36dp"
+        app:layout_constraintStart_toEndOf="@+id/imgCampoBatalla3"
+        app:layout_constraintTop_toBottomOf="@+id/imgCampoBatalla2" />
+
+    <ImageView
+        android:id="@+id/imgCampoBatalla5"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="68dp"
+        android:layout_marginTop="36dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imgCampoBatalla3" />
+
+
+    <ImageView
+        android:id="@+id/imgCampoBatalla6"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="36dp"
+        app:layout_constraintStart_toEndOf="@+id/imgCampoBatalla5"
+        app:layout_constraintTop_toBottomOf="@+id/imgCampoBatalla4" />
+
+    <ImageView
+        android:id="@+id/imgSilueta"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintStart_toStartOf="@+id/imgCampoBatalla"
+        app:layout_constraintTop_toTopOf="@+id/imgCampoBatalla" />
+
+
+
+    <ImageView
+        android:id="@+id/imgSilueta2"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintStart_toStartOf="@+id/imgCampoBatalla2"
+        app:layout_constraintTop_toTopOf="@+id/imgCampoBatalla2" />
+
+
+    <ImageView
+        android:id="@+id/imgSilueta3"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintStart_toStartOf="@+id/imgCampoBatalla3"
+        app:layout_constraintTop_toTopOf="@+id/imgCampoBatalla3" />
+
+
+
+    <ImageView
+        android:id="@+id/imgSilueta4"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintStart_toStartOf="@+id/imgCampoBatalla4"
+        app:layout_constraintTop_toTopOf="@+id/imgCampoBatalla4" />
+
+
+    <ImageView
+        android:id="@+id/imgSilueta5"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintStart_toStartOf="@+id/imgCampoBatalla5"
+        app:layout_constraintTop_toTopOf="@+id/imgCampoBatalla5" />
+
+    <ImageView
+        android:id="@+id/imgSilueta6"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintStart_toStartOf="@+id/imgCampoBatalla6"
+        app:layout_constraintTop_toTopOf="@+id/imgCampoBatalla6" />
+
+
 </android.support.constraint.ConstraintLayout>

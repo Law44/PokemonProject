@@ -4,4 +4,5 @@
     <color name="colorPrimaryDark">#000</color>
     <color name="colorAccent"> #cc0000 </color>
     <color name="searchWhite">#FFF</color>
+    <color name="searchFondoGris">#5b000000</color>
 </resources>
