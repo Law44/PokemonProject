@@ -1,6 +1,6 @@
 package com.example.pokemonproject.model;
 
-class Types {
+public class Types {
     public int slot;
     public Type type;
 }

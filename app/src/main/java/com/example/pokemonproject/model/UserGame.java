@@ -6,6 +6,10 @@ public class UserGame {
     private Username user;
     private String teamName;
 
+    public UserGame(){
+
+    }
+
     public UserGame(Username user, String teamName) {
         this.user = user;
         this.teamName = teamName;

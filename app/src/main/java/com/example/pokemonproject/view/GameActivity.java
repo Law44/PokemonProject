@@ -32,6 +32,7 @@ import com.example.pokemonproject.api.PokemonApi;
 import com.example.pokemonproject.api.PokemonModule;
 import com.example.pokemonproject.model.Pokemon;
 import com.example.pokemonproject.model.Stats;
+import com.example.pokemonproject.model.Username;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -67,6 +68,8 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_game);
 
         numbergames = getIntent().getIntExtra("games", 0);
+
+        Log.e("ERROR", String.valueOf(numbergames));
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

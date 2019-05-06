@@ -29,6 +29,13 @@ public class NoLeagueFragment extends Fragment {
             }
         });
 
+        mView.findViewById(R.id.joinLeague).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), JoinLeagueActivity.class));
+            }
+        });
+
         return mView;
 
     }

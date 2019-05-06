@@ -9,12 +9,19 @@ public class Partida {
     private float initialMoney;
     private ArrayList<UserGame> users;
 
+
+    public Partida(){
+
+    }
+
     public Partida(String id, String name, float initialMoney, ArrayList<UserGame> users){
         this.id = id;
         this.name = name;
         this.initialMoney = initialMoney;
         this.users = users;
     }
+
+
 
     public String getId() {
         return id;

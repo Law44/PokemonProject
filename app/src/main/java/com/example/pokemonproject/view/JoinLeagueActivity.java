@@ -22,15 +22,17 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
+
 
 public class JoinLeagueActivity extends AppCompatActivity {
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-    EditText idGame;
+    EditText idGame, etTeamName;
 
     Username creator;
-    UserGame users;
+    Partida users;
     String idUser;
     String games;
 
@@ -38,9 +40,10 @@ public class JoinLeagueActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_league);
+        setContentView(R.layout.activity_join_league);
 
         idGame = findViewById(R.id.idGame);
+        etTeamName = findViewById(R.id.etTeamName);
 
         db.collection("Users")
                 .whereEqualTo("email", FirebaseAuth.getInstance().getCurrentUser().getEmail())
@@ -58,6 +61,7 @@ public class JoinLeagueActivity extends AppCompatActivity {
                     }
                 });
 
+
         findViewById(R.id.unir).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -68,11 +72,30 @@ public class JoinLeagueActivity extends AppCompatActivity {
                         .document(idUser)
                         .update("games", games);
 
-                creator.setGames(games);
+                db.collection("Partidas")
+                        .document(idGame.getText().toString())
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    users = document.toObject(Partida.class);
+                                    creator.setGames(games);
+                                    UserGame userGame = new UserGame(creator, etTeamName.getText().toString());
+                                    users.getUsers().add(userGame);
+                                    db.collection("Partidas")
+                                            .document(idGame.getText().toString())
+                                            .update("users", users.getUsers());
 
-                db.collection("Partidas");
+                                    Intent intent = new Intent(JoinLeagueActivity.this, GameActivity.class);
+                                    intent.putExtra("games", Integer.parseInt(games));
+                                    startActivity(intent);
+                                }
+                            }
+                        });
 
-                finish();
+
 
             }
         });

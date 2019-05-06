@@ -1,5 +1,5 @@
 package com.example.pokemonproject.model;
 
-class Type {
+public class Type {
     public String name;
 }
