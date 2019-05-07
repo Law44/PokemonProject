@@ -6,11 +6,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 import com.example.pokemonproject.R;
 import com.example.pokemonproject.model.Partida;
+import com.example.pokemonproject.model.Pokemon;
 import com.example.pokemonproject.model.UserGame;
 import com.example.pokemonproject.model.Username;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -21,16 +24,18 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class NewLeagueActivity extends AppCompatActivity {
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-    EditText etGameName, etInitialMoney, etTeamName;
+    EditText etGameName, etTeamName;
 
     Username creator;
     String idUser;
     String games;
+    String lastGame;
 
 
     @Override
@@ -39,8 +44,15 @@ public class NewLeagueActivity extends AppCompatActivity {
         setContentView(R.layout.activity_new_league);
 
         etGameName = findViewById(R.id.etGameName);
-        etInitialMoney = findViewById(R.id.etInitialMoney);
         etTeamName = findViewById(R.id.etTeamName);
+
+        String[] opcionesSpinner = new String[] {
+                "500000", "1000000", "1500000", "2000000" };
+        final Spinner spinner = findViewById(R.id.etInitialMoney);
+        ArrayAdapter<String> spinneroptions = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, opcionesSpinner);
+        spinneroptions.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(spinneroptions);
 
         db.collection("Users")
                 .whereEqualTo("email", FirebaseAuth.getInstance().getCurrentUser().getEmail())
@@ -53,6 +65,7 @@ public class NewLeagueActivity extends AppCompatActivity {
                                 idUser = document.getId();
                                 games = document.get("games").toString();
                                 creator = document.toObject(Username.class);
+                                lastGame = document.get("lastGame").toString();
                             }
                         }
                     }
@@ -64,18 +77,26 @@ public class NewLeagueActivity extends AppCompatActivity {
 
                 games = String.valueOf(Integer.parseInt(games)+1);
 
+                ArrayList<UserGame> usergames = new ArrayList<>();
+                ArrayList<Pokemon> team = new ArrayList<>();
+                usergames.add(new UserGame(creator, etTeamName.getText().toString(), 0, team, Float.parseFloat(spinner.getSelectedItem().toString())));
+                String id = db.collection("Partidas").document().getId();
+                lastGame = id;
+
                 db.collection("Users")
                         .document(idUser)
-                        .update("games", games);
+                        .update("games", games, "lastGame", lastGame);
 
                 creator.setGames(games);
 
-                ArrayList<UserGame> usergames = new ArrayList<UserGame>();
-                usergames.add(new UserGame(creator, etTeamName.getText().toString()));
-                String id = db.collection("Partidas").document().getId();
-                Partida partida = new Partida(id, etGameName.getText().toString(), Float.parseFloat(String.valueOf(etInitialMoney.getText().toString())), usergames);
+                Partida partida = new Partida(id, etGameName.getText().toString(), Float.parseFloat(String.valueOf(spinner.getSelectedItem().toString())), usergames);
                 db.collection("Partidas").document(id).set(partida);
-                finish();
+
+                Intent intent = new Intent(NewLeagueActivity.this, GameActivity.class);
+                intent.putExtra("games", Integer.parseInt(games));
+                intent.putExtra("lastGame", lastGame);
+                startActivity(intent);
+
             }
         });
 

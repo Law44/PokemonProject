@@ -28,9 +28,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titulo" />
+        app:layout_constraintTop_toBottomOf="@+id/titulo"
+        android:singleLine="true"/>
 
-    <EditText
+    <Spinner
         android:id="@+id/etInitialMoney"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -40,7 +41,8 @@
         android:hint="Presupuesto inicial de equipo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etGameName" />
+        app:layout_constraintTop_toBottomOf="@+id/etGameName"
+        android:singleLine="true"/>
 
     <EditText
         android:id="@+id/etTeamName"
@@ -53,7 +55,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etInitialMoney" />
+        app:layout_constraintTop_toBottomOf="@+id/etInitialMoney"
+        android:singleLine="true"/>
 
     <Button
         android:id="@+id/crear"

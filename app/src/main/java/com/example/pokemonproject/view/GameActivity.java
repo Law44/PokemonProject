@@ -1,6 +1,8 @@
 package com.example.pokemonproject.view;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -16,6 +18,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -25,23 +30,28 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.pokemonproject.GlideApp;
 import com.example.pokemonproject.R;
 import com.example.pokemonproject.api.PokemonApi;
 import com.example.pokemonproject.api.PokemonModule;
+import com.example.pokemonproject.model.Partida;
 import com.example.pokemonproject.model.Pokemon;
 import com.example.pokemonproject.model.Stats;
+import com.example.pokemonproject.model.UserGame;
 import com.example.pokemonproject.model.Username;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
@@ -61,6 +71,9 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
     final Executor executor = Executors.newFixedThreadPool(2);
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     int numbergames;
+    String id;
+    String user;
+    String nameGame;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,23 +81,33 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_game);
 
         numbergames = getIntent().getIntExtra("games", 0);
+        id = getIntent().getStringExtra("lastGame");
 
-        Log.e("ERROR", String.valueOf(numbergames));
+        db.collection("Partidas")
+                .document(id)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            nameGame = document.toObject(Partida.class).getName();
+                        }
+                    }
+                });
 
-        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
-        // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager = findViewById(R.id.container);
         mViewPager.setOffscreenPageLimit(5);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        final TabLayout tabLayout = findViewById(R.id.tabs);
 
         final TextView title = findViewById(R.id.toolbar_title);
+
         title.setText("INCIO");
 
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
@@ -162,6 +185,7 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 name.setText(document.get("username").toString());
+                                user = document.get("username").toString();
                                 }
                         }
                     }
@@ -211,14 +235,34 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
 
         switch (item.getItemId()) {
 
-            case R.id.nav_camera: {
+            case R.id.invite: {
+                PackageManager pm=getPackageManager();
+                try {
+
+                    Intent waIntent = new Intent(Intent.ACTION_SEND);
+                    waIntent.setType("text/plain");
+
+                    String text = "Utiliza este codigo para unirte a la liga " + nameGame + " creada por " + user + ":\n" + id;
+
+                    PackageInfo info= pm.getPackageInfo("com.whatsapp", PackageManager.GET_META_DATA);
+                    waIntent.setPackage("com.whatsapp");
+
+                    waIntent.putExtra(Intent.EXTRA_TEXT, text);
+
+                    startActivity(Intent.createChooser(waIntent, "Share with"));
+
+                } catch (PackageManager.NameNotFoundException e) {
+                    Toast.makeText(this, "WhatsApp not Installed", Toast.LENGTH_SHORT)
+                            .show();
+                }
                 break;
             }
-            case R.id.nav_gallery: {
-                readApi();
+            case R.id.create: {
+                startActivity(new Intent(GameActivity.this, NewLeagueActivity.class));
                 break;
             }
-            case R.id.nav_manage: {
+            case R.id.join: {
+                startActivity(new Intent(GameActivity.this, JoinLeagueActivity.class));
                 break;
             }
 

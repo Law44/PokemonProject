@@ -54,7 +54,7 @@ public class UserActivity extends AppCompatActivity {
                 }
                 else {
                     startActivity(new Intent(UserActivity.this, GameActivity.class));
-                    Username username = new Username(etUsername.getText().toString(), FirebaseAuth.getInstance().getCurrentUser().getEmail(), "0");
+                    Username username = new Username(etUsername.getText().toString(), FirebaseAuth.getInstance().getCurrentUser().getEmail(), "0", "");
                     db.collection("Users").add(username);
                     next = true;
                     finish();

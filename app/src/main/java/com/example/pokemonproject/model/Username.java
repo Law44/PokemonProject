@@ -6,6 +6,15 @@ public class Username {
     private String username;
     private String email;
     private String games;
+    private String lastGame;
+
+    public String getLastGame() {
+        return lastGame;
+    }
+
+    public void setLastGame(String lastGame) {
+        this.lastGame = lastGame;
+    }
 
     public String getUsername() {
         return username;
@@ -35,9 +44,10 @@ public class Username {
 
     }
 
-    public Username(String username, String email, String games) {
+    public Username(String username, String email, String games, String lastGame) {
         this.username = username;
         this.email = email;
         this.games = games;
+        this.lastGame = lastGame;
     }
 }

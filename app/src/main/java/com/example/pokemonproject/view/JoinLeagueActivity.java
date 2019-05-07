@@ -11,6 +11,7 @@ import android.widget.EditText;
 
 import com.example.pokemonproject.R;
 import com.example.pokemonproject.model.Partida;
+import com.example.pokemonproject.model.Pokemon;
 import com.example.pokemonproject.model.UserGame;
 import com.example.pokemonproject.model.Username;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -35,7 +36,7 @@ public class JoinLeagueActivity extends AppCompatActivity {
     Partida users;
     String idUser;
     String games;
-
+    String lastGame;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +57,7 @@ public class JoinLeagueActivity extends AppCompatActivity {
                                 idUser = document.getId();
                                 games = document.get("games").toString();
                                 creator = document.toObject(Username.class);
+                                lastGame = document.get("lastGame").toString();
                             }
                         }
                     }
@@ -67,10 +69,11 @@ public class JoinLeagueActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 games = String.valueOf(Integer.parseInt(games)+1);
+                lastGame = idGame.getText().toString();
 
                 db.collection("Users")
                         .document(idUser)
-                        .update("games", games);
+                        .update("games", games, "lastGame", lastGame);
 
                 db.collection("Partidas")
                         .document(idGame.getText().toString())
@@ -82,7 +85,8 @@ public class JoinLeagueActivity extends AppCompatActivity {
                                     DocumentSnapshot document = task.getResult();
                                     users = document.toObject(Partida.class);
                                     creator.setGames(games);
-                                    UserGame userGame = new UserGame(creator, etTeamName.getText().toString());
+                                    ArrayList<Pokemon> team = new ArrayList<>();
+                                    UserGame userGame = new UserGame(creator, etTeamName.getText().toString(), 0, team, users.getInitialMoney());
                                     users.getUsers().add(userGame);
                                     db.collection("Partidas")
                                             .document(idGame.getText().toString())
@@ -90,6 +94,7 @@ public class JoinLeagueActivity extends AppCompatActivity {
 
                                     Intent intent = new Intent(JoinLeagueActivity.this, GameActivity.class);
                                     intent.putExtra("games", Integer.parseInt(games));
+                                    intent.putExtra("lastGame", lastGame);
                                     startActivity(intent);
                                 }
                             }
