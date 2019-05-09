@@ -10,6 +10,10 @@ public class Pokemon {
     private int id;
     private String name;
     private Sprites sprites;
+    private int price;
+    private int idEvo;
+
+
 
     public Pokemon(int id, String name, Sprites sprites, List<Stats> stats, List<Types> types) {
         this.id = id;
@@ -20,6 +24,21 @@ public class Pokemon {
     }
     public Pokemon(){}
 
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+
+    public int getIdEvo() {
+        return idEvo;
+    }
+
+    public void setIdEvo(int idEvo) {
+        this.idEvo = idEvo;
+    }
 
     public void setId(int id) {
         this.id = id;
