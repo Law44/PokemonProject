@@ -70,6 +70,7 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
 
     PokemonApi pokemonApi = PokemonModule.getAPI();
     final Executor executor = Executors.newFixedThreadPool(2);
+    final Executor executor2 = Executors.newFixedThreadPool(2);
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     int numbergames;
     String id;
@@ -259,7 +260,8 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
                 break;
             }
             case R.id.create: {
-                readApiMovements();
+                readApi();
+                //readApiMovements();
                 //startActivity(new Intent(GameActivity.this, NewLeagueActivity.class));
                 break;
             }
@@ -406,7 +408,19 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
                                         response.body().getStats().get(j).base_stat+= 5;
                                     }
                                 }
-                                Pokemon pokemon = new Pokemon(response.body().getId(), response.body().getName(), response.body().getSprites(), response.body().getStats(), response.body().getTypes());
+                                for (int j = 0; j < response.body().getMoves().size();j++){
+                                    String idMove ="";
+                                    for (int z = 31;;z++){
+                                        if (response.body().getMoves().get(j).move.url.charAt(z) != '/'){
+                                            idMove += response.body().getMoves().get(j).move.url.charAt(z);
+                                        }else {
+                                            break;
+                                        }
+                                    }
+                                    response.body().getMoves().get(j).move.id = Integer.parseInt(idMove);
+                                }
+                                Pokemon pokemon = new Pokemon(response.body().getId(), response.body().getName(), response.body().getSprites(), response.body().getStats(), response.body().getTypes(), response.body().getMoves());
+
                                 addPriceEvo(pokemon);
                                 db.collection("ListaPokemon")
                                         .add(pokemon);
@@ -1029,18 +1043,18 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
 
     public void readApiMovements(){
         for (int i = 1; i < 729; i++) {
-            pokemonApi.getMovements(i).enqueue(new Callback<Movement>() {
+            pokemonApi.getMovement(i).enqueue(new Callback<Movement>() {
                 @Override
                 public void onResponse(Call<Movement> call, final Response<Movement> response) {
-                    executor.execute(new Runnable() {
+                    executor2.execute(new Runnable() {
                         @Override
                         public void run() {
-                            Log.e("ERROR", "HOLA2");
                             if (response.body() != null) {
-                                Log.e("ERROR", "HOLA3");
+                                if (response.body().power != null) {
                                     Movement movement = new Movement(response.body().id, response.body().name, response.body().names, response.body().power, response.body().pp, response.body().accuracy, response.body().priority, response.body().type);
                                     db.collection("Movimientos")
                                             .add(movement);
+                                }
 
                             }
                         }
@@ -1049,6 +1063,7 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
 
                 @Override
                 public void onFailure(Call<Movement> call, Throwable t) {
+                    Log.e("ERROR", t.getMessage());
                 }
             });
         }

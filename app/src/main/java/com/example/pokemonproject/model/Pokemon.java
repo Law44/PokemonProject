@@ -12,17 +12,29 @@ public class Pokemon {
     private Sprites sprites;
     private int price;
     private int idEvo;
+    private List<Stats> stats;
+    private List<Types> types;
+    private List<Moves> moves;
 
 
 
-    public Pokemon(int id, String name, Sprites sprites, List<Stats> stats, List<Types> types) {
+    public Pokemon(int id, String name, Sprites sprites, List<Stats> stats, List<Types> types, List<Moves> moves) {
         this.id = id;
         this.name = name;
         this.sprites = sprites;
         this.stats = stats;
         this.types = types;
+        this.moves = moves;
     }
     public Pokemon(){}
+
+    public List<Moves> getMoves() {
+        return moves;
+    }
+
+    public void setMoves(List<Moves> moves) {
+        this.moves = moves;
+    }
 
     public int getPrice() {
         return price;
@@ -55,10 +67,6 @@ public class Pokemon {
     public void setStats(List<Stats> stats) {
         this.stats = stats;
     }
-
-    private List<Stats> stats;
-
-    private List<Types> types;
 
     public int getId() {
         return id;
