@@ -407,8 +407,614 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
                                     }
                                 }
                                 Pokemon pokemon = new Pokemon(response.body().getId(), response.body().getName(), response.body().getSprites(), response.body().getStats(), response.body().getTypes());
+                                addPriceEvo(pokemon);
                                 db.collection("ListaPokemon")
                                         .add(pokemon);
+                            }
+                        }
+
+                        private void addPriceEvo(Pokemon pokemon) {
+                            switch (pokemon.getId()){
+                                case 1:
+                                    pokemon.setIdEvo(2);
+                                    pokemon.setPrice(350);
+                                    break;
+                                case 2:
+                                    pokemon.setIdEvo(3);
+                                    pokemon.setPrice(1000);
+                                    break;
+                                case 3:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(4000);
+                                    break;
+                                case 4:
+                                    pokemon.setIdEvo(5);
+                                    pokemon.setPrice(350);
+                                    break;
+                                case 5:
+                                    pokemon.setIdEvo(6);
+                                    pokemon.setPrice(1000);
+                                    break;
+                                case 6:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(4000);
+                                    break;
+                                case 7:
+                                    pokemon.setIdEvo(8);
+                                    pokemon.setPrice(350);
+                                    break;
+                                case 8:
+                                    pokemon.setIdEvo(9);
+                                    pokemon.setPrice(1000);
+                                    break;
+                                case 9:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(4000);
+                                    break;
+                                case 10:
+                                    pokemon.setIdEvo(10);
+                                    pokemon.setPrice(150);
+                                    break;
+                                case 11:
+                                    pokemon.setIdEvo(12);
+                                    pokemon.setPrice(300);
+                                    break;
+                                case 12:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(1750);
+                                    break;
+                                case 13:
+                                    pokemon.setIdEvo(14);
+                                    pokemon.setPrice(150);
+                                    break;
+                                case 14:
+                                    pokemon.setIdEvo(15);
+                                    pokemon.setPrice(300);
+                                    break;
+                                case 15:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(1750);
+                                    break;
+                                case 16:
+                                    pokemon.setIdEvo(17);
+                                    pokemon.setPrice(250);
+                                    break;
+                                case 17:
+                                    pokemon.setIdEvo(18);
+                                    pokemon.setPrice(900);
+                                    break;
+                                case 18:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(2800);
+                                    break;
+                                case 19:
+                                    pokemon.setIdEvo(20);
+                                    pokemon.setPrice(90);
+                                    break;
+                                case 20:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(600);
+                                    break;
+                                case 21:
+                                    pokemon.setIdEvo(22);
+                                    pokemon.setPrice(200);
+                                    break;
+                                case 22:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(2000);
+                                    break;
+                                case 23:
+                                    pokemon.setIdEvo(24);
+                                    pokemon.setPrice(400);
+                                    break;
+                                case 24:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(1850);
+                                    break;
+                                case 25:
+                                    pokemon.setIdEvo(26);
+                                    pokemon.setPrice(750);
+                                    break;
+                                case 26:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(2400);
+                                    break;
+                                case 27:
+                                    pokemon.setIdEvo(28);
+                                    pokemon.setPrice(500);
+                                    break;
+                                case 28:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(2000);
+                                    break;
+                                case 29:
+                                    pokemon.setIdEvo(30);
+                                    pokemon.setPrice(400);
+                                    break;
+                                case 30:
+                                    pokemon.setIdEvo(31);
+                                    pokemon.setPrice(975);
+                                    break;
+                                case 31:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(3250);
+                                    break;
+                                case 32:
+                                    pokemon.setIdEvo(33);
+                                    pokemon.setPrice(400);
+                                    break;
+                                case 33:
+                                    pokemon.setIdEvo(34);
+                                    pokemon.setPrice(975);
+                                    break;
+                                case 34:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(3250);
+                                    break;
+                                case 35:
+                                    pokemon.setIdEvo(36);
+                                    pokemon.setPrice(850);
+                                    break;
+                                case 36:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(2000);
+                                    break;
+                                case 37:
+                                    pokemon.setIdEvo(38);
+                                    pokemon.setPrice(600);
+                                    break;
+                                case 38:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(2600);
+                                    break;
+                                case 39:
+                                    pokemon.setIdEvo(40);
+                                    pokemon.setPrice(850);
+                                    break;
+                                case 40:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(2000);
+                                    break;
+                                case 41:
+                                    pokemon.setIdEvo(42);
+                                    pokemon.setPrice(165);
+                                    break;
+                                case 42:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(2225);
+                                    break;
+                                case 43:
+                                    pokemon.setIdEvo(44);
+                                    pokemon.setPrice(160);
+                                    break;
+                                case 44:
+                                    pokemon.setIdEvo(45);
+                                    pokemon.setPrice(900);
+                                    break;
+                                case 45:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(2500);
+                                    break;
+                                case 46:
+                                    pokemon.setIdEvo(47);
+                                    pokemon.setPrice(250);
+                                    break;
+                                case 47:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(1450);
+                                    break;
+                                case 48:
+                                    pokemon.setIdEvo(49);
+                                    pokemon.setPrice(500);
+                                    break;
+                                case 49:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(1400);
+                                    break;
+                                case 50:
+                                    pokemon.setIdEvo(51);
+                                    pokemon.setPrice(700);
+                                    break;
+                                case 51:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(2400);
+                                    break;
+                                case 52:
+                                    pokemon.setIdEvo(53);
+                                    pokemon.setPrice(650);
+                                    break;
+                                case 53:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(1300);
+                                    break;
+                                case 54:
+                                    pokemon.setIdEvo(55);
+                                    pokemon.setPrice(500);
+                                    break;
+                                case 55:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(2300);
+                                    break;
+                                case 56:
+                                    pokemon.setIdEvo(57);
+                                    pokemon.setPrice(800);
+                                    break;
+                                case 57:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(2500);
+                                    break;
+                                case 58:
+                                    pokemon.setIdEvo(59);
+                                    pokemon.setPrice(1000);
+                                    break;
+                                case 59:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(3000);
+                                    break;
+                                case 60:
+                                    pokemon.setIdEvo(61);
+                                    pokemon.setPrice(450);
+                                    break;
+                                case 61:
+                                    pokemon.setIdEvo(62);
+                                    pokemon.setPrice(1000);
+                                    break;
+                                case 62:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(2750);
+                                    break;
+                                case 63:
+                                    pokemon.setIdEvo(64);
+                                    pokemon.setPrice(400);
+                                    break;
+                                case 64:
+                                    pokemon.setIdEvo(65);
+                                    pokemon.setPrice(1600);
+                                    break;
+                                case 65:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(5000);
+                                    break;
+                                case 66:
+                                    pokemon.setIdEvo(67);
+                                    pokemon.setPrice(450);
+                                    break;
+                                case 67:
+                                    pokemon.setIdEvo(68);
+                                    pokemon.setPrice(1400);
+                                    break;
+                                case 68:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(4250);
+                                    break;
+                                case 69:
+                                    pokemon.setIdEvo(70);
+                                    pokemon.setPrice(300);
+                                    break;
+                                case 70:
+                                    pokemon.setIdEvo(71);
+                                    pokemon.setPrice(975);
+                                    break;
+                                case 71:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(2150);
+                                    break;
+                                case 72:
+                                    pokemon.setIdEvo(73);
+                                    pokemon.setPrice(500);
+                                    break;
+                                case 73:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(1800);
+                                    break;
+                                case 74:
+                                    pokemon.setIdEvo(75);
+                                    pokemon.setPrice(500);
+                                    break;
+                                case 75:
+                                    pokemon.setIdEvo(76);
+                                    pokemon.setPrice(1500);
+                                    break;
+                                case 76:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(4375);
+                                    break;
+                                case 77:
+                                    pokemon.setIdEvo(78);
+                                    pokemon.setPrice(950);
+                                    break;
+                                case 78:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(2450);
+                                    break;
+                                case 79:
+                                    pokemon.setIdEvo(80);
+                                    pokemon.setPrice(300);
+                                    break;
+                                case 80:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(2000);
+                                    break;
+                                case 81:
+                                    pokemon.setIdEvo(82);
+                                    pokemon.setPrice(500);
+                                    break;
+                                case 82:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(2200);
+                                    break;
+                                case 83:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(1000);
+                                    break;
+                                case 84:
+                                    pokemon.setIdEvo(85);
+                                    pokemon.setPrice(750);
+                                    break;
+                                case 85:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(1400);
+                                    break;
+                                case 86:
+                                    pokemon.setIdEvo(86);
+                                    pokemon.setPrice(900);
+                                    break;
+                                case 87:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(2500);
+                                    break;
+                                case 88:
+                                    pokemon.setIdEvo(89);
+                                    pokemon.setPrice(700);
+                                    break;
+                                case 89:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(1850);
+                                    break;
+                                case 90:
+                                    pokemon.setIdEvo(91);
+                                    pokemon.setPrice(650);
+                                    break;
+                                case 91:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(1900);
+                                    break;
+                                case 92:
+                                    pokemon.setIdEvo(93);
+                                    pokemon.setPrice(500);
+                                    break;
+                                case 93:
+                                    pokemon.setIdEvo(94);
+                                    pokemon.setPrice(1500);
+                                    break;
+                                case 94:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(4500);
+                                    break;
+                                case 95:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(1500);
+                                    break;
+                                case 96:
+                                    pokemon.setIdEvo(97);
+                                    pokemon.setPrice(600);
+                                    break;
+                                case 97:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(1400);
+                                    break;
+                                case 98:
+                                    pokemon.setIdEvo(99);
+                                    pokemon.setPrice(550);
+                                    break;
+                                case 99:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(2000);
+                                    break;
+                                case 100:
+                                    pokemon.setIdEvo(101);
+                                    pokemon.setPrice(800);
+                                    break;
+                                case 101:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(1600);
+                                    break;
+                                case 102:
+                                    pokemon.setIdEvo(103);
+                                    pokemon.setPrice(1450);
+                                    break;
+                                case 104:
+                                    pokemon.setIdEvo(105);
+                                    pokemon.setPrice(500);
+                                    break;
+                                case 105:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(1700);
+                                    break;
+                                case 106:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(1800);
+                                    break;
+                                case 107:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(1750);
+                                    break;
+                                case 108:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(1000);
+                                    break;
+                                case 109:
+                                    pokemon.setIdEvo(110);
+                                    pokemon.setPrice(600);
+                                    break;
+                                case 110:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(1400);
+                                    break;
+                                case 111:
+                                    pokemon.setIdEvo(112);
+                                    pokemon.setPrice(1000);
+                                    break;
+                                case 112:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(3500);
+                                    break;
+                                case 113:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(2000);
+                                    break;
+                                case 114:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(1250);
+                                    break;
+                                case 115:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(2300);
+                                    break;
+                                case 116:
+                                    pokemon.setIdEvo(117);
+                                    pokemon.setPrice(800);
+                                    break;
+                                case 117:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(1650);
+                                    break;
+                                case 118:
+                                    pokemon.setIdEvo(119);
+                                    pokemon.setPrice(700);
+                                    break;
+                                case 119:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(1450);
+                                    break;
+                                case 120:
+                                    pokemon.setIdEvo(121);
+                                    pokemon.setPrice(1150);
+                                    break;
+                                case 121:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(2500);
+                                    break;
+                                case 122:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(1700);
+                                    break;
+                                case 123:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(1850);
+                                    break;
+                                case 124:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(2000);
+                                    break;
+                                case 125:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(2100);
+                                    break;
+                                case 126:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(2100);
+                                    break;
+                                case 127:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(1500);
+                                    break;
+                                case 128:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(2150);
+                                    break;
+                                case 129:
+                                    pokemon.setIdEvo(130);
+                                    pokemon.setPrice(50);
+                                    break;
+                                case 130:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(4750);
+                                    break;
+                                case 131:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(2300);
+                                    break;
+                                case 132:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(1250);
+                                    break;
+                                case 133:
+                                    pokemon.setIdEvo(134135136);
+                                    pokemon.setPrice(800);
+                                    break;
+                                case 134:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(2400);
+                                    break;
+                                case 135:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(2400);
+                                    break;
+                                case 136:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(2400);
+                                    break;
+                                case 137:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(1600);
+                                    break;
+                                case 138:
+                                    pokemon.setIdEvo(139);
+                                    pokemon.setPrice(950);
+                                    break;
+                                case 139:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(1800);
+                                    break;
+                                case 140:
+                                    pokemon.setIdEvo(141);
+                                    pokemon.setPrice(950);
+                                    break;
+                                case 141:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(1800);
+                                    break;
+                                case 142:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(2500);
+                                    break;
+                                case 143:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(4400);
+                                    break;
+                                case 144:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(10000);
+                                    break;
+                                case 145:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(10000);
+                                    break;
+                                case 146:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(10000);
+                                    break;
+                                case 147:
+                                    pokemon.setIdEvo(148);
+                                    pokemon.setPrice(1000);
+                                    break;
+                                case 148:
+                                    pokemon.setIdEvo(149);
+                                    pokemon.setPrice(3000);
+                                    break;
+                                case 149:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(7000);
+                                    break;
+                                case 150:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(12000);
+                                    break;
+                                case 151:
+                                    pokemon.setIdEvo(0);
+                                    pokemon.setPrice(8000);
+                                    break;
                             }
                         }
                     });
