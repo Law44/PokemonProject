@@ -36,6 +36,7 @@ import com.example.pokemonproject.GlideApp;
 import com.example.pokemonproject.R;
 import com.example.pokemonproject.api.PokemonApi;
 import com.example.pokemonproject.api.PokemonModule;
+import com.example.pokemonproject.model.Movement;
 import com.example.pokemonproject.model.Partida;
 import com.example.pokemonproject.model.Pokemon;
 import com.example.pokemonproject.model.Stats;
@@ -258,7 +259,8 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
                 break;
             }
             case R.id.create: {
-                startActivity(new Intent(GameActivity.this, NewLeagueActivity.class));
+                readApiMovements();
+                //startActivity(new Intent(GameActivity.this, NewLeagueActivity.class));
                 break;
             }
             case R.id.join: {
@@ -414,6 +416,33 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
 
                 @Override
                 public void onFailure(Call<Pokemon> call, Throwable t) {
+                }
+            });
+        }
+    }
+
+    public void readApiMovements(){
+        for (int i = 1; i < 729; i++) {
+            pokemonApi.getMovements(i).enqueue(new Callback<Movement>() {
+                @Override
+                public void onResponse(Call<Movement> call, final Response<Movement> response) {
+                    executor.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.e("ERROR", "HOLA2");
+                            if (response.body() != null) {
+                                Log.e("ERROR", "HOLA3");
+                                    Movement movement = new Movement(response.body().id, response.body().name, response.body().names, response.body().power, response.body().pp, response.body().accuracy, response.body().priority, response.body().type);
+                                    db.collection("Movimientos")
+                                            .add(movement);
+
+                            }
+                        }
+                    });
+                }
+
+                @Override
+                public void onFailure(Call<Movement> call, Throwable t) {
                 }
             });
         }
