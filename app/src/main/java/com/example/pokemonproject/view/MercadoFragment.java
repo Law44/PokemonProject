@@ -44,7 +44,7 @@ public class MercadoFragment extends Fragment {
         recyclerView.addItemDecoration(itemDecor);
         FirebaseFirestore rootRef = FirebaseFirestore.getInstance();
         final CollectionReference productsRef = rootRef.collection("ListaPokemon");
-        query = productsRef.orderBy("id").limit(10).endAt(10);
+        query = productsRef.orderBy("id", Query.Direction.DESCENDING).limit(10).endAt(10);
         final PagedList.Config config = new PagedList.Config.Builder()
                 .setEnablePlaceholders(true)
                 .setPrefetchDistance(10)
@@ -97,7 +97,7 @@ public class MercadoFragment extends Fragment {
 
             tvName.setText(model.getName());
             tvId.setText(String.valueOf(model.getId()));
-            tvCostePokemon.setText(String.valueOf(position*200));
+            tvCostePokemon.setText(String.valueOf(model.getPrice()));
             if (model.getTypes().size() == 2){
                 int id = tipo1.getContext().getResources().getIdentifier(model.getTypes().get(0).getType().getName(), "drawable", tipo1.getContext().getPackageName());
                 GlideApp.with(getActivity()).load(id).into(tipo1);
@@ -120,6 +120,11 @@ public class MercadoFragment extends Fragment {
                     .load(R.drawable.icons8_pokeball_80)
                     .circleCrop()
                     .into((ImageView)view.findViewById(R.id.imgButtonPagar));
+
+            GlideApp.with(view)
+                    .load(R.drawable.pokemondollar)
+                    .into((ImageView) view.findViewById(R.id.imgPokedolar));
+
 
             button.setOnClickListener(new View.OnClickListener() {
                 @Override

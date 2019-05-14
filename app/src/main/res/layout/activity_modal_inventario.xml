@@ -8,7 +8,7 @@
 
     <android.support.v7.widget.CardView
         android:id="@+id/cardPokemonModal"
-        android:layout_width="100dp"
+        android:layout_width="300dp"
         android:layout_height="200dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="48dp"
@@ -16,19 +16,126 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.532"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        >
+        <ImageView
+            android:id="@+id/imgModalBoxFondo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="5dp"
+            android:alpha="0.5"/>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="5dp"
+            android:background="@drawable/modal_border"
+            android:alpha="0.8"/>
+
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
+            android:layout_height="match_parent"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            >
             <ImageView
                 android:id="@+id/imgPokemonModal"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/imgTipo1Modal"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="12dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imgPokemonModal" />
+
+            <ImageView
+                android:id="@+id/imgTipo2Modal"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="12dp"
+                app:layout_constraintStart_toEndOf="@+id/imgTipo1Modal"
+                app:layout_constraintTop_toBottomOf="@+id/imgPokemonModal" />
+
+            <ImageView
+                android:id="@+id/imgTipoUnicoModal"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="12dp"
+                app:layout_constraintStart_toStartOf="@+id/imgTipo1Modal"
+                app:layout_constraintTop_toBottomOf="@+id/imgPokemonModal" />
+
+            <EditText
+                android:id="@+id/etCostePokemon"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                android:inputType="number"
+                android:textAlignment="textEnd"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/imgPokemonModal"
+                app:layout_constraintTop_toBottomOf="@+id/btnCloseModal" />
+
+            <Button
+                android:id="@+id/btnCloseModal"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/ic_close_red_24dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/btnMinusModal"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/ic_remove_red_24dp"
+                app:layout_constraintEnd_toStartOf="@+id/etCostePokemon"
+                app:layout_constraintHorizontal_bias="0.709"
+                app:layout_constraintStart_toEndOf="@+id/imgPokemonModal"
+                app:layout_constraintTop_toBottomOf="@+id/btnCloseModal" />
+
+            <Button
+                android:id="@+id/btnAddModal"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/ic_add_red_24dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.451"
+                app:layout_constraintStart_toEndOf="@+id/etCostePokemon"
+                app:layout_constraintTop_toBottomOf="@+id/btnCloseModal" />
+
+            <Button
+                android:id="@+id/btnPujarModal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="40dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="8dp"
+                android:text="Pujar"
+                android:textColor="@color/searchWhite"
+                android:background="@drawable/buttonpujarmodal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/imgTipo2Modal"
+                app:layout_constraintTop_toBottomOf="@+id/etCostePokemon" />
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>
 
