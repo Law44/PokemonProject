@@ -151,7 +151,6 @@ public class ListaFragment extends Fragment {
             @Override
             protected void onBindViewHolder(@NonNull PokemonViewHolder holder, int position, @NonNull Pokemon model) {
                 holder.setPokemon(model);
-                Log.e("pokemon",model.getName());
             }
         };
         recyclerView.setAdapter(adapter);

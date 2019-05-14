@@ -5,29 +5,35 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_camera"
-            android:icon="@drawable/user"
-            android:title="Perfil" />
+            android:id="@+id/gamesList"
+            android:icon="@drawable/ic_arrow_forward_black_24dp"
+            android:title="Prueba"
+            />
         <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Galeria" />
+            android:id="@+id/invite"
+            android:icon="@drawable/ic_share_black_24dp"
+            android:title="Invitar a jugadores" />
         <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Ajustes" />
+            android:id="@+id/create"
+            android:icon="@drawable/ic_create_black_24dp"
+            android:title="Crear nueva partida" />
+        <item
+            android:id="@+id/join"
+            android:icon="@drawable/ic_playlist_add_black_24dp"
+            android:title="Unirse a otra partida" />
+        <item
+            android:id="@+id/createDatabase"
+            android:icon="@drawable/ic_cloud_upload_black_24dp"
+            android:title="Crear base de datos"
+            />
     </group>
 
-    <item android:title="Comunicación">
+    <item android:title="Cuenta">
         <menu>
             <item
                 android:id="@+id/sign_out"
                 android:icon="@drawable/signout"
                 android:title="Desconectarse" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Ayuda" />
         </menu>
     </item>
 

@@ -21,6 +21,7 @@ public class SplashScreen extends AppCompatActivity {
     FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
     int games;
+    String lastGame;
 
 
     @Override
@@ -37,6 +38,7 @@ public class SplashScreen extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 for (QueryDocumentSnapshot document : task.getResult()) {
                                     games = Integer.parseInt(document.get("games").toString());
+                                    lastGame = document.get("lastGame").toString();
                                 }
                             }
                         }
@@ -50,6 +52,7 @@ public class SplashScreen extends AppCompatActivity {
                     if (firebaseUser != null){
                         Intent intent = new Intent(SplashScreen.this, GameActivity.class);
                         intent.putExtra("games", games);
+                        intent.putExtra("lastGame", lastGame);
                         startActivity(intent);
                         finish();
                     }

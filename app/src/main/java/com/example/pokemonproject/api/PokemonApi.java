@@ -1,6 +1,7 @@
 package com.example.pokemonproject.api;
 
 
+import com.example.pokemonproject.model.Movement;
 import com.example.pokemonproject.model.Pokemon;
 
 import retrofit2.Call;
@@ -13,4 +14,6 @@ public interface PokemonApi {
     @GET("pokemon/{id}/")
     Call<Pokemon> getPokemon(@Path("id") int id);
 
+    @GET("move/{idmovement}/")
+    Call<Movement> getMovement(@Path("idmovement") int idmovement);
 }
