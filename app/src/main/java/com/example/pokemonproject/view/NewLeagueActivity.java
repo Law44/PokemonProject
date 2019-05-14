@@ -36,6 +36,7 @@ public class NewLeagueActivity extends AppCompatActivity {
     String idUser;
     String games;
     String lastGame;
+    ArrayList<String> listGame;
 
 
     @Override
@@ -66,6 +67,7 @@ public class NewLeagueActivity extends AppCompatActivity {
                                 games = document.get("games").toString();
                                 creator = document.toObject(Username.class);
                                 lastGame = document.get("lastGame").toString();
+                                listGame = creator.getListGames();
                             }
                         }
                     }
@@ -82,12 +84,14 @@ public class NewLeagueActivity extends AppCompatActivity {
                 usergames.add(new UserGame(creator, etTeamName.getText().toString(), 0, team, Float.parseFloat(spinner.getSelectedItem().toString())));
                 String id = db.collection("Partidas").document().getId();
                 lastGame = id;
+                listGame.add(lastGame);
 
                 db.collection("Users")
                         .document(idUser)
-                        .update("games", games, "lastGame", lastGame);
+                        .update("games", games, "lastGame", lastGame, "listGames", listGame);
 
                 creator.setGames(games);
+                creator.setListGames(listGame);
 
                 Partida partida = new Partida(id, etGameName.getText().toString(), Float.parseFloat(String.valueOf(spinner.getSelectedItem().toString())), usergames);
                 db.collection("Partidas").document(id).set(partida);
@@ -95,6 +99,7 @@ public class NewLeagueActivity extends AppCompatActivity {
                 Intent intent = new Intent(NewLeagueActivity.this, GameActivity.class);
                 intent.putExtra("games", Integer.parseInt(games));
                 intent.putExtra("lastGame", lastGame);
+                intent.putExtra("listGames", listGame);
                 startActivity(intent);
 
             }

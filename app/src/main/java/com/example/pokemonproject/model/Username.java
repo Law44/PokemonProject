@@ -2,11 +2,14 @@ package com.example.pokemonproject.model;
 
 import com.firebase.ui.auth.data.model.User;
 
+import java.util.ArrayList;
+
 public class Username {
     private String username;
     private String email;
     private String games;
     private String lastGame;
+    private ArrayList<String> listGames;
 
     public String getLastGame() {
         return lastGame;
@@ -40,14 +43,23 @@ public class Username {
         this.games = games;
     }
 
+    public ArrayList<String> getListGames() {
+        return listGames;
+    }
+
+    public void setListGames(ArrayList<String> listGames) {
+        this.listGames = listGames;
+    }
+
     public Username(){
 
     }
 
-    public Username(String username, String email, String games, String lastGame) {
+    public Username(String username, String email, String games, String lastGame, ArrayList<String> listGames) {
         this.username = username;
         this.email = email;
         this.games = games;
         this.lastGame = lastGame;
+        this.listGames = listGames;
     }
 }

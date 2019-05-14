@@ -1,5 +1,5 @@
 package com.example.pokemonproject.model;
 
-class Language {
+public class Language {
     public String name;
 }

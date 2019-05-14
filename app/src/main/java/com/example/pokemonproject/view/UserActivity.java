@@ -21,6 +21,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
+
 public class UserActivity extends AppCompatActivity {
 
     EditText etUsername;
@@ -54,7 +56,8 @@ public class UserActivity extends AppCompatActivity {
                 }
                 else {
                     startActivity(new Intent(UserActivity.this, GameActivity.class));
-                    Username username = new Username(etUsername.getText().toString(), FirebaseAuth.getInstance().getCurrentUser().getEmail(), "0", "");
+                    ArrayList<String> listgame = new ArrayList<>();
+                    Username username = new Username(etUsername.getText().toString(), FirebaseAuth.getInstance().getCurrentUser().getEmail(), "0", "", listgame);
                     db.collection("Users").add(username);
                     next = true;
                     finish();

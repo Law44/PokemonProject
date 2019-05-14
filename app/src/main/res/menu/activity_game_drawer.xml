@@ -5,6 +5,11 @@
 
     <group android:checkableBehavior="single">
         <item
+            android:id="@+id/gamesList"
+            android:icon="@drawable/ic_arrow_forward_black_24dp"
+            android:title="Prueba"
+            />
+        <item
             android:id="@+id/invite"
             android:icon="@drawable/ic_share_black_24dp"
             android:title="Invitar a jugadores" />
@@ -16,6 +21,11 @@
             android:id="@+id/join"
             android:icon="@drawable/ic_playlist_add_black_24dp"
             android:title="Unirse a otra partida" />
+        <item
+            android:id="@+id/createDatabase"
+            android:icon="@drawable/ic_cloud_upload_black_24dp"
+            android:title="Crear base de datos"
+            />
     </group>
 
     <item android:title="Cuenta">

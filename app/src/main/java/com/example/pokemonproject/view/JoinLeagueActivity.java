@@ -37,6 +37,7 @@ public class JoinLeagueActivity extends AppCompatActivity {
     String idUser;
     String games;
     String lastGame;
+    ArrayList<String> listGame;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +59,7 @@ public class JoinLeagueActivity extends AppCompatActivity {
                                 games = document.get("games").toString();
                                 creator = document.toObject(Username.class);
                                 lastGame = document.get("lastGame").toString();
+                                listGame = creator.getListGames();
                             }
                         }
                     }
@@ -70,10 +72,11 @@ public class JoinLeagueActivity extends AppCompatActivity {
 
                 games = String.valueOf(Integer.parseInt(games)+1);
                 lastGame = idGame.getText().toString();
+                listGame.add(lastGame);
 
                 db.collection("Users")
                         .document(idUser)
-                        .update("games", games, "lastGame", lastGame);
+                        .update("games", games, "lastGame", lastGame, "listGames", listGame);
 
                 db.collection("Partidas")
                         .document(idGame.getText().toString())
@@ -95,6 +98,7 @@ public class JoinLeagueActivity extends AppCompatActivity {
                                     Intent intent = new Intent(JoinLeagueActivity.this, GameActivity.class);
                                     intent.putExtra("games", Integer.parseInt(games));
                                     intent.putExtra("lastGame", lastGame);
+                                    intent.putExtra("listGames", listGame);
                                     startActivity(intent);
                                 }
                             }

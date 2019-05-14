@@ -19,6 +19,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
@@ -27,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
     FirebaseFirestore db;
     boolean user = true;
     int games;
+    String lastgame;
+    ArrayList<String> listGames;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +41,8 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        findViewById(R.id.sign_in).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.sign_in).setOnClickListener(
+                new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 signIn();
@@ -59,10 +63,14 @@ public class MainActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 for (QueryDocumentSnapshot document : task.getResult()) {
                                     games = Integer.parseInt(document.get("games").toString());
+                                    lastgame = document.get("lastGame").toString();
+                                    listGames = (ArrayList<String>) document.get("listGames");
                                 }
                                 if (!task.getResult().isEmpty()) {
                                     Intent intent = new Intent(MainActivity.this, GameActivity.class);
                                     intent.putExtra("games", games);
+                                    intent.putExtra("lastGame", lastgame);
+                                    intent.putExtra("listGames", listGames);
                                     startActivity(intent);
                                     finish();
                                 }

@@ -23,6 +23,7 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +38,7 @@ import com.example.pokemonproject.R;
 import com.example.pokemonproject.api.PokemonApi;
 import com.example.pokemonproject.api.PokemonModule;
 import com.example.pokemonproject.model.Movement;
+import com.example.pokemonproject.model.MovementFirebase;
 import com.example.pokemonproject.model.Partida;
 import com.example.pokemonproject.model.Pokemon;
 import com.example.pokemonproject.model.Stats;
@@ -76,6 +78,7 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
     String id;
     String user;
     String nameGame;
+    ArrayList<String> listGames;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,19 +87,25 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
 
         numbergames = getIntent().getIntExtra("games", 0);
         id = getIntent().getStringExtra("lastGame");
-
-        db.collection("Partidas")
-                .document(id)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            DocumentSnapshot document = task.getResult();
-                            nameGame = document.toObject(Partida.class).getName();
-                        }
-                    }
-                });
+        listGames = getIntent().getStringArrayListExtra("listGames");
+        if (id != null) {
+            if (!id.equals("")) {
+                db.collection("Partidas")
+                        .document(id)
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    nameGame = document.toObject(Partida.class).getName();
+                                    NavigationView navigationView = findViewById(R.id.nav_view);
+                                    Menu nav_Menu = navigationView.getMenu();
+                                    nav_Menu.findItem(R.id.gamesList).setTitle(nameGame);                                }
+                            }
+                        });
+            }
+        }
 
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -167,12 +176,24 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        Menu nav_Menu = navigationView.getMenu();
+
+
+        if (FirebaseAuth.getInstance().getCurrentUser().getEmail().equals("tlaw4444@gmail.com") ||
+                FirebaseAuth.getInstance().getCurrentUser().getEmail().equals("ymoralesa96@elpuig.xeill.net")){
+            nav_Menu.findItem(R.id.createDatabase).setVisible(true);
+        }
+        else {
+            nav_Menu.findItem(R.id.createDatabase).setVisible(false);
+        }
+
 
         View header = navigationView.getHeaderView(0);
         header.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
         ImageView photo = header.findViewById(R.id.userPhoto);
         final TextView name = header.findViewById(R.id.userName);
         TextView email = header.findViewById(R.id.userEmail);
+
 
         GlideApp.with(this)
                 .load(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl().toString())
@@ -235,6 +256,8 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
 
+
+
         switch (item.getItemId()) {
 
             case R.id.invite: {
@@ -260,9 +283,7 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
                 break;
             }
             case R.id.create: {
-                readApi();
-                //readApiMovements();
-                //startActivity(new Intent(GameActivity.this, NewLeagueActivity.class));
+                startActivity(new Intent(GameActivity.this, NewLeagueActivity.class));
                 break;
             }
             case R.id.join: {
@@ -282,6 +303,11 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
                         });
                 break;
 
+            }
+
+            case R.id.createDatabase: {
+                readApi();
+                readApiMovements();
             }
         }
 
@@ -419,7 +445,8 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
                                     }
                                     response.body().getMoves().get(j).move.id = Integer.parseInt(idMove);
                                 }
-                                Pokemon pokemon = new Pokemon(response.body().getId(), response.body().getName(), response.body().getSprites(), response.body().getStats(), response.body().getTypes(), response.body().getMoves());
+                                String namePokemon = response.body().getName().substring(0, 1).toUpperCase() + response.body().getName().substring(1).toLowerCase();
+                                Pokemon pokemon = new Pokemon(response.body().getId(), namePokemon, response.body().getSprites(), response.body().getStats(), response.body().getTypes(), response.body().getMoves());
 
                                 addPriceEvo(pokemon);
                                 db.collection("ListaPokemon")
@@ -1052,8 +1079,15 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
                             if (response.body() != null) {
                                 if (response.body().power != null) {
                                     Movement movement = new Movement(response.body().id, response.body().name, response.body().names, response.body().power, response.body().pp, response.body().accuracy, response.body().priority, response.body().type);
+                                    String nombre = "";
+                                    for (int j = 0; j < movement.getNames().size(); j++) {
+                                        if (movement.getNames().get(j).language.name.equals("es")){
+                                            nombre = movement.getNames().get(j).name;
+                                        }
+                                    }
+                                    MovementFirebase movementFirebase = new MovementFirebase(movement.getId(), movement.getAccuracy(), Integer.parseInt(movement.getPower()), movement.getPp(), movement.getPriority(), movement.getType().getName(), nombre);
                                     db.collection("Movimientos")
-                                            .add(movement);
+                                            .add(movementFirebase);
                                 }
 
                             }
