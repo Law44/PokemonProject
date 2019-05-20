@@ -238,14 +238,20 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
                 iconSearch.setVisibility(View.VISIBLE);
 
             } else {
-                super.onBackPressed();
+                Intent startMain = new Intent(Intent.ACTION_MAIN);
+                startMain.addCategory(Intent.CATEGORY_HOME);
+                startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(startMain);
             }
         }else{
             if (drawer.isDrawerOpen(GravityCompat.START) ) {
                 drawer.closeDrawer(GravityCompat.START);
 
             } else {
-                super.onBackPressed();
+                Intent startMain = new Intent(Intent.ACTION_MAIN);
+                startMain.addCategory(Intent.CATEGORY_HOME);
+                startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(startMain);
             }
         }
 
@@ -260,26 +266,13 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
 
         switch (item.getItemId()) {
 
+            case R.id.gamesList:{
+                new ModalSelectGame(GameActivity.this);
+                break;
+            }
+
             case R.id.invite: {
-                PackageManager pm=getPackageManager();
-                try {
-
-                    Intent waIntent = new Intent(Intent.ACTION_SEND);
-                    waIntent.setType("text/plain");
-
-                    String text = "Utiliza este codigo para unirte a la liga " + nameGame + " creada por " + user + ":\n" + id;
-
-                    PackageInfo info= pm.getPackageInfo("com.whatsapp", PackageManager.GET_META_DATA);
-                    waIntent.setPackage("com.whatsapp");
-
-                    waIntent.putExtra(Intent.EXTRA_TEXT, text);
-
-                    startActivity(Intent.createChooser(waIntent, "Share with"));
-
-                } catch (PackageManager.NameNotFoundException e) {
-                    Toast.makeText(this, "WhatsApp not Installed", Toast.LENGTH_SHORT)
-                            .show();
-                }
+                sendInvitation();
                 break;
             }
             case R.id.create: {
@@ -316,6 +309,29 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
+
+
+    private void sendInvitation() {
+        PackageManager pm=getPackageManager();
+        try {
+
+            Intent waIntent = new Intent(Intent.ACTION_SEND);
+            waIntent.setType("text/plain");
+
+            String text = "Utiliza este codigo para unirte a la liga " + nameGame + " creada por " + user + ":\n" + id;
+
+            PackageInfo info= pm.getPackageInfo("com.whatsapp", PackageManager.GET_META_DATA);
+            waIntent.setPackage("com.whatsapp");
+
+            waIntent.putExtra(Intent.EXTRA_TEXT, text);
+
+            startActivity(Intent.createChooser(waIntent, "Share with"));
+
+        } catch (PackageManager.NameNotFoundException e) {
+            Toast.makeText(this, "WhatsApp not Installed", Toast.LENGTH_SHORT)
+                    .show();
+        }
+    }
 
 
     @Override

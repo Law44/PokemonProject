@@ -96,6 +96,7 @@ public class NewLeagueActivity extends AppCompatActivity {
                 Partida partida = new Partida(id, etGameName.getText().toString(), Float.parseFloat(String.valueOf(spinner.getSelectedItem().toString())), usergames);
                 db.collection("Partidas").document(id).set(partida);
 
+                finish();
                 Intent intent = new Intent(NewLeagueActivity.this, GameActivity.class);
                 intent.putExtra("games", Integer.parseInt(games));
                 intent.putExtra("lastGame", lastGame);

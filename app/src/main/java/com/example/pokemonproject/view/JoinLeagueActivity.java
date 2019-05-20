@@ -95,6 +95,7 @@ public class JoinLeagueActivity extends AppCompatActivity {
                                             .document(idGame.getText().toString())
                                             .update("users", users.getUsers());
 
+                                    finish();
                                     Intent intent = new Intent(JoinLeagueActivity.this, GameActivity.class);
                                     intent.putExtra("games", Integer.parseInt(games));
                                     intent.putExtra("lastGame", lastGame);
