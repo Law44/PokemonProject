@@ -101,7 +101,8 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
                                     nameGame = document.toObject(Partida.class).getName();
                                     NavigationView navigationView = findViewById(R.id.nav_view);
                                     Menu nav_Menu = navigationView.getMenu();
-                                    nav_Menu.findItem(R.id.gamesList).setTitle(nameGame);                                }
+                                    nav_Menu.findItem(R.id.gamesList).setTitle(nameGame);
+                                }
                             }
                         });
             }
@@ -405,13 +406,13 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
             else {
                 switch (position) {
                     case 0:
-                        HomeFragment homeFragment = new HomeFragment();
+                        HomeFragment homeFragment = new HomeFragment(GameActivity.this, id);
                         return homeFragment;
                     case 1:
                         CopaFragment copaFragment = new CopaFragment();
                         return copaFragment;
                     case 2:
-                        MercadoFragment mercadoFragment = new MercadoFragment();
+                        MercadoFragment mercadoFragment = new MercadoFragment(id);
                         return mercadoFragment;
                     case 3:
                         JornadaFragment jornadaFragment = new JornadaFragment();

@@ -6,7 +6,7 @@ public class Partida {
 
     private String id;
     private String name;
-    private float initialMoney;
+    private int initialMoney;
     private ArrayList<UserGame> users;
 
 
@@ -14,7 +14,7 @@ public class Partida {
 
     }
 
-    public Partida(String id, String name, float initialMoney, ArrayList<UserGame> users){
+    public Partida(String id, String name, int initialMoney, ArrayList<UserGame> users){
         this.id = id;
         this.name = name;
         this.initialMoney = initialMoney;
@@ -39,11 +39,11 @@ public class Partida {
         this.name = name;
     }
 
-    public float getInitialMoney() {
+    public int getInitialMoney() {
         return initialMoney;
     }
 
-    public void setInitialMoney(float initialMoney) {
+    public void setInitialMoney(int initialMoney) {
         this.initialMoney = initialMoney;
     }
 

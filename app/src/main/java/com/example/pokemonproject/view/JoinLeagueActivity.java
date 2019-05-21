@@ -12,6 +12,8 @@ import android.widget.EditText;
 import com.example.pokemonproject.R;
 import com.example.pokemonproject.model.Partida;
 import com.example.pokemonproject.model.Pokemon;
+import com.example.pokemonproject.model.Pujas;
+import com.example.pokemonproject.model.Team;
 import com.example.pokemonproject.model.UserGame;
 import com.example.pokemonproject.model.Username;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -34,7 +36,7 @@ public class JoinLeagueActivity extends AppCompatActivity {
 
     Username creator;
     Partida users;
-    String idUser;
+    String idUser, teamID, pujasID;
     String games;
     String lastGame;
     ArrayList<String> listGame;
@@ -88,8 +90,14 @@ public class JoinLeagueActivity extends AppCompatActivity {
                                     DocumentSnapshot document = task.getResult();
                                     users = document.toObject(Partida.class);
                                     creator.setGames(games);
-                                    ArrayList<Pokemon> team = new ArrayList<>();
-                                    UserGame userGame = new UserGame(creator, etTeamName.getText().toString(), 0, team, users.getInitialMoney());
+                                    teamID = db.collection("Equipos").document().getId();
+                                    pujasID = db.collection("Pujas").document().getId();
+                                    Pujas pujas = new Pujas();
+                                    db.collection("Pujas").document(pujasID).set(pujas);
+                                    UserGame userGame = new UserGame(creator, etTeamName.getText().toString(), 0, teamID, users.getInitialMoney(), pujasID);
+                                    Team equipo = new Team();
+                                    db.collection("Equipos").document(teamID).set(equipo);
+
                                     users.getUsers().add(userGame);
                                     db.collection("Partidas")
                                             .document(idGame.getText().toString())

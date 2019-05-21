@@ -56,7 +56,6 @@ public class ModalSelectGame {
                             }
                         }
                         for (int i = 0; i < listGames.size(); i++) {
-                            Log.e("AQUI", "ENTRO");
 
                             final int finalI = i;
                             db.collection("Partidas")
