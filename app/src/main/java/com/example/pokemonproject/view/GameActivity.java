@@ -410,6 +410,7 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
                         return homeFragment;
                     case 1:
                         CopaFragment copaFragment = new CopaFragment();
+                        copaFragment.setIdLastPartida(id);
                         return copaFragment;
                     case 2:
                         MercadoFragment mercadoFragment = new MercadoFragment(id);
