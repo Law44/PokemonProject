@@ -12,8 +12,11 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.example.pokemonproject.R;
+import com.example.pokemonproject.model.ListaPujas;
 import com.example.pokemonproject.model.Partida;
 import com.example.pokemonproject.model.Pokemon;
+import com.example.pokemonproject.model.Pujas;
+import com.example.pokemonproject.model.Team;
 import com.example.pokemonproject.model.UserGame;
 import com.example.pokemonproject.model.Username;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -33,7 +36,7 @@ public class NewLeagueActivity extends AppCompatActivity {
     EditText etGameName, etTeamName;
 
     Username creator;
-    String idUser;
+    String idUser, teamID, pujasID;
     String games;
     String lastGame;
     ArrayList<String> listGame;
@@ -80,11 +83,17 @@ public class NewLeagueActivity extends AppCompatActivity {
                 games = String.valueOf(Integer.parseInt(games)+1);
 
                 ArrayList<UserGame> usergames = new ArrayList<>();
-                ArrayList<Pokemon> team = new ArrayList<>();
-                usergames.add(new UserGame(creator, etTeamName.getText().toString(), 0, team, Float.parseFloat(spinner.getSelectedItem().toString())));
+                teamID = db.collection("Equipos").document().getId();
+                pujasID = db.collection("Pujas").document().getId();
+                Pujas pujas = new Pujas();
+                db.collection("Pujas").document(pujasID).set(pujas);
+                usergames.add(new UserGame(creator, etTeamName.getText().toString(), 0, teamID, Integer.parseInt(spinner.getSelectedItem().toString()), pujasID));
+                Team equipo = new Team();
+                db.collection("Equipos").document(teamID).set(equipo);
                 String id = db.collection("Partidas").document().getId();
                 lastGame = id;
                 listGame.add(lastGame);
+
 
                 db.collection("Users")
                         .document(idUser)
@@ -93,9 +102,10 @@ public class NewLeagueActivity extends AppCompatActivity {
                 creator.setGames(games);
                 creator.setListGames(listGame);
 
-                Partida partida = new Partida(id, etGameName.getText().toString(), Float.parseFloat(String.valueOf(spinner.getSelectedItem().toString())), usergames);
+                Partida partida = new Partida(id, etGameName.getText().toString(), Integer.parseInt(String.valueOf(spinner.getSelectedItem().toString())), usergames);
                 db.collection("Partidas").document(id).set(partida);
 
+                finish();
                 Intent intent = new Intent(NewLeagueActivity.this, GameActivity.class);
                 intent.putExtra("games", Integer.parseInt(games));
                 intent.putExtra("lastGame", lastGame);
