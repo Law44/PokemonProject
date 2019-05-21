@@ -4,6 +4,9 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.support.annotation.NonNull;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -12,22 +15,39 @@ import android.widget.ImageView;
 
 import com.example.pokemonproject.GlideApp;
 import com.example.pokemonproject.R;
+import com.example.pokemonproject.model.GamesInfo;
+import com.example.pokemonproject.model.Partida;
 import com.example.pokemonproject.model.Pokemon;
+import com.example.pokemonproject.model.Pujas;
+import com.example.pokemonproject.model.Team;
+import com.example.pokemonproject.model.UserGame;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.ArrayList;
 
 class ModalComprarPokemon {
     private Pokemon pokemon;
     private MercadoFragment fragment;
     private Context context;
-    public ModalComprarPokemon(Context context, Pokemon model, MercadoFragment mercadoFragment) {
+    private String idGame;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    ArrayList<UserGame> listUsers;
+
+    public ModalComprarPokemon(Context context, final Pokemon model, MercadoFragment mercadoFragment, String idBuyGame, final int position) {
         this.context = context;
         this.pokemon = model;
         this.fragment = mercadoFragment;
+        this.idGame = idBuyGame;
 
         final Dialog dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCancelable(false);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        dialog.setContentView(R.layout.activity_modal_inventario);
+        dialog.setContentView(R.layout.activity_modal_compra);
         GlideApp.with(context).load(model.getSprites().front_default).into((ImageView) dialog.findViewById(R.id.imgPokemonModal));
         GlideApp.with(context).load(R.drawable.boxpokemonmodal).centerCrop().into((ImageView) dialog.findViewById(R.id.imgModalBoxFondo));
 
@@ -55,6 +75,7 @@ class ModalComprarPokemon {
             @Override
             public void onClick(View view) {
                 etCoste.setText(String.valueOf(Integer.parseInt(etCoste.getText().toString())+10));
+
             }
         });
         btnMin.setOnClickListener(new View.OnClickListener() {
@@ -70,6 +91,50 @@ class ModalComprarPokemon {
                 return true;
             }
         });
+
+        Button btnPujarModal = dialog.findViewById(R.id.btnPujarModal);
+        btnPujarModal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ArrayList<Pokemon> team = new ArrayList<>();
+                team.add(model);
+                db.collection("Partidas")
+                        .document(idGame)
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                final DocumentSnapshot documentSnapshot = task.getResult();
+                                Partida partida = documentSnapshot.toObject(Partida.class);
+                                listUsers = partida.getUsers();
+                                for (int j = 0; j < listUsers.size(); j++) {
+                                    if (listUsers.get(j).getUser().getEmail().equals(FirebaseAuth.getInstance().getCurrentUser().getEmail())) {
+                                        final String pujasID = listUsers.get(j).getPujasID();
+
+                                        db.collection("Pujas")
+                                                .document(pujasID)
+                                                .get()
+                                                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                        DocumentSnapshot documentSnapshot1 = task.getResult();
+                                                        Pujas pujas = documentSnapshot1.toObject(Pujas.class);
+                                                        ArrayList<Integer> pujastemp = pujas.getPujas();
+                                                        pujastemp.set(position, Integer.parseInt(etCoste.getText().toString()));
+
+                                                        db.collection("Pujas").document(pujasID).update("pujas", pujastemp);
+                                                        dialog.dismiss();
+                                                    }
+                                                });
+
+                                    }
+                                }
+
+                            }
+                        });
+            }
+        });
+
         dialog.show();
 
     }

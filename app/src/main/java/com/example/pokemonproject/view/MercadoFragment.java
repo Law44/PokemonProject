@@ -1,5 +1,6 @@
 package com.example.pokemonproject.view;
 
+import android.annotation.SuppressLint;
 import android.arch.paging.PagedList;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -30,6 +31,12 @@ public class MercadoFragment extends Fragment {
     private FirestorePagingOptions<Pokemon> options;
     private RecyclerView recyclerView;
     private FirestorePagingAdapter<Pokemon, MercadoFragment.PokemonViewHolder> adapter;
+    String lastgame;
+
+    @SuppressLint("ValidFragment")
+    public MercadoFragment(String id) {
+        lastgame = id;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -85,7 +92,7 @@ public class MercadoFragment extends Fragment {
 
 
 
-        public void setPokemon(final Pokemon model, int position) {
+        public void setPokemon(final Pokemon model, final int position) {
             TextView tvName = view.findViewById(R.id.tvPokemonNameMercado);
             TextView tvId = view.findViewById(R.id.tvPokemonPokedexMercado);
             TextView tvCostePokemon = view.findViewById(R.id.tvPokemonCosteMercado);
@@ -129,7 +136,7 @@ public class MercadoFragment extends Fragment {
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    new ModalComprarPokemon(view.getContext(), model, MercadoFragment.this);
+                    new ModalComprarPokemon(view.getContext(), model, MercadoFragment.this, lastgame, position);
                 }
             });
         }

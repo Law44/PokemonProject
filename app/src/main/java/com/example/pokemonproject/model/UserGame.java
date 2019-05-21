@@ -9,26 +9,36 @@ public class UserGame {
     private Username user;
     private String teamName;
     private int points;
-    private float money;
-    private ArrayList<Pokemon> team;
+    private int money;
+    private String teamID;
+    private String pujasID;
 
     public UserGame(){
 
     }
 
-    public UserGame(Username user, String teamName, int points, ArrayList<Pokemon> team, float money) {
+    public UserGame(Username user, String teamName, int points, String teamID, int money, String pujasID) {
         this.user = user;
         this.teamName = teamName;
         this.points = points;
-        this.team = team;
+        this.teamID = teamID;
         this.money = money;
+        this.pujasID = pujasID;
     }
 
-    public float getMoney() {
+    public String getPujasID() {
+        return pujasID;
+    }
+
+    public void setPujasID(String pujas) {
+        this.pujasID = pujas;
+    }
+
+    public int getMoney() {
         return money;
     }
 
-    public void setMoney(float money) {
+    public void setMoney(int money) {
         this.money = money;
     }
 
@@ -40,12 +50,12 @@ public class UserGame {
         this.points = points;
     }
 
-    public ArrayList<Pokemon> getTeam() {
-        return team;
+    public String getTeamID() {
+        return teamID;
     }
 
-    public void setTeam(ArrayList<Pokemon> team) {
-        this.team = team;
+    public void setTeamID(String teamID) {
+        this.teamID = teamID;
     }
 
     public Username getUser() {
