@@ -38,7 +38,7 @@ class ModalComprarPokemon {
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     ArrayList<UserGame> listUsers;
 
-    public ModalComprarPokemon(final Context context, final Pokemon model, MercadoFragment mercadoFragment, String idBuyGame, final int position) {
+    public ModalComprarPokemon(final Context context, final Pokemon model, MercadoFragment mercadoFragment, String idBuyGame, final int position, final Team team) {
         this.context = context;
         this.pokemon = model;
         this.fragment = mercadoFragment;
@@ -106,8 +106,6 @@ class ModalComprarPokemon {
             @Override
             public void onClick(View v) {
                 if (Integer.parseInt(etCoste.getText().toString()) >= pokemon.getPrice()){
-                    ArrayList<Pokemon> team = new ArrayList<>();
-                    team.add(model);
                     db.collection("Partidas")
                             .document(idGame)
                             .get()
@@ -120,7 +118,6 @@ class ModalComprarPokemon {
                                     for (int j = 0; j < listUsers.size(); j++) {
                                         if (listUsers.get(j).getUser().getEmail().equals(FirebaseAuth.getInstance().getCurrentUser().getEmail())) {
                                             final String pujasID = listUsers.get(j).getPujasID();
-
                                             db.collection("Pujas")
                                                     .document(pujasID)
                                                     .get()
@@ -129,11 +126,24 @@ class ModalComprarPokemon {
                                                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                                             DocumentSnapshot documentSnapshot1 = task.getResult();
                                                             Pujas pujas = documentSnapshot1.toObject(Pujas.class);
-                                                            ArrayList<Integer> pujastemp = pujas.getPujas();
+                                                            final ArrayList<Integer> pujastemp = pujas.getPujas();
                                                             pujastemp.set(position, Integer.parseInt(etCoste.getText().toString()));
 
-                                                            db.collection("Pujas").document(pujasID).update("pujas", pujastemp);
-                                                            dialog.dismiss();
+                                                            boolean presente = false;
+                                                            for (int i = 0; i < team.getEquipo().size(); i++) {
+                                                                if (team.getEquipo().get(i).getId() == model.getId()){
+                                                                    presente = true;
+                                                                }
+                                                            }
+                                                            if (presente){
+                                                                Toast.makeText(context, "Ya tienes a este pokemon!", Toast.LENGTH_LONG).show();
+                                                            }
+                                                            else {
+                                                                db.collection("Pujas").document(pujasID).update("pujas", pujastemp);
+                                                                dialog.dismiss();
+                                                            }
+
+
                                                         }
                                                     });
 

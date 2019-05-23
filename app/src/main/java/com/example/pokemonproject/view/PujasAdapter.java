@@ -13,6 +13,7 @@ import com.example.pokemonproject.GlideApp;
 import com.example.pokemonproject.R;
 import com.example.pokemonproject.model.GamesInfo;
 import com.example.pokemonproject.model.Pokemon;
+import com.example.pokemonproject.model.Team;
 import com.example.pokemonproject.model.Username;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -32,14 +33,16 @@ public class PujasAdapter extends RecyclerView.Adapter<PujasAdapter.PokemonViewH
     ArrayList<String> listGame;
     Username creator;
     MercadoFragment mercadoFragment;
+    Team team;
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-    public PujasAdapter(GameActivity context, String lastgame, MercadoFragment mercadoFragment){
+    public PujasAdapter(GameActivity context, String lastgame, MercadoFragment mercadoFragment, Team team){
 
         this.context = context;
         this.lastgame = lastgame;
         this.mercadoFragment = mercadoFragment;
+        this.team = team;
 
     }
 
@@ -116,7 +119,7 @@ public class PujasAdapter extends RecyclerView.Adapter<PujasAdapter.PokemonViewH
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    new ModalComprarPokemon(view.getContext(), model, mercadoFragment, lastgame, position);
+                    new ModalComprarPokemon(view.getContext(), model, mercadoFragment, lastgame, position, team);
                 }
             });
 
