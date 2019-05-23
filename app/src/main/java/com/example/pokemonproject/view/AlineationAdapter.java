@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.pokemonproject.GlideApp;
 import com.example.pokemonproject.R;
@@ -84,45 +85,57 @@ public class AlineationAdapter extends RecyclerView.Adapter<AlineationAdapter.Al
                 db.collection("Alineaciones").document(alineationID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        Alineation alineation = null;
+                        boolean presente = false;
+
                         if (task.isSuccessful()) {
-                            Alineation alineation = task.getResult().toObject(Alineation.class);
-                            alineation.getLista().set(alineationPos, pokemonsArrayList.get(i));
-                            db.collection("Alineaciones").document(alineationID).update("lista", alineation.getLista());
+                            alineation = task.getResult().toObject(Alineation.class);
+
+
+                            for (int j = 0; j < alineation.getLista().size(); j++) {
+                                if (alineation.getLista().get(j).getId() == pokemonsArrayList.get(i).getId()) {
+                                    presente = true;
+                                }
+                            }
+                            if (presente) {
+                                Toast.makeText(context, "Ese pokemon ya esta en la alineación", Toast.LENGTH_LONG).show();
+
+                            } else {
+                                alineation.getLista().set(alineationPos, pokemonsArrayList.get(i));
+                                db.collection("Alineaciones").document(alineationID).update("lista", alineation.getLista());
+
+                                if (alineationPos == 0) {
+                                    GlideApp.with(context)
+                                            .load(pokemonsArrayList.get(i).getSprites().front_default)
+                                            .into((ImageView) context.findViewById(R.id.imgSilueta));
+                                } else if (alineationPos == 1) {
+                                    GlideApp.with(context)
+                                            .load(pokemonsArrayList.get(i).getSprites().front_default)
+                                            .into((ImageView) context.findViewById(R.id.imgSilueta2));
+                                } else if (alineationPos == 2) {
+                                    GlideApp.with(context)
+                                            .load(pokemonsArrayList.get(i).getSprites().front_default)
+                                            .into((ImageView) context.findViewById(R.id.imgSilueta3));
+                                } else if (alineationPos == 3) {
+                                    GlideApp.with(context)
+                                            .load(pokemonsArrayList.get(i).getSprites().front_default)
+                                            .into((ImageView) context.findViewById(R.id.imgSilueta4));
+                                } else if (alineationPos == 4) {
+                                    GlideApp.with(context)
+                                            .load(pokemonsArrayList.get(i).getSprites().front_default)
+                                            .into((ImageView) context.findViewById(R.id.imgSilueta5));
+                                } else if (alineationPos == 5) {
+                                    GlideApp.with(context)
+                                            .load(pokemonsArrayList.get(i).getSprites().front_default)
+                                            .into((ImageView) context.findViewById(R.id.imgSilueta6));
+                                }
+                                dialog.dismiss();
+                            }
                         }
 
                     }
                 });
-                if (alineationPos == 0) {
-                    GlideApp.with(context)
-                            .load(pokemonsArrayList.get(i).getSprites().front_default)
-                            .into((ImageView) context.findViewById(R.id.imgSilueta));
-                }
-                else if (alineationPos == 1) {
-                    GlideApp.with(context)
-                            .load(pokemonsArrayList.get(i).getSprites().front_default)
-                            .into((ImageView) context.findViewById(R.id.imgSilueta2));
-                }
-                else if (alineationPos == 2) {
-                    GlideApp.with(context)
-                            .load(pokemonsArrayList.get(i).getSprites().front_default)
-                            .into((ImageView) context.findViewById(R.id.imgSilueta3));
-                }
-                else if (alineationPos == 3) {
-                    GlideApp.with(context)
-                            .load(pokemonsArrayList.get(i).getSprites().front_default)
-                            .into((ImageView) context.findViewById(R.id.imgSilueta4));
-                }
-                else if (alineationPos == 4) {
-                    GlideApp.with(context)
-                            .load(pokemonsArrayList.get(i).getSprites().front_default)
-                            .into((ImageView) context.findViewById(R.id.imgSilueta5));
-                }
-                else if (alineationPos == 5) {
-                    GlideApp.with(context)
-                            .load(pokemonsArrayList.get(i).getSprites().front_default)
-                            .into((ImageView) context.findViewById(R.id.imgSilueta6));
-                }
-                dialog.dismiss();
+
 
             }
         });
