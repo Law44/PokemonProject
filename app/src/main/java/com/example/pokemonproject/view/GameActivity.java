@@ -406,14 +406,14 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
             else {
                 switch (position) {
                     case 0:
-                        HomeFragment homeFragment = new HomeFragment(GameActivity.this, id);
+                        HomeFragment homeFragment = new HomeFragment(GameActivity.this, id, numbergames, id, listGames);
                         return homeFragment;
                     case 1:
                         CopaFragment copaFragment = new CopaFragment();
                         copaFragment.setIdLastPartida(id);
                         return copaFragment;
                     case 2:
-                        MercadoFragment mercadoFragment = new MercadoFragment(id);
+                        MercadoFragment mercadoFragment = new MercadoFragment(GameActivity.this, id);
                         return mercadoFragment;
                     case 3:
                         JornadaFragment jornadaFragment = new JornadaFragment();
