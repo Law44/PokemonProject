@@ -93,8 +93,10 @@ public class AlineationAdapter extends RecyclerView.Adapter<AlineationAdapter.Al
 
 
                             for (int j = 0; j < alineation.getLista().size(); j++) {
-                                if (alineation.getLista().get(j).getId() == pokemonsArrayList.get(i).getId()) {
-                                    presente = true;
+                                if (alineation.getLista().get(j) != null) {
+                                    if (alineation.getLista().get(j).getId() == pokemonsArrayList.get(i).getId()) {
+                                        presente = true;
+                                    }
                                 }
                             }
                             if (presente) {

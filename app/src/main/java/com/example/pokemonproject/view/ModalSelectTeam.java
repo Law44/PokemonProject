@@ -1,4 +1,4 @@
-package com.example.pokemonproject.model;
+package com.example.pokemonproject.view;
 
 import android.app.Dialog;
 import android.graphics.Color;
@@ -10,6 +10,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Window;
 
 import com.example.pokemonproject.R;
+import com.example.pokemonproject.model.GamesInfo;
+import com.example.pokemonproject.model.Pokemon;
 import com.example.pokemonproject.view.AlineationAdapter;
 import com.example.pokemonproject.view.GameActivity;
 import com.example.pokemonproject.view.GamesAdapter;
