@@ -12,6 +12,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.example.pokemonproject.GlideApp;
 import com.example.pokemonproject.R;
@@ -37,7 +38,7 @@ class ModalComprarPokemon {
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     ArrayList<UserGame> listUsers;
 
-    public ModalComprarPokemon(Context context, final Pokemon model, MercadoFragment mercadoFragment, String idBuyGame, final int position) {
+    public ModalComprarPokemon(final Context context, final Pokemon model, MercadoFragment mercadoFragment, String idBuyGame, final int position, final Team team) {
         this.context = context;
         this.pokemon = model;
         this.fragment = mercadoFragment;
@@ -75,13 +76,21 @@ class ModalComprarPokemon {
             @Override
             public void onClick(View view) {
                 etCoste.setText(String.valueOf(Integer.parseInt(etCoste.getText().toString())+10));
+                ArrayList<Pokemon> lista = new ArrayList<>();
+                lista.add(model);
+                db.collection("Equipos").document("mmACwGfuyu6rGfhjtPXr").update("equipo", lista);
 
             }
         });
         btnMin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                etCoste.setText(String.valueOf(Integer.parseInt(etCoste.getText().toString())-10));
+                if (Integer.parseInt(etCoste.getText().toString()) > pokemon.getPrice()){
+                    etCoste.setText(String.valueOf(Integer.parseInt(etCoste.getText().toString())-10));
+                }
+                else {
+                    Toast.makeText(context, "La puja no puede ser mas baja que el precio original", Toast.LENGTH_LONG).show();
+                }
             }
         });
         btnAdd.setOnLongClickListener(new View.OnLongClickListener() {
@@ -96,42 +105,57 @@ class ModalComprarPokemon {
         btnPujarModal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ArrayList<Pokemon> team = new ArrayList<>();
-                team.add(model);
-                db.collection("Partidas")
-                        .document(idGame)
-                        .get()
-                        .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                final DocumentSnapshot documentSnapshot = task.getResult();
-                                Partida partida = documentSnapshot.toObject(Partida.class);
-                                listUsers = partida.getUsers();
-                                for (int j = 0; j < listUsers.size(); j++) {
-                                    if (listUsers.get(j).getUser().getEmail().equals(FirebaseAuth.getInstance().getCurrentUser().getEmail())) {
-                                        final String pujasID = listUsers.get(j).getPujasID();
+                if (Integer.parseInt(etCoste.getText().toString()) >= pokemon.getPrice()){
+                    db.collection("Partidas")
+                            .document(idGame)
+                            .get()
+                            .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    final DocumentSnapshot documentSnapshot = task.getResult();
+                                    Partida partida = documentSnapshot.toObject(Partida.class);
+                                    listUsers = partida.getUsers();
+                                    for (int j = 0; j < listUsers.size(); j++) {
+                                        if (listUsers.get(j).getUser().getEmail().equals(FirebaseAuth.getInstance().getCurrentUser().getEmail())) {
+                                            final String pujasID = listUsers.get(j).getPujasID();
+                                            db.collection("Pujas")
+                                                    .document(pujasID)
+                                                    .get()
+                                                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                            DocumentSnapshot documentSnapshot1 = task.getResult();
+                                                            Pujas pujas = documentSnapshot1.toObject(Pujas.class);
+                                                            final ArrayList<Integer> pujastemp = pujas.getPujas();
+                                                            pujastemp.set(position, Integer.parseInt(etCoste.getText().toString()));
 
-                                        db.collection("Pujas")
-                                                .document(pujasID)
-                                                .get()
-                                                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                        DocumentSnapshot documentSnapshot1 = task.getResult();
-                                                        Pujas pujas = documentSnapshot1.toObject(Pujas.class);
-                                                        ArrayList<Integer> pujastemp = pujas.getPujas();
-                                                        pujastemp.set(position, Integer.parseInt(etCoste.getText().toString()));
+                                                            boolean presente = false;
+                                                            for (int i = 0; i < team.getEquipo().size(); i++) {
+                                                                if (team.getEquipo().get(i).getId() == model.getId()){
+                                                                    presente = true;
+                                                                }
+                                                            }
+                                                            if (presente){
+                                                                Toast.makeText(context, "Ya tienes a este pokemon!", Toast.LENGTH_LONG).show();
+                                                            }
+                                                            else {
+                                                                db.collection("Pujas").document(pujasID).update("pujas", pujastemp);
+                                                                dialog.dismiss();
+                                                            }
 
-                                                        db.collection("Pujas").document(pujasID).update("pujas", pujastemp);
-                                                        dialog.dismiss();
-                                                    }
-                                                });
 
+                                                        }
+                                                    });
+
+                                        }
                                     }
-                                }
 
-                            }
-                        });
+                                }
+                            });
+                }
+                else {
+                    Toast.makeText(context, "La puja no puede ser mas baja que el precio original", Toast.LENGTH_LONG).show();
+                }
             }
         });
 

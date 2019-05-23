@@ -42,6 +42,7 @@ import com.example.pokemonproject.model.MovementFirebase;
 import com.example.pokemonproject.model.Partida;
 import com.example.pokemonproject.model.Pokemon;
 import com.example.pokemonproject.model.Stats;
+import com.example.pokemonproject.model.Team;
 import com.example.pokemonproject.model.UserGame;
 import com.example.pokemonproject.model.Username;
 import com.firebase.ui.auth.AuthUI;
@@ -77,6 +78,7 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
     int numbergames;
     String id;
     String user;
+    Partida partida;
     String nameGame;
     ArrayList<String> listGames;
 
@@ -88,6 +90,7 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
         numbergames = getIntent().getIntExtra("games", 0);
         id = getIntent().getStringExtra("lastGame");
         listGames = getIntent().getStringArrayListExtra("listGames");
+
         if (id != null) {
             if (!id.equals("")) {
                 db.collection("Partidas")
@@ -98,10 +101,27 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                 if (task.isSuccessful()) {
                                     DocumentSnapshot document = task.getResult();
-                                    nameGame = document.toObject(Partida.class).getName();
+                                    partida = document.toObject(Partida.class);
+                                    nameGame = partida.getName();
                                     NavigationView navigationView = findViewById(R.id.nav_view);
                                     Menu nav_Menu = navigationView.getMenu();
                                     nav_Menu.findItem(R.id.gamesList).setTitle(nameGame);
+
+//                                    ArrayList<UserGame> lista = partida.getUsers();
+//                                    for (int i = 0; i < lista.size(); i++) {
+//                                        if (lista.get(i).getUser().getEmail().equals(FirebaseAuth.getInstance().getCurrentUser().getEmail())){
+//                                            teamid = lista.get(i).getTeamID();
+//                                        }
+//                                    }
+//
+//                                    db.collection("Equipos").document(teamid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//                                        @Override
+//                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                                            if (task.isSuccessful()){
+//                                                team = task.getResult().toObject(Team.class);
+//                                            }
+//                                        }
+//                                    });
                                 }
                             }
                         });
@@ -406,14 +426,14 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
             else {
                 switch (position) {
                     case 0:
-                        HomeFragment homeFragment = new HomeFragment(GameActivity.this, id);
+                        HomeFragment homeFragment = new HomeFragment(GameActivity.this, id, numbergames, id, listGames);
                         return homeFragment;
                     case 1:
                         CopaFragment copaFragment = new CopaFragment();
                         copaFragment.setIdLastPartida(id);
                         return copaFragment;
                     case 2:
-                        MercadoFragment mercadoFragment = new MercadoFragment(id);
+                        MercadoFragment mercadoFragment = new MercadoFragment(GameActivity.this, id);
                         return mercadoFragment;
                     case 3:
                         JornadaFragment jornadaFragment = new JornadaFragment();
