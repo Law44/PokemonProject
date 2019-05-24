@@ -15,7 +15,6 @@ import android.widget.ImageView;
 import com.example.pokemonproject.GlideApp;
 import com.example.pokemonproject.R;
 import com.example.pokemonproject.model.Alineation;
-import com.example.pokemonproject.model.ModalSelectTeam;
 import com.example.pokemonproject.model.Partida;
 import com.example.pokemonproject.model.Team;
 import com.example.pokemonproject.model.UserGame;
