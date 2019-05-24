@@ -20,6 +20,7 @@ import com.example.pokemonproject.R;
 import com.example.pokemonproject.model.ListaPujas;
 import com.example.pokemonproject.model.Partida;
 import com.example.pokemonproject.model.Pokemon;
+import com.example.pokemonproject.model.Pujas;
 import com.example.pokemonproject.model.Team;
 import com.firebase.ui.firestore.paging.FirestorePagingAdapter;
 import com.firebase.ui.firestore.paging.FirestorePagingOptions;
@@ -31,8 +32,12 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static android.support.v7.widget.RecyclerView.VERTICAL;
 
@@ -41,15 +46,24 @@ public class MercadoFragment extends Fragment {
     private Query query;
     private FirestorePagingOptions<Pokemon> options;
     private RecyclerView recyclerView;
-    String lastgame, teamID;
+    String lastgame, teamID, pujasID;
     GameActivity context;
     Team team;
     ArrayList<Pokemon> listaPokemon;
+    ArrayList<Integer> pujas;
+    Map<Integer, Integer> totalPujas;
+    int money;
+    public static int saldofuturo;
 
-    @SuppressLint("ValidFragment")
+    @SuppressLint({"ValidFragment", "NewApi"})
     public MercadoFragment(GameActivity context, String id) {
         lastgame = id;
         this.context = context;
+        this.totalPujas = new HashMap<>();
+        for (int i = 0; i < 10; i++) {
+            totalPujas.putIfAbsent(i, 0);
+        }
+
     }
 
     @Override
@@ -84,22 +98,54 @@ public class MercadoFragment extends Fragment {
                                             for (int i = 0; i < partida.getUsers().size(); i++) {
                                                 if (partida.getUsers().get(i).getUser().getEmail().equals(FirebaseAuth.getInstance().getCurrentUser().getEmail())){
                                                     teamID = partida.getUsers().get(i).getTeamID();
+                                                    pujasID = partida.getUsers().get(i).getPujasID();
+                                                    money = partida.getUsers().get(i).getMoney();
+                                                    saldofuturo = money;
                                                 }
                                             }
 
-                                            rootRef.collection("Equipos").document(teamID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                            rootRef.collection("Pujas").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                @SuppressLint("NewApi")
                                                 @Override
-                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                        if (task.isSuccessful()){
-                                                            team = task.getResult().toObject(Team.class);
+                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                    if (task.isSuccessful()) {
+                                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                                            if (document.getId().equals(pujasID)){
+                                                                pujas = (ArrayList<Integer>) document.get("pujas");
+                                                                for (int i = 0; i < pujas.size(); i++) {
+                                                                    saldofuturo -= Integer.parseInt(String.valueOf(pujas.get(i)));
+                                                                }
+                                                            }
+                                                            ArrayList<Integer> pujastemp = (ArrayList<Integer>) document.get("pujas");
+                                                            for (int i = 0; i < totalPujas.size(); i++) {
+                                                                totalPujas.putIfAbsent(i, pujastemp.get(i));
 
-                                                            PujasAdapter pujasAdapter = new PujasAdapter(context, lastgame, MercadoFragment.this, team);
-                                                            pujasAdapter.setPokemonPujas(listaPokemon);
+                                                            }
 
-                                                            recyclerView.setAdapter(pujasAdapter);
+                                                            for (int i = 0; i < pujastemp.size(); i++) {
+                                                                if (Integer.parseInt(String.valueOf(pujastemp.get(i))) > 0){
+                                                                    totalPujas.put(i, Integer.parseInt(String.valueOf(totalPujas.get(i)))+1);
+                                                                }
+                                                            }
                                                         }
+                                                        rootRef.collection("Equipos").document(teamID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                                if (task.isSuccessful()) {
+                                                                    team = task.getResult().toObject(Team.class);
+
+                                                                    PujasAdapter pujasAdapter = new PujasAdapter(context, lastgame, MercadoFragment.this, team, totalPujas, pujas);
+                                                                    pujasAdapter.setPokemonPujas(listaPokemon);
+
+                                                                    recyclerView.setAdapter(pujasAdapter);
+                                                                }
+                                                            }
+                                                        });
+                                                    }
                                                 }
                                             });
+
+
                                         }
                                     }
                                 });

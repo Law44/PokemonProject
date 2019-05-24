@@ -23,6 +23,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class PujasAdapter extends RecyclerView.Adapter<PujasAdapter.PokemonViewHolder> {
 
@@ -34,15 +35,21 @@ public class PujasAdapter extends RecyclerView.Adapter<PujasAdapter.PokemonViewH
     Username creator;
     MercadoFragment mercadoFragment;
     Team team;
+    Map<Integer, Integer> totalPujas;
+    ArrayList<Integer> pujas;
+    int money;
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-    public PujasAdapter(GameActivity context, String lastgame, MercadoFragment mercadoFragment, Team team){
+    public PujasAdapter(GameActivity context, String lastgame, MercadoFragment mercadoFragment, Team team, Map<Integer, Integer> totalPujas, ArrayList<Integer> pujas){
 
         this.context = context;
         this.lastgame = lastgame;
         this.mercadoFragment = mercadoFragment;
         this.team = team;
+        this.totalPujas = totalPujas;
+        this.pujas = pujas;
+        this.money = money;
 
     }
 
@@ -84,6 +91,7 @@ public class PujasAdapter extends RecyclerView.Adapter<PujasAdapter.PokemonViewH
             ImageView tipo2 = view.findViewById(R.id.imgPokemonTipo2Mercado);
             ImageView tipounico = view.findViewById(R.id.imgPokemonTipoUnicoMercado);
             ImageView button = view.findViewById(R.id.imgButtonPagar);
+            ImageView fondo = view.findViewById(R.id.imgFondo);
 
 
             tvName.setText(model.getName());
@@ -116,10 +124,17 @@ public class PujasAdapter extends RecyclerView.Adapter<PujasAdapter.PokemonViewH
                     .load(R.drawable.pokemondollar)
                     .into((ImageView) view.findViewById(R.id.imgPokedolar));
 
+            if (Integer.parseInt(String.valueOf(pujas.get(position))) > 0){
+                fondo.setBackgroundColor(view.getResources().getColor(R.color.colorBuy));
+            }
+            else {
+                fondo.setBackgroundColor(view.getResources().getColor(R.color.searchWhite));
+            }
+
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    new ModalComprarPokemon(view.getContext(), model, mercadoFragment, lastgame, position, team);
+                    new ModalComprarPokemon(view.getContext(), model, mercadoFragment, lastgame, position, team, totalPujas, pujas, view);
                 }
             });
 
