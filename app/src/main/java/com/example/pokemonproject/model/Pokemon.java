@@ -8,6 +8,7 @@ import java.util.Map;
 public class Pokemon {
 
     private int id;
+    private int life;
     private String name;
     private Sprites sprites;
     private int price;
@@ -25,11 +26,20 @@ public class Pokemon {
         this.stats = stats;
         this.types = types;
         this.moves = moves;
+        this.life = stats.get(5).base_stat;
     }
     public Pokemon(){}
 
     public List<Moves> getMoves() {
         return moves;
+    }
+
+    public int getLife() {
+        return life;
+    }
+
+    public void setLife(int life) {
+        this.life = life;
     }
 
     public void setMoves(List<Moves> moves) {
