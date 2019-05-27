@@ -12,18 +12,28 @@ public class UserGame {
     private int money;
     private String teamID;
     private String pujasID;
+    private String alineationID;
 
     public UserGame(){
 
     }
 
-    public UserGame(Username user, String teamName, int points, String teamID, int money, String pujasID) {
+    public UserGame(Username user, String teamName, int points, String teamID, int money, String pujasID, String alineationID) {
         this.user = user;
         this.teamName = teamName;
         this.points = points;
         this.teamID = teamID;
         this.money = money;
         this.pujasID = pujasID;
+        this.alineationID = alineationID;
+    }
+
+    public String getAlineationID() {
+        return alineationID;
+    }
+
+    public void setAlineationID(String alineationID) {
+        this.alineationID = alineationID;
     }
 
     public String getPujasID() {
