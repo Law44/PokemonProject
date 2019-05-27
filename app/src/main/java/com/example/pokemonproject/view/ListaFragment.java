@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -50,11 +51,6 @@ public class ListaFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         final View mView = inflater.inflate(R.layout.fragment_pokemons, container, false);
-
-        searchView =  mView.findViewById(R.id.search_view);
-        searchView.setVoiceSearch(false);
-
-
         mView.post(new Runnable() {
            @Override
                public void run() {
@@ -62,26 +58,18 @@ public class ListaFragment extends Fragment {
                }
            });
 
-
-        Button search = mView.findViewById(R.id.action_search);
-        search.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                searchView.showSearch();
-            }
-        });
-
         recyclerView = mView.findViewById(R.id.rvListaPokemon);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         DividerItemDecoration itemDecor = new DividerItemDecoration(mView.getContext(), VERTICAL);
         recyclerView.addItemDecoration(itemDecor);
+
         FirebaseFirestore rootRef = FirebaseFirestore.getInstance();
         final CollectionReference productsRef = rootRef.collection("ListaPokemon");
 
         recyclerView = loadList(recyclerView, productsRef);
 
 
-        searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+        /*searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 return false;
@@ -90,9 +78,10 @@ public class ListaFragment extends Fragment {
             @Override
             public boolean onQueryTextChange(String newText) {
                 if(newText.isEmpty()){
-
+                    recyclerView = loadList(recyclerView, productsRef);
                 }else {
-                    query = productsRef.whereEqualTo("name", newText.toLowerCase());
+                    String namePokemon = newText.substring(0, 1).toUpperCase() + newText.substring(1).toLowerCase();
+                    query = productsRef.whereEqualTo("name",namePokemon );
                     Log.e("name", newText);
                     final PagedList.Config config = new PagedList.Config.Builder()
                             .setEnablePlaceholders(true)
@@ -122,7 +111,7 @@ public class ListaFragment extends Fragment {
                 }
                 return false;
             }
-        });
+        });*/
 
         return mView;
     }

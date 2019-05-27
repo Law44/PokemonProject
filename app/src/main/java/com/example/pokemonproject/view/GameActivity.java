@@ -81,6 +81,7 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
     Partida partida;
     String nameGame;
     ArrayList<String> listGames;
+    private MaterialSearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,22 +107,6 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
                                     NavigationView navigationView = findViewById(R.id.nav_view);
                                     Menu nav_Menu = navigationView.getMenu();
                                     nav_Menu.findItem(R.id.gamesList).setTitle(nameGame);
-
-//                                    ArrayList<UserGame> lista = partida.getUsers();
-//                                    for (int i = 0; i < lista.size(); i++) {
-//                                        if (lista.get(i).getUser().getEmail().equals(FirebaseAuth.getInstance().getCurrentUser().getEmail())){
-//                                            teamid = lista.get(i).getTeamID();
-//                                        }
-//                                    }
-//
-//                                    db.collection("Equipos").document(teamid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//                                        @Override
-//                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                                            if (task.isSuccessful()){
-//                                                team = task.getResult().toObject(Team.class);
-//                                            }
-//                                        }
-//                                    });
                                 }
                             }
                         });
@@ -139,6 +124,33 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
         final TabLayout tabLayout = findViewById(R.id.tabs);
 
         final TextView title = findViewById(R.id.toolbar_title);
+        searchView = findViewById(R.id.search_view);
+        searchView.setVoiceSearch(false);
+        searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+//                queryChangeListener3.onQueryChange(newText);
+
+                return false;
+            }
+        });
+        searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
+            @Override
+            public void onSearchViewShown() {
+                //Do some magic
+            }
+
+            @Override
+            public void onSearchViewClosed() {
+                //Do some magic
+            }
+        });
 
         title.setText("INCIO");
 
@@ -151,30 +163,34 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
                 switch (tab.getPosition()){
                     case 0:
                         makeIconsWhite(tabLayout);
+                        findViewById(R.id.action_search).setVisibility(View.INVISIBLE);
                         tab.setIcon(R.drawable.icons8_home_48_red);
                         title.setText(R.string.inicioCaps);
                         break;
                     case 1:
                         makeIconsWhite(tabLayout);
+                        findViewById(R.id.action_search).setVisibility(View.INVISIBLE);
                         tab.setIcon(R.drawable.icons8_leaderboard_filled_50_red);
                         title.setText(R.string.clasificacionCaps);
                         break;
                     case 2:
                         makeIconsWhite(tabLayout);
+                        findViewById(R.id.action_search).setVisibility(View.INVISIBLE);
                         tab.setIcon(R.drawable.icons8_pokeball_48_red);
                         title.setText(R.string.mercadoCaps);
                         break;
                     case 3:
                         makeIconsWhite(tabLayout);
+                        findViewById(R.id.action_search).setVisibility(View.INVISIBLE);
                         tab.setIcon(R.drawable.icons8_explosion_filled_50_red);
                         title.setText(R.string.combateCaps);
                         break;
                     case 4:
                         makeIconsWhite(tabLayout);
+                        findViewById(R.id.action_search).setVisibility(View.VISIBLE);
                         tab.setIcon(R.drawable.icons8_pokedex_filled_52_red);
                         title.setText(R.string.pokemonsCaps);
                 }
-
             }
 
             @Override
@@ -198,6 +214,8 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         Menu nav_Menu = navigationView.getMenu();
+
+
 
 
         if (FirebaseAuth.getInstance().getCurrentUser().getEmail().equals("tlaw4444@gmail.com") ||
@@ -252,11 +270,9 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (findViewById(R.id.search_view)!= null) {
             MaterialSearchView searchView = findViewById(R.id.search_view);
-            if (drawer.isDrawerOpen(GravityCompat.START) || searchView.isSearchOpen() ) {
+            if (drawer.isDrawerOpen(GravityCompat.START) ) {
                 drawer.closeDrawer(GravityCompat.START);
-                searchView.closeSearch();
-                Button iconSearch =  findViewById(R.id.action_search);
-                iconSearch.setVisibility(View.VISIBLE);
+
 
             } else {
                 Intent startMain = new Intent(Intent.ACTION_MAIN);
@@ -354,6 +370,15 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.menu_game,menu);
+        MenuItem item = menu.findItem(R.id.action_search);
+        searchView.setMenuItem(item);
+        searchView.setVisibility(View.INVISIBLE);
+        return true;
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -363,7 +388,8 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_search) {
+            searchView.showSearch();
             return true;
         }
 
