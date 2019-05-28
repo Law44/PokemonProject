@@ -23,6 +23,8 @@ public class Movement {
         this.type = type;
     }
 
+    public Movement(){}
+
     public int getId() {
         return id;
     }

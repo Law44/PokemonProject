@@ -24,7 +24,7 @@
         <item
             android:id="@+id/createDatabase"
             android:icon="@drawable/ic_cloud_upload_black_24dp"
-            android:title="Crear base de datos"
+            android:title="Ajustes de administrador"
             />
     </group>
 
