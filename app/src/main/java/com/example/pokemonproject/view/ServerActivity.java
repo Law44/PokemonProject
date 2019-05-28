@@ -79,6 +79,7 @@ public class ServerActivity extends AppCompatActivity {
         btnLoadPokemon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                estado.setText("Wait");
                 db.collection("ListaPokemon").orderBy("id").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -86,6 +87,7 @@ public class ServerActivity extends AppCompatActivity {
                             for (QueryDocumentSnapshot snapshot: task.getResult()) {
                                 pkemonList.add(snapshot.toObject(Pokemon.class));
                             }
+                            estado.setText("Ready");
                         }
                     }
                 });
@@ -95,6 +97,7 @@ public class ServerActivity extends AppCompatActivity {
         btnLoadMovement.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                estado.setText("Wait");
                 db.collection("Movimientos").orderBy("id").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
