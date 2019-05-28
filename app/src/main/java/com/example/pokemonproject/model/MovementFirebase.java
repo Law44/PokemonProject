@@ -23,9 +23,6 @@ public class MovementFirebase {
         this.name = name;
     }
 
-    public MovementFirebase(){
-
-    }
 
     public int getId() {
         return id;
