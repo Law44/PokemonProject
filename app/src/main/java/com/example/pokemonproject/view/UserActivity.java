@@ -57,7 +57,7 @@ public class UserActivity extends AppCompatActivity {
                 else {
                     startActivity(new Intent(UserActivity.this, GameActivity.class));
                     ArrayList<String> listgame = new ArrayList<>();
-                    Username username = new Username(etUsername.getText().toString(), FirebaseAuth.getInstance().getCurrentUser().getEmail(), "0", "", listgame);
+                    Username username = new Username(etUsername.getText().toString(), FirebaseAuth.getInstance().getCurrentUser().getEmail(), "0", "", listgame, FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl().toString());
                     db.collection("Users").add(username);
                     next = true;
                     finish();
