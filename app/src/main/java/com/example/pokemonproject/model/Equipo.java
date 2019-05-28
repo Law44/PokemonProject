@@ -6,16 +6,26 @@ public class Equipo {
 
     private String username;
     private String useremail;
+    private String imguser;
     private Alineation alineacion;
 
-    public Equipo(String username, String useremail, Alineation alineacion) {
+    public Equipo(String username, String useremail, Alineation alineacion, String imguser) {
         this.username = username;
         this.useremail = useremail;
         this.alineacion = alineacion;
+        this.imguser = imguser;
     }
 
     public Equipo (){
 
+    }
+
+    public String getImguser() {
+        return imguser;
+    }
+
+    public void setImguser(String imguser) {
+        this.imguser = imguser;
     }
 
     public String getUsername() {

@@ -54,7 +54,8 @@ public class ServerActivity extends AppCompatActivity {
     ArrayList<String> partidas;
     final Executor executor = Executors.newFixedThreadPool(2);
     final Executor executor2 = Executors.newFixedThreadPool(2);
-    int jornada = 1;
+    int jornada = 0;
+    boolean calculojornada;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -351,6 +352,8 @@ public class ServerActivity extends AppCompatActivity {
                     }
 
                     for (int i = 0; i < partidas.size(); i++) {
+                        calculojornada = false;
+                        jornada = 0;
                         db.collection("Partidas").document(partidas.get(i)).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -378,28 +381,28 @@ public class ServerActivity extends AppCompatActivity {
                                                                         partida.getUsers().get(finalI).getCombatesID().add(idCombate);
                                                                         partida.getUsers().get(finalJ).getCombatesID().add(idCombate);
                                                                         db.collection("Partidas").document(partida.getId()).set(partida);
-
                                                                         db.collection("Combates").whereEqualTo("idGame", partida.getId()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                                                             @Override
                                                                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                                                                 if (task.isSuccessful()){
                                                                                     for (QueryDocumentSnapshot snapshot : task.getResult()) {
-                                                                                        Log.e("COMBATE", "OK");
                                                                                         Combate combate = snapshot.toObject(Combate.class);
-                                                                                        if (combate.getJornada() > jornada) {
+                                                                                        if (combate.getJornada() > jornada && !calculojornada) {
                                                                                             jornada = combate.getJornada();
                                                                                         }
                                                                                     }
-                                                                                    jornada++;
-                                                                                    Equipo equipo1 = new Equipo(partida.getUsers().get(finalI).getUser().getUsername(), partida.getUsers().get(finalI).getUser().getEmail(), alineation1);
-                                                                                    Equipo equipo2 = new Equipo(partida.getUsers().get(finalJ).getUser().getUsername(), partida.getUsers().get(finalJ).getUser().getEmail(), alineation2);
+                                                                                    if (!calculojornada) {
+                                                                                        calculojornada = true;
+                                                                                        jornada++;
+                                                                                    }
+                                                                                    Equipo equipo1 = new Equipo(partida.getUsers().get(finalI).getUser().getUsername(), partida.getUsers().get(finalI).getUser().getEmail(), alineation1, partida.getUsers().get(finalI).getUser().getImgurl());
+                                                                                    Equipo equipo2 = new Equipo(partida.getUsers().get(finalJ).getUser().getUsername(), partida.getUsers().get(finalJ).getUser().getEmail(), alineation2, partida.getUsers().get(finalJ).getUser().getImgurl());
                                                                                     Combate nextCombate = new Combate(equipo1, equipo2, jornada, partida.getId());
                                                                                     db.collection("Combates").document(idCombate).set(nextCombate);
                                                                                 }
                                                                                 else {
-                                                                                    Log.e("COMBATE", "NO OK");
-                                                                                    Equipo equipo1 = new Equipo(partida.getUsers().get(finalI).getUser().getUsername(), partida.getUsers().get(finalI).getUser().getEmail(), alineation1);
-                                                                                    Equipo equipo2 = new Equipo(partida.getUsers().get(finalJ).getUser().getUsername(), partida.getUsers().get(finalJ).getUser().getEmail(), alineation2);
+                                                                                    Equipo equipo1 = new Equipo(partida.getUsers().get(finalI).getUser().getUsername(), partida.getUsers().get(finalI).getUser().getEmail(), alineation1, partida.getUsers().get(finalI).getUser().getImgurl());
+                                                                                    Equipo equipo2 = new Equipo(partida.getUsers().get(finalJ).getUser().getUsername(), partida.getUsers().get(finalJ).getUser().getEmail(), alineation2, partida.getUsers().get(finalJ).getUser().getImgurl());
                                                                                     Combate combate = new Combate(equipo1, equipo2, 1, partida.getId());
                                                                                     db.collection("Combates").document(idCombate).set(combate);
                                                                                 }
