@@ -32,7 +32,7 @@ import java.util.ArrayList;
 
 import static android.support.v7.widget.RecyclerView.VERTICAL;
 
-public class CopaFragment extends Fragment {
+public class CopaFragment extends Fragment implements GameActivity.QueryChangeListener {
     private UserGameRecyclerAdapter adapter;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     String idGame ="";
@@ -75,6 +75,12 @@ public class CopaFragment extends Fragment {
     public void setIdLastPartida(String id) {
         this.idGame = id;
     }
+
+    @Override
+    public void onQueryChange(String query) {
+
+    }
+
     private class UserGameRecyclerAdapter extends RecyclerView.Adapter<UserGameRecyclerAdapter.UserGameViewHolder> {
         ArrayList<UserGame> list;
 

@@ -66,6 +66,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class GameActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
     interface QueryChangeListener {
         void onQueryChange(String query);
     }
@@ -128,17 +129,16 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
         final TextView title = findViewById(R.id.toolbar_title);
 
 
-        searchView = (MaterialSearchView) findViewById(R.id.search_view);
+        searchView = findViewById(R.id.search_view);
         searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                //Do some
+                queryChangeListener3.onQueryChange(query);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-//                queryChangeListener3.onQueryChange(newText);
                 return false;
             }
         });
@@ -476,12 +476,12 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
             return 5;
         }
 
-//        @Override
-//        public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-//            queryChangeListener3 = (QueryChangeListener) object;
-//
-//            super.setPrimaryItem(container, position, object);
-//        }
+        @Override
+        public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+            queryChangeListener3 = (QueryChangeListener) object;
+
+            super.setPrimaryItem(container, position, object);
+        }
     }
 
 }

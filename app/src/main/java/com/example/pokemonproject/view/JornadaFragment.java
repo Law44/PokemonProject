@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 
 import com.example.pokemonproject.R;
 
-public class JornadaFragment extends Fragment {
+public class JornadaFragment extends Fragment implements GameActivity.QueryChangeListener {
 
     View mView;
 
@@ -19,5 +19,10 @@ public class JornadaFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_jornada, container, false);
         return mView;
+    }
+
+    @Override
+    public void onQueryChange(String query) {
+
     }
 }

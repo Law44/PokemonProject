@@ -42,7 +42,7 @@ import java.util.Map;
 import static android.support.v7.widget.RecyclerView.VERTICAL;
 
 @SuppressLint("ValidFragment")
-public class MercadoFragment extends Fragment {
+public class MercadoFragment extends Fragment implements GameActivity.QueryChangeListener {
     private Query query;
     private FirestorePagingOptions<Pokemon> options;
     private RecyclerView recyclerView;
@@ -155,5 +155,10 @@ public class MercadoFragment extends Fragment {
                 });
 
         return mView;
+    }
+
+    @Override
+    public void onQueryChange(String query) {
+
     }
 }

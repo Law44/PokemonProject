@@ -36,7 +36,7 @@ import java.util.List;
 import static android.support.v7.widget.RecyclerView.HORIZONTAL;
 import static android.support.v7.widget.RecyclerView.VERTICAL;
 
-public class ListaFragment extends Fragment {
+public class ListaFragment extends Fragment implements GameActivity.QueryChangeListener {
 
     private MaterialSearchView searchView;
     private Query query;
@@ -52,17 +52,6 @@ public class ListaFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         final View mView = inflater.inflate(R.layout.fragment_pokemons, container, false);
-//        searchView =  mView.findViewById(R.id.search_view);
-//        searchView.setVoiceSearch(false);
-//
-//        search = mView.findViewById(R.id.action_search);
-//        search.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                searchView.showSearch();
-//                search.setVisibility(View.INVISIBLE);
-//            }
-//        });
 
 
         recyclerView = mView.findViewById(R.id.rvListaPokemon);

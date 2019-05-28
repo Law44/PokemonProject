@@ -28,7 +28,7 @@ import java.util.ArrayList;
 
 import static android.support.v7.widget.RecyclerView.VERTICAL;
 
-public  class HomeFragment extends Fragment {
+public  class HomeFragment extends Fragment implements GameActivity.QueryChangeListener {
 
     private GameActivity gameActivity;
     private String teamID, alineationID;
@@ -247,5 +247,10 @@ public  class HomeFragment extends Fragment {
         });
 
         return mView;
+    }
+
+    @Override
+    public void onQueryChange(String query) {
+
     }
 }
