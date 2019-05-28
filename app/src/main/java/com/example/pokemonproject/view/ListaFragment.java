@@ -44,6 +44,7 @@ public class ListaFragment extends Fragment {
     private RecyclerView recyclerView;
     private FirestorePagingAdapter<Pokemon, PokemonViewHolder> adapter;
     Button search;
+    CollectionReference productsRef;
 
 
     @Nullable
@@ -51,17 +52,17 @@ public class ListaFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         final View mView = inflater.inflate(R.layout.fragment_pokemons, container, false);
-        searchView =  mView.findViewById(R.id.search_view);
-        searchView.setVoiceSearch(false);
-
-        search = mView.findViewById(R.id.action_search);
-        search.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                searchView.showSearch();
-                search.setVisibility(View.INVISIBLE);
-            }
-        });
+//        searchView =  mView.findViewById(R.id.search_view);
+//        searchView.setVoiceSearch(false);
+//
+//        search = mView.findViewById(R.id.action_search);
+//        search.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                searchView.showSearch();
+//                search.setVisibility(View.INVISIBLE);
+//            }
+//        });
 
 
         recyclerView = mView.findViewById(R.id.rvListaPokemon);
@@ -71,20 +72,60 @@ public class ListaFragment extends Fragment {
 
 
         FirebaseFirestore rootRef = FirebaseFirestore.getInstance();
-        final CollectionReference productsRef = rootRef.collection("ListaPokemon");
+        productsRef = rootRef.collection("ListaPokemon");
 
         recyclerView = loadList(recyclerView, productsRef);
 
 
-        searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
+//        searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+//            @Override
+//            public boolean onQueryTextSubmit(String query) {
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean onQueryTextChange(String newText) {
+//                if(newText.isEmpty()){
+//                    recyclerView = loadList(recyclerView, productsRef);
+//                }else {
+//                    String namePokemon = newText.substring(0, 1).toUpperCase() + newText.substring(1).toLowerCase();
+//                    query = productsRef.whereEqualTo("name",namePokemon );
+//                    Log.e("name", newText);
+//                    final PagedList.Config config = new PagedList.Config.Builder()
+//                            .setEnablePlaceholders(true)
+//                            .setPrefetchDistance(151)
+//                            .setPageSize(151)
+//                            .build();
+//                    options = new FirestorePagingOptions.Builder<Pokemon>()
+//                            .setLifecycleOwner(getViewLifecycleOwner())
+//                            .setQuery(query, config, Pokemon.class)
+//                            .build();
+//
+//                    adapter = new FirestorePagingAdapter<Pokemon, PokemonViewHolder>(options) {
+//                        @NonNull
+//                        @Override
+//                        public PokemonViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+//
+//                            View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_pokemon, viewGroup, false);
+//                            return new PokemonViewHolder(view);
+//                        }
+//
+//                        @Override
+//                        protected void onBindViewHolder(@NonNull PokemonViewHolder holder, int position, @NonNull Pokemon model) {
+//                            holder.setPokemon(model);
+//                        }
+//                    };
+//                    recyclerView.setAdapter(adapter);
+//                }
+//                return false;
+//            }
+//        });
 
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                if(newText.isEmpty()){
+        return mView;
+
+    }
+    public void onQueryChange(String newText) {
+        if(newText.isEmpty()){
                     recyclerView = loadList(recyclerView, productsRef);
                 }else {
                     String namePokemon = newText.substring(0, 1).toUpperCase() + newText.substring(1).toLowerCase();
@@ -116,12 +157,9 @@ public class ListaFragment extends Fragment {
                     };
                     recyclerView.setAdapter(adapter);
                 }
-                return false;
-            }
-        });
 
-        return mView;
     }
+
 
     private RecyclerView loadList(RecyclerView recyclerView, CollectionReference productsRef) {
         query = productsRef.orderBy("id");

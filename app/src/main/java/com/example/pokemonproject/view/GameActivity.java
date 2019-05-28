@@ -66,10 +66,16 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class GameActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+    interface QueryChangeListener {
+        void onQueryChange(String query);
+    }
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
+    QueryChangeListener queryChangeListener3;
+
     private ViewPager mViewPager;
+    MaterialSearchView searchView;
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     int numbergames;
@@ -122,7 +128,32 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
         final TextView title = findViewById(R.id.toolbar_title);
 
 
+        searchView = (MaterialSearchView) findViewById(R.id.search_view);
+        searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                //Do some
+                return false;
+            }
 
+            @Override
+            public boolean onQueryTextChange(String newText) {
+//                queryChangeListener3.onQueryChange(newText);
+                return false;
+            }
+        });
+
+        searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
+            @Override
+            public void onSearchViewShown() {
+                //Do some magic
+            }
+
+            @Override
+            public void onSearchViewClosed() {
+                //Do some magic
+            }
+        });
         title.setText("INCIO");
 
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
@@ -244,9 +275,6 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
                     drawer.closeDrawer(GravityCompat.START);
                     searchView.closeSearch();
                     searchView.clearFocus();
-                    Button iconSearch =  findViewById(R.id.action_search);
-                    iconSearch.setVisibility(View.VISIBLE);
-                    iconSearch.findFocus();
                 } else {
                 Intent startMain = new Intent(Intent.ACTION_MAIN);
                 startMain.addCategory(Intent.CATEGORY_HOME);
@@ -346,6 +374,8 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
     public boolean onCreateOptionsMenu(Menu menu) {
 
         getMenuInflater().inflate(R.menu.menu_game,menu);
+        MenuItem item = menu.findItem(R.id.action_search);
+        searchView.setMenuItem(item);
 
         return true;
     }
@@ -445,6 +475,13 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
             // Show 3 total pages.
             return 5;
         }
+
+//        @Override
+//        public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+//            queryChangeListener3 = (QueryChangeListener) object;
+//
+//            super.setPrimaryItem(container, position, object);
+//        }
     }
 
 }
