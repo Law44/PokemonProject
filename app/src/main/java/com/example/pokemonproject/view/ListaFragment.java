@@ -43,7 +43,7 @@ public class ListaFragment extends Fragment {
     private FirestorePagingOptions<Pokemon> options;
     private RecyclerView recyclerView;
     private FirestorePagingAdapter<Pokemon, PokemonViewHolder> adapter;
-    int height;
+    Button search;
 
 
     @Nullable
@@ -51,17 +51,24 @@ public class ListaFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         final View mView = inflater.inflate(R.layout.fragment_pokemons, container, false);
-        mView.post(new Runnable() {
-           @Override
-               public void run() {
-                   height = mView.getMeasuredHeight(); // for instance
-               }
-           });
+        searchView =  mView.findViewById(R.id.search_view);
+        searchView.setVoiceSearch(false);
+
+        search = mView.findViewById(R.id.action_search);
+        search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                searchView.showSearch();
+                search.setVisibility(View.INVISIBLE);
+            }
+        });
+
 
         recyclerView = mView.findViewById(R.id.rvListaPokemon);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         DividerItemDecoration itemDecor = new DividerItemDecoration(mView.getContext(), VERTICAL);
         recyclerView.addItemDecoration(itemDecor);
+
 
         FirebaseFirestore rootRef = FirebaseFirestore.getInstance();
         final CollectionReference productsRef = rootRef.collection("ListaPokemon");
@@ -69,7 +76,7 @@ public class ListaFragment extends Fragment {
         recyclerView = loadList(recyclerView, productsRef);
 
 
-        /*searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+        searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 return false;
@@ -111,7 +118,7 @@ public class ListaFragment extends Fragment {
                 }
                 return false;
             }
-        });*/
+        });
 
         return mView;
     }

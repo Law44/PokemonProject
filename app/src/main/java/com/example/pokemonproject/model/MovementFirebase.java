@@ -9,6 +9,10 @@ public class MovementFirebase {
     public String type;
     public String name;
 
+    public MovementFirebase(){
+
+    }
+
     public MovementFirebase(int id, int accuracy, int power, int pp, int priority, String type, String name) {
         this.id = id;
         this.accuracy = accuracy;
@@ -18,6 +22,7 @@ public class MovementFirebase {
         this.type = type;
         this.name = name;
     }
+
 
     public int getId() {
         return id;

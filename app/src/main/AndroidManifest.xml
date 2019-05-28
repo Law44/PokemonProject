@@ -25,7 +25,8 @@
         <activity android:name=".view.UserActivity" />
         <activity android:name=".view.MainActivity" />
         <activity android:name=".view.NewLeagueActivity" />
-        <activity android:name=".view.JoinLeagueActivity"></activity>
+        <activity android:name=".view.JoinLeagueActivity" />
+        <activity android:name=".view.ServerActivity"></activity>
     </application>
 
 </manifest>

@@ -13,6 +13,7 @@ public class UserGame {
     private String teamID;
     private String pujasID;
     private String alineationID;
+    private ArrayList<String> combatesID;
 
     public UserGame(){
 
@@ -26,6 +27,15 @@ public class UserGame {
         this.money = money;
         this.pujasID = pujasID;
         this.alineationID = alineationID;
+        this.combatesID = new ArrayList<>();
+    }
+
+    public ArrayList<String> getCombatesID() {
+        return combatesID;
+    }
+
+    public void setCombatesID(ArrayList<String> combatesID) {
+        this.combatesID = combatesID;
     }
 
     public String getAlineationID() {
