@@ -118,7 +118,7 @@ public class MercadoFragment extends Fragment {
                                                             }
                                                             ArrayList<Integer> pujastemp = (ArrayList<Integer>) document.get("pujas");
                                                             for (int i = 0; i < totalPujas.size(); i++) {
-                                                                totalPujas.put(i, pujastemp.get(i));
+                                                                totalPujas.put(i, 0);
 
                                                             }
 
