@@ -15,6 +15,7 @@ import com.example.pokemonproject.GlideApp;
 import com.example.pokemonproject.R;
 import com.example.pokemonproject.model.Alineation;
 import com.example.pokemonproject.model.GamesInfo;
+import com.example.pokemonproject.model.MovementFirebase;
 import com.example.pokemonproject.model.Pokemon;
 import com.example.pokemonproject.model.Username;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -57,7 +58,7 @@ public class AlineationAdapter extends RecyclerView.Adapter<AlineationAdapter.Al
     }
 
     @Override
-    public void onBindViewHolder(@NonNull AlineationAdapter.AlineationViewHolder viewHolder, final int i) {
+    public void onBindViewHolder(@NonNull final AlineationAdapter.AlineationViewHolder viewHolder, final int i) {
         viewHolder.tvName.setText(pokemonsArrayList.get(i).getName());
         viewHolder.tvId.setText(String.valueOf(pokemonsArrayList.get(i).getId()));
 
@@ -141,6 +142,35 @@ public class AlineationAdapter extends RecyclerView.Adapter<AlineationAdapter.Al
 
             }
         });
+        for (int j = 0; j < pokemonsArrayList.get(i).getMoves().size(); j++) {
+            final int finalJ = j;
+            db.collection("Movimientos").whereEqualTo("id",pokemonsArrayList.get(i).getMoves().get(j).move.id).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()){
+                        for (QueryDocumentSnapshot snapshot: task.getResult()){
+                            MovementFirebase movementFirebase = snapshot.toObject(MovementFirebase.class);
+
+                            switch (finalJ){
+                                case 0:
+                                    viewHolder.move1.setText(movementFirebase.name);
+                                    break;
+                                case 1:
+                                    viewHolder.move2.setText(movementFirebase.name);
+                                    break;
+                                case 2:
+                                    viewHolder.move3.setText(movementFirebase.name);
+                                    break;
+                                case 3:
+                                    viewHolder.move4.setText(movementFirebase.name);
+                                    break;
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
 
 
     }
@@ -160,7 +190,10 @@ public class AlineationAdapter extends RecyclerView.Adapter<AlineationAdapter.Al
         ImageView tipo1;
         ImageView tipo2;
         ImageView tipounico;
-
+        TextView move1;
+        TextView move2;
+        TextView move3;
+        TextView move4;
         AlineationViewHolder(View view){
             super(view);
 
@@ -169,6 +202,11 @@ public class AlineationAdapter extends RecyclerView.Adapter<AlineationAdapter.Al
             tipo1 = view.findViewById(R.id.imgPokemonTipo1);
             tipo2 = view.findViewById(R.id.imgPokemonTipo2);
             tipounico = view.findViewById(R.id.imgPokemonTipoUnico);
+            move1 = view.findViewById(R.id.alineationMov1);
+            move2 = view.findViewById(R.id.alineationMov2);
+            move3 = view.findViewById(R.id.alineationMov3);
+            move4 = view.findViewById(R.id.alineationMov4);
+
         }
 
     }

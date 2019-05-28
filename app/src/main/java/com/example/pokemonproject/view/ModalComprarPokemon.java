@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.example.pokemonproject.GlideApp;
 import com.example.pokemonproject.R;
 import com.example.pokemonproject.model.GamesInfo;
+import com.example.pokemonproject.model.MovementFirebase;
 import com.example.pokemonproject.model.Partida;
 import com.example.pokemonproject.model.Pokemon;
 import com.example.pokemonproject.model.Pujas;
@@ -29,6 +30,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -54,7 +57,39 @@ class ModalComprarPokemon {
         dialog.setContentView(R.layout.activity_modal_compra);
         GlideApp.with(context).load(model.getSprites().front_default).into((ImageView) dialog.findViewById(R.id.imgPokemonModal));
         GlideApp.with(context).load(R.drawable.boxpokemonmodal).centerCrop().into((ImageView) dialog.findViewById(R.id.imgModalBoxFondo));
+        final TextView mov1 = dialog.findViewById(R.id.comprarMov1);
+        final TextView mov2 = dialog.findViewById(R.id.comprarMov2);
+        final TextView mov3 = dialog.findViewById(R.id.comprarMov3);
+        final TextView mov4 = dialog.findViewById(R.id.comprarMov4);
 
+        for (int j = 0; j < pokemon.getMoves().size(); j++) {
+            final int finalJ = j;
+            db.collection("Movimientos").whereEqualTo("id", pokemon.getMoves().get(j).move.id).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot snapshot : task.getResult()) {
+                            MovementFirebase movementFirebase = snapshot.toObject(MovementFirebase.class);
+
+                            switch (finalJ) {
+                                case 0:
+                                    mov1.setText(movementFirebase.name);
+                                    break;
+                                case 1:
+                                    mov2.setText(movementFirebase.name);
+                                    break;
+                                case 2:
+                                    mov3.setText(movementFirebase.name);
+                                    break;
+                                case 3:
+                                    mov4.setText(movementFirebase.name);
+                                    break;
+                            }
+                        }
+                    }
+                }
+            });
+        }
         if (model.getTypes().size()==2){
             int id = context.getResources().getIdentifier(model.getTypes().get(0).getType().getName(), "drawable", context.getPackageName());
             GlideApp.with(context).load(id).into((ImageView) dialog.findViewById(R.id.imgTipo1Modal));
@@ -142,7 +177,10 @@ class ModalComprarPokemon {
                                                         @Override
                                                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                                             if (Integer.parseInt(String.valueOf(pujaspropias.get(position))) == 0) {
-                                                                totalPujas.put(position, Integer.parseInt(String.valueOf(totalPujas.get(position) + 1)));
+                                                                String kk = "" + totalPujas.get(position);
+                                                                Integer integer = Integer.valueOf(kk);
+                                                                integer += 1;
+                                                                totalPujas.put(position, integer);
 
                                                             }
                                                             DocumentSnapshot documentSnapshot1 = task.getResult();
