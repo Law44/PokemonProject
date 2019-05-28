@@ -177,6 +177,7 @@ class ModalComprarPokemon {
                                                         @Override
                                                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                                             if (Integer.parseInt(String.valueOf(pujaspropias.get(position))) == 0) {
+                                                                Log.e("PUJAS", String.valueOf(totalPujas.get(position)));
                                                                 String kk = "" + totalPujas.get(position);
                                                                 Integer integer = Integer.valueOf(kk);
                                                                 integer += 1;
