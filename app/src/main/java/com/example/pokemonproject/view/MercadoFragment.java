@@ -55,14 +55,14 @@ public class MercadoFragment extends Fragment {
     int money;
     public static int saldofuturo;
 
-    @SuppressLint({"ValidFragment", "NewApi"})
     public MercadoFragment(GameActivity context, String id) {
         lastgame = id;
         this.context = context;
         this.totalPujas = new HashMap<>();
         for (int i = 0; i < 10; i++) {
-            totalPujas.putIfAbsent(i, 0);
+            totalPujas.put(i,0);
         }
+
 
     }
 
@@ -118,7 +118,7 @@ public class MercadoFragment extends Fragment {
                                                             }
                                                             ArrayList<Integer> pujastemp = (ArrayList<Integer>) document.get("pujas");
                                                             for (int i = 0; i < totalPujas.size(); i++) {
-                                                                totalPujas.putIfAbsent(i, pujastemp.get(i));
+                                                                totalPujas.put(i, pujastemp.get(i));
 
                                                             }
 
