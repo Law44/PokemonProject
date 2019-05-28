@@ -78,7 +78,6 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
     Partida partida;
     String nameGame;
     ArrayList<String> listGames;
-    private MaterialSearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,33 +120,8 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
         final TabLayout tabLayout = findViewById(R.id.tabs);
 
         final TextView title = findViewById(R.id.toolbar_title);
-        searchView = findViewById(R.id.search_view);
-        searchView.setVoiceSearch(false);
-        searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
 
-                return false;
-            }
 
-            @Override
-            public boolean onQueryTextChange(String newText) {
-//                queryChangeListener3.onQueryChange(newText);
-
-                return false;
-            }
-        });
-        searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
-            @Override
-            public void onSearchViewShown() {
-                //Do some magic
-            }
-
-            @Override
-            public void onSearchViewClosed() {
-                //Do some magic
-            }
-        });
 
         title.setText("INCIO");
 
@@ -266,11 +240,14 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (findViewById(R.id.search_view)!= null) {
             MaterialSearchView searchView = findViewById(R.id.search_view);
-            if (drawer.isDrawerOpen(GravityCompat.START) ) {
-                drawer.closeDrawer(GravityCompat.START);
-
-
-            } else {
+                if (drawer.isDrawerOpen(GravityCompat.START) || searchView.isSearchOpen() ) {
+                    drawer.closeDrawer(GravityCompat.START);
+                    searchView.closeSearch();
+                    searchView.clearFocus();
+                    Button iconSearch =  findViewById(R.id.action_search);
+                    iconSearch.setVisibility(View.VISIBLE);
+                    iconSearch.findFocus();
+                } else {
                 Intent startMain = new Intent(Intent.ACTION_MAIN);
                 startMain.addCategory(Intent.CATEGORY_HOME);
                 startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -369,9 +346,7 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
     public boolean onCreateOptionsMenu(Menu menu) {
 
         getMenuInflater().inflate(R.menu.menu_game,menu);
-        MenuItem item = menu.findItem(R.id.action_search);
-        searchView.setMenuItem(item);
-        searchView.setVisibility(View.INVISIBLE);
+
         return true;
     }
 
@@ -383,10 +358,8 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_search) {
-            searchView.showSearch();
-            return true;
-        }
+
+
 
         return super.onOptionsItemSelected(item);
     }
