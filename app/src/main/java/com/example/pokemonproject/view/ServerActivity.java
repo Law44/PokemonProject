@@ -25,6 +25,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -53,6 +54,7 @@ public class ServerActivity extends AppCompatActivity {
     ArrayList<String> partidas;
     final Executor executor = Executors.newFixedThreadPool(2);
     final Executor executor2 = Executors.newFixedThreadPool(2);
+    int jornada = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,35 +66,49 @@ public class ServerActivity extends AppCompatActivity {
         movementList = new ArrayList<>();
         pokemonApi = PokemonModule.getAPI();
 
-        db.collection("ListaPokemon").orderBy("id").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()){
-                    for (QueryDocumentSnapshot snapshot: task.getResult()) {
-                        pkemonList.add(snapshot.toObject(Pokemon.class));
-                    }
-                }
-            }
-        });
-
-        db.collection("Movimientos").orderBy("id").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()){
-                    for (QueryDocumentSnapshot snapshot : task.getResult()){
-                        movementList.add(snapshot.toObject(MovementFirebase.class));
-                    }
-                    estado.setText("Ready");
-                }
-            }
-        });
-
         Button btnCombates = findViewById(R.id.Combates);
         Button btnRefrescarMercado = findViewById(R.id.Mercado);
         Button btnPujas = findViewById(R.id.Pujas);
         Button btnPrepararCombate = findViewById(R.id.preparaCombate);
         Button btnListaPokemon = findViewById(R.id.listapokemon);
         Button btnListaMovimientos = findViewById(R.id.listamovimientos);
+        Button btnLoadPokemon = findViewById(R.id.loadPokemon);
+        Button btnLoadMovement = findViewById(R.id.loadMovement);
+
+        btnLoadPokemon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                db.collection("ListaPokemon").orderBy("id").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()){
+                            for (QueryDocumentSnapshot snapshot: task.getResult()) {
+                                pkemonList.add(snapshot.toObject(Pokemon.class));
+                            }
+                        }
+                    }
+                });
+            }
+        });
+
+        btnLoadMovement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                db.collection("Movimientos").orderBy("id").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()){
+                            for (QueryDocumentSnapshot snapshot : task.getResult()){
+                                movementList.add(snapshot.toObject(MovementFirebase.class));
+                            }
+                            estado.setText("Ready");
+                        }
+                    }
+                });
+            }
+        });
+
+
 
         btnPrepararCombate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -355,7 +371,7 @@ public class ServerActivity extends AppCompatActivity {
                                                                 @Override
                                                                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                                                     if (task.isSuccessful()){
-                                                                        String idCombate = db.collection("Combates").document().getId();
+                                                                        final String idCombate = db.collection("Combates").document().getId();
 
                                                                         DocumentSnapshot documentSnapshot = task.getResult();
                                                                         alineation2 = documentSnapshot.toObject(Alineation.class);
@@ -363,10 +379,36 @@ public class ServerActivity extends AppCompatActivity {
                                                                         partida.getUsers().get(finalJ).getCombatesID().add(idCombate);
                                                                         db.collection("Partidas").document(partida.getId()).set(partida);
 
-                                                                        Equipo equipo1 = new Equipo(partida.getUsers().get(finalI).getUser().getUsername(), partida.getUsers().get(finalI).getUser().getEmail(), alineation1);
-                                                                        Equipo equipo2 = new Equipo(partida.getUsers().get(finalJ).getUser().getUsername(), partida.getUsers().get(finalJ).getUser().getEmail(), alineation2);
-                                                                        Combate combate = new Combate(equipo1, equipo2);
-                                                                        db.collection("Combates").document(idCombate).set(combate);
+                                                                        db.collection("Combates").whereEqualTo("idGame", partida.getId()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                            @Override
+                                                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                                if (task.isSuccessful()){
+                                                                                    for (QueryDocumentSnapshot snapshot : task.getResult()) {
+                                                                                        Log.e("COMBATE", "OK");
+                                                                                        Combate combate = snapshot.toObject(Combate.class);
+                                                                                        if (combate.getJornada() > jornada) {
+                                                                                            jornada = combate.getJornada();
+                                                                                        }
+                                                                                    }
+                                                                                    jornada++;
+                                                                                    Equipo equipo1 = new Equipo(partida.getUsers().get(finalI).getUser().getUsername(), partida.getUsers().get(finalI).getUser().getEmail(), alineation1);
+                                                                                    Equipo equipo2 = new Equipo(partida.getUsers().get(finalJ).getUser().getUsername(), partida.getUsers().get(finalJ).getUser().getEmail(), alineation2);
+                                                                                    Combate nextCombate = new Combate(equipo1, equipo2, jornada, partida.getId());
+                                                                                    db.collection("Combates").document(idCombate).set(nextCombate);
+                                                                                }
+                                                                                else {
+                                                                                    Log.e("COMBATE", "NO OK");
+                                                                                    Equipo equipo1 = new Equipo(partida.getUsers().get(finalI).getUser().getUsername(), partida.getUsers().get(finalI).getUser().getEmail(), alineation1);
+                                                                                    Equipo equipo2 = new Equipo(partida.getUsers().get(finalJ).getUser().getUsername(), partida.getUsers().get(finalJ).getUser().getEmail(), alineation2);
+                                                                                    Combate combate = new Combate(equipo1, equipo2, 1, partida.getId());
+                                                                                    db.collection("Combates").document(idCombate).set(combate);
+                                                                                }
+                                                                            }
+
+
+                                                                        });
+
+
 
                                                                     }
                                                                 }

@@ -14,6 +14,10 @@ public class Equipo {
         this.alineacion = alineacion;
     }
 
+    public Equipo (){
+
+    }
+
     public String getUsername() {
         return username;
     }

@@ -33,7 +33,7 @@ public class ModalSelectGame {
     ArrayList<String> listGames;
     ArrayList<GamesInfo> gamesInfos = new ArrayList<>();
 
-    public ModalSelectGame (final GameActivity context){
+    public ModalSelectGame(final GameActivity context, final String id){
 
         this.context = context;
 
@@ -78,7 +78,7 @@ public class ModalSelectGame {
                                             RecyclerView recyclerView =  dialog.findViewById(R.id.rvgamesList);
                                             recyclerView.setLayoutManager(new LinearLayoutManager(dialog.getOwnerActivity()));
 
-                                            GamesAdapter gamesAdapter = new GamesAdapter(context);
+                                            GamesAdapter gamesAdapter = new GamesAdapter(context, id);
                                             gamesAdapter.setGamesInfoArrayList(gamesInfos);
 
                                             recyclerView.setAdapter(gamesAdapter);

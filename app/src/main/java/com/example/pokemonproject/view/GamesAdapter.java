@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.pokemonproject.GlideApp;
 import com.example.pokemonproject.R;
@@ -34,11 +35,13 @@ public class GamesAdapter extends RecyclerView.Adapter<GamesAdapter.GamesViewHol
     String games;
     ArrayList<String> listGame;
     Username creator;
+    String lastgame;
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-    public GamesAdapter(GameActivity context){
+    public GamesAdapter(GameActivity context, String id){
         this.context = context;
+        this.lastgame = id;
     }
 
     @NonNull
@@ -75,12 +78,18 @@ public class GamesAdapter extends RecyclerView.Adapter<GamesAdapter.GamesViewHol
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                context.finish();
-                Intent intent = new Intent(v.getContext(), GameActivity.class);
-                intent.putExtra("lastGame", gamesInfoArrayList.get(i).getId());
-                intent.putExtra("games", Integer.parseInt(games));
-                intent.putExtra("listGames", listGame);
-                v.getContext().startActivity(intent);
+                if (gamesInfoArrayList.get(i).getId().equals(lastgame)){
+                    Toast.makeText(context, "Estas actualmente en esta partida", Toast.LENGTH_LONG).show();
+
+                }
+                else {
+                    context.finish();
+                    Intent intent = new Intent(v.getContext(), GameActivity.class);
+                    intent.putExtra("lastGame", gamesInfoArrayList.get(i).getId());
+                    intent.putExtra("games", Integer.parseInt(games));
+                    intent.putExtra("listGames", listGame);
+                    v.getContext().startActivity(intent);
+                }
             }
         });
 

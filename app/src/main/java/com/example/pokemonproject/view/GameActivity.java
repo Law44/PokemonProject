@@ -300,7 +300,7 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
         switch (item.getItemId()) {
 
             case R.id.gamesList:{
-                new ModalSelectGame(GameActivity.this);
+                new ModalSelectGame(GameActivity.this, id);
                 break;
             }
 

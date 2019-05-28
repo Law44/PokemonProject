@@ -55,7 +55,7 @@ public class NewLeagueActivity extends AppCompatActivity {
         etTeamName = findViewById(R.id.etTeamName);
 
         String[] opcionesSpinner = new String[] {
-                "500000", "1000000", "1500000", "2000000" };
+                "2500", "5000", "7500", "10000", "15000" };
         final Spinner spinner = findViewById(R.id.etInitialMoney);
         ArrayAdapter<String> spinneroptions = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, opcionesSpinner);
