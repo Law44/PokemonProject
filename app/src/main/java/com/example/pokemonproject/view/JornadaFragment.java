@@ -47,42 +47,43 @@ public class JornadaFragment extends Fragment {
                 if (task.isSuccessful()){
                     Partida partida = task.getResult().toObject(Partida.class);
 
-                    for (int i =0;i<partida.getUsers().size(); i++){
-                        if(partida.getUsers().get(i).getUser().getEmail().equals(FirebaseAuth.getInstance().getCurrentUser().getEmail())){
-                            final String combateId = partida.getUsers().get(i).getCombatesID().get(partida.getUsers().get(i).getCombatesID().size()-1);
-                            Log.e("Combates", ""+(partida.getUsers().get(i).getCombatesID().size()-1));
-                            db.collection("Combates").document(combateId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                    if (task.isSuccessful()){
-                                        Combate combateSacarJornada = task.getResult().toObject(Combate.class);
-                                        Log.e("Combates", ""+combateSacarJornada.getIdGame());
-                                        final int jornadaActual = combateSacarJornada.getJornada();
-                                        db.collection("Combates").whereEqualTo("idGame",idPartida).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                if (task.isSuccessful()){
-                                                    for (QueryDocumentSnapshot snapshot:task.getResult()){
-                                                        Combate combate = snapshot.toObject(Combate.class);
-                                                        if (combate.getJornada() == jornadaActual){
-                                                            combateList.add(combate);
+                    for (int i =0;i<partida.getUsers().size(); i++) {
+                        if (partida.getUsers().get(i).getUser().getEmail().equals(FirebaseAuth.getInstance().getCurrentUser().getEmail())) {
+                            if (partida.getUsers().get(i).getCombatesID().size() > 0) {
+                                final String combateId = partida.getUsers().get(i).getCombatesID().get(partida.getUsers().get(i).getCombatesID().size() - 1);
+                                db.collection("Combates").document(combateId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            Combate combateSacarJornada = task.getResult().toObject(Combate.class);
+//                                        if (combateSacarJornada==null)return;
+                                            final int jornadaActual = combateSacarJornada.getJornada();
+                                            db.collection("Combates").whereEqualTo("idGame", idPartida).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                    if (task.isSuccessful()) {
+                                                        for (QueryDocumentSnapshot snapshot : task.getResult()) {
+                                                            Combate combate = snapshot.toObject(Combate.class);
+                                                            if (combate.getJornada() == jornadaActual) {
+                                                                combateList.add(combate);
+                                                            }
                                                         }
+                                                        Log.e("Combates", "" + combateList.size());
+                                                        CombatesAdapter combatesAdapter = new CombatesAdapter(combateList);
+                                                        recyclerView = mView.findViewById(R.id.rvMercadoPokemon);
+                                                        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                                                        DividerItemDecoration itemDecor = new DividerItemDecoration(mView.getContext(), VERTICAL);
+                                                        recyclerView.addItemDecoration(itemDecor);
+                                                        recyclerView.setAdapter(combatesAdapter);
+
                                                     }
-                                                    Log.e("Combates", ""+combateList.size());
-                                                    CombatesAdapter combatesAdapter = new CombatesAdapter(combateList);
-                                                    recyclerView = mView.findViewById(R.id.rvMercadoPokemon);
-                                                    recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-                                                    DividerItemDecoration itemDecor = new DividerItemDecoration(mView.getContext(), VERTICAL);
-                                                    recyclerView.addItemDecoration(itemDecor);
-                                                    recyclerView.setAdapter(combatesAdapter);
-
                                                 }
-                                            }
-                                        });
+                                            });
+                                        }
                                     }
-                                }
-                            });
+                                });
 
+                            }
                         }
                     }
                 }
