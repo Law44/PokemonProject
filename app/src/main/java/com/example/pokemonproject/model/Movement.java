@@ -11,8 +11,9 @@ public class Movement {
     public int accuracy;
     public int priority;
     public Type type;
+    private TipoDaño damage_class;
 
-    public Movement(int id, String name, List<Name> names, String power, int pp, int accuracy, int priority, Type type) {
+    public Movement(int id, String name, List<Name> names, String power, int pp, int accuracy, int priority, Type type, TipoDaño damage_class) {
         this.id = id;
         this.name = name;
         this.names = names;
@@ -21,9 +22,18 @@ public class Movement {
         this.accuracy = accuracy;
         this.priority = priority;
         this.type = type;
+        this.damage_class = damage_class;
     }
 
     public Movement(){}
+
+    public TipoDaño getDamage_class() {
+        return damage_class;
+    }
+
+    public void setDamage_class(TipoDaño damage_class) {
+        this.damage_class = damage_class;
+    }
 
     public int getId() {
         return id;

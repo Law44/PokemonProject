@@ -16,6 +16,7 @@ public class Pokemon {
     private List<Stats> stats;
     private List<Types> types;
     private List<Moves> moves;
+    private PiedraEvo piedrasEvo;
 
 
 
@@ -28,6 +29,8 @@ public class Pokemon {
         this.moves = moves;
         this.life = stats.get(5).base_stat;
     }
+
+
     public Pokemon(){}
 
     public List<Moves> getMoves() {
@@ -36,6 +39,14 @@ public class Pokemon {
 
     public int getLife() {
         return life;
+    }
+
+    public PiedraEvo getPiedrasEvo() {
+        return piedrasEvo;
+    }
+
+    public void setPiedrasEvo(PiedraEvo piedrasEvo) {
+        this.piedrasEvo = piedrasEvo;
     }
 
     public void setLife(int life) {

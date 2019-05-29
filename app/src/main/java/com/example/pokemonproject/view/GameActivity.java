@@ -192,6 +192,7 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
                         findViewById(R.id.action_search).setVisibility(View.VISIBLE);
                         tab.setIcon(R.drawable.icons8_pokedex_filled_52_red);
                         title.setText(R.string.pokemonsCaps);
+                        break;
                 }
             }
 
