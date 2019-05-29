@@ -73,7 +73,7 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
     QueryChangeListener queryChangeListener3;
-
+    private Menu menu;
     private ViewPager mViewPager;
     MaterialSearchView searchView;
 
@@ -162,34 +162,36 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
 
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
+                MenuItem item =menu.findItem(R.id.action_search);
+
                 switch (tab.getPosition()){
                     case 0:
                         makeIconsWhite(tabLayout);
-                        findViewById(R.id.action_search).setVisibility(View.INVISIBLE);
+                        item.setVisible(false);
                         tab.setIcon(R.drawable.icons8_home_48_red);
                         title.setText(R.string.inicioCaps);
                         break;
                     case 1:
                         makeIconsWhite(tabLayout);
-                        findViewById(R.id.action_search).setVisibility(View.INVISIBLE);
+                        item.setVisible(false);
                         tab.setIcon(R.drawable.icons8_leaderboard_filled_50_red);
                         title.setText(R.string.clasificacionCaps);
                         break;
                     case 2:
                         makeIconsWhite(tabLayout);
-                        findViewById(R.id.action_search).setVisibility(View.INVISIBLE);
+                        item.setVisible(false);
                         tab.setIcon(R.drawable.icons8_pokeball_48_red);
                         title.setText(R.string.mercadoCaps);
                         break;
                     case 3:
                         makeIconsWhite(tabLayout);
-                        findViewById(R.id.action_search).setVisibility(View.INVISIBLE);
+                        item.setVisible(false);
                         tab.setIcon(R.drawable.icons8_explosion_filled_50_red);
                         title.setText(R.string.combateCaps);
                         break;
                     case 4:
                         makeIconsWhite(tabLayout);
-                        findViewById(R.id.action_search).setVisibility(View.VISIBLE);
+                        item.setVisible(true);
                         tab.setIcon(R.drawable.icons8_pokedex_filled_52_red);
                         title.setText(R.string.pokemonsCaps);
                 }
@@ -376,6 +378,9 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
         getMenuInflater().inflate(R.menu.menu_game,menu);
         MenuItem item = menu.findItem(R.id.action_search);
         searchView.setMenuItem(item);
+        item.setVisible(false);
+        this.menu = menu;
+
 
         return true;
     }
@@ -450,17 +455,20 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
             else {
                 switch (position) {
                     case 0:
-                        HomeFragment homeFragment = new HomeFragment(GameActivity.this, id, numbergames, id, listGames);
+                        HomeFragment homeFragment = new HomeFragment();
+                        homeFragment.setInfo(GameActivity.this, id, numbergames, id, listGames);
                         return homeFragment;
                     case 1:
                         CopaFragment copaFragment = new CopaFragment();
                         copaFragment.setIdLastPartida(id);
                         return copaFragment;
                     case 2:
-                        MercadoFragment mercadoFragment = new MercadoFragment(GameActivity.this, id);
+                        MercadoFragment mercadoFragment = new MercadoFragment();
+                        mercadoFragment.setInfo(GameActivity.this, id);
                         return mercadoFragment;
                     case 3:
                         JornadaFragment jornadaFragment = new JornadaFragment();
+                        jornadaFragment.setIdLastPartida(id);
                         return jornadaFragment;
                     case 4:
                         ListaFragment listaFragment = new ListaFragment();

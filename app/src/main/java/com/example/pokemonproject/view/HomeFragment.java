@@ -41,13 +41,10 @@ public  class HomeFragment extends Fragment {
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     View mView;
 
-
-    public HomeFragment(){
+    public HomeFragment() {
 
     }
-
-    @SuppressLint("ValidFragment")
-    public HomeFragment(GameActivity gameActivity, String id, int numbergames, String idLastGame, ArrayList<String> listGames) {
+    public void setInfo(GameActivity gameActivity, String id, int numbergames, String idLastGame, ArrayList<String> listGames){
         this.gameActivity = gameActivity;
         this.idGame = id;
         this.numbergames = numbergames;

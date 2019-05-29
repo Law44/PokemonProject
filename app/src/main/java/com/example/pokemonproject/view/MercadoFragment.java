@@ -41,7 +41,6 @@ import java.util.Map;
 
 import static android.support.v7.widget.RecyclerView.VERTICAL;
 
-@SuppressLint("ValidFragment")
 public class MercadoFragment extends Fragment {
     private Query query;
     private FirestorePagingOptions<Pokemon> options;
@@ -55,15 +54,16 @@ public class MercadoFragment extends Fragment {
     int money;
     public static int saldofuturo;
 
-    public MercadoFragment(GameActivity context, String id) {
-        lastgame = id;
-        this.context = context;
+    public MercadoFragment() {
+    }
+
+    public void setInfo(GameActivity context, String id){
         this.totalPujas = new HashMap<>();
         for (int i = 0; i < 10; i++) {
             totalPujas.put(i,0);
         }
-
-
+        lastgame = id;
+        this.context = context;
     }
 
     @Override
