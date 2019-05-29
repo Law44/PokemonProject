@@ -18,6 +18,8 @@ import android.widget.TextView;
 import com.example.pokemonproject.GlideApp;
 import com.example.pokemonproject.R;
 import com.example.pokemonproject.model.ListaPujas;
+import com.example.pokemonproject.model.MovementFirebase;
+import com.example.pokemonproject.model.Moves;
 import com.example.pokemonproject.model.Partida;
 import com.example.pokemonproject.model.Pokemon;
 import com.example.pokemonproject.model.Pujas;
@@ -37,6 +39,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static android.support.v7.widget.RecyclerView.VERTICAL;
@@ -54,6 +57,8 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
     Map<Integer, Integer> totalPujas;
     int money;
     public static int saldofuturo;
+    ArrayList<List<Moves>> movimientos;
+    TextView tvMoneyMercado, tvMoneyFuturaMercado;
 
     public MercadoFragment(GameActivity context, String id) {
         lastgame = id;
@@ -62,6 +67,7 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
         for (int i = 0; i < 10; i++) {
             totalPujas.put(i,0);
         }
+        this.movimientos = new ArrayList<>();
 
 
     }
@@ -72,9 +78,17 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
         super.onCreateView(inflater, container, savedInstanceState);
         View mView = inflater.inflate(R.layout.fragment_mercado, container, false);
 
+        tvMoneyMercado = mView.findViewById(R.id.tvMoneyMercado);
+        tvMoneyFuturaMercado = mView.findViewById(R.id.tvMoneyFuturaMercado);
 
         recyclerView = mView.findViewById(R.id.rvMercadoPokemon);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        ImageView dolar1 = mView.findViewById(R.id.imgPokedolarPartida1);
+        GlideApp.with(this).load(R.drawable.pokemondollar).into(dolar1);
+
+        ImageView dolar2 = mView.findViewById(R.id.imgPokedolarPartida2);
+        GlideApp.with(this).load(R.drawable.pokemondollar).into(dolar2);
+
         DividerItemDecoration itemDecor = new DividerItemDecoration(mView.getContext(), VERTICAL);
         recyclerView.addItemDecoration(itemDecor);
         final FirebaseFirestore rootRef = FirebaseFirestore.getInstance();
@@ -101,6 +115,7 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
                                                     pujasID = partida.getUsers().get(i).getPujasID();
                                                     money = partida.getUsers().get(i).getMoney();
                                                     saldofuturo = money;
+                                                    tvMoneyMercado.setText(String.valueOf(money));
                                                 }
                                             }
 
@@ -115,6 +130,8 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
                                                                 for (int i = 0; i < pujas.size(); i++) {
                                                                     saldofuturo -= Integer.parseInt(String.valueOf(pujas.get(i)));
                                                                 }
+                                                                tvMoneyFuturaMercado.setText(String.valueOf(saldofuturo));
+
                                                             }
                                                             ArrayList<Integer> pujastemp = (ArrayList<Integer>) document.get("pujas");
                                                             for (int i = 0; i < totalPujas.size(); i++) {
@@ -134,7 +151,43 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
                                                                 if (task.isSuccessful()) {
                                                                     team = task.getResult().toObject(Team.class);
 
-                                                                    PujasAdapter pujasAdapter = new PujasAdapter(context, lastgame, MercadoFragment.this, team, totalPujas, pujas);
+                                                                    for (int i = 0; i < listaPokemon.size(); i++) {
+                                                                        final int finalI = i;
+                                                                        for (int j = 0; j < listaPokemon.get(i).getMoves().size(); j++) {
+                                                                            final int finalJ = j;
+
+                                                                            rootRef.collection("Movimientos").whereEqualTo("id",listaPokemon.get(i).getMoves().get(j).move.id).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                                @Override
+                                                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                                    if (task.isSuccessful()){
+                                                                                        for (QueryDocumentSnapshot snapshot: task.getResult()){
+                                                                                            MovementFirebase movementFirebase = snapshot.toObject(MovementFirebase.class);
+
+                                                                                            switch (finalJ){
+                                                                                                case 0:
+                                                                                                    listaPokemon.get(finalI).getMoves().get(finalJ).move.name = movementFirebase.name;
+                                                                                                    break;
+                                                                                                case 1:
+                                                                                                    listaPokemon.get(finalI).getMoves().get(finalJ).move.name = movementFirebase.name;
+                                                                                                    break;
+                                                                                                case 2:
+                                                                                                    listaPokemon.get(finalI).getMoves().get(finalJ).move.name = movementFirebase.name;
+
+                                                                                                    break;
+                                                                                                case 3:
+                                                                                                    listaPokemon.get(finalI).getMoves().get(finalJ).move.name = movementFirebase.name;
+                                                                                                    break;
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            });
+                                                                        }
+                                                                        movimientos.add(listaPokemon.get(finalI).getMoves());
+
+                                                                    }
+
+                                                                    PujasAdapter pujasAdapter = new PujasAdapter(context, lastgame, MercadoFragment.this, team, totalPujas, pujas, movimientos);
                                                                     pujasAdapter.setPokemonPujas(listaPokemon);
 
                                                                     recyclerView.setAdapter(pujasAdapter);

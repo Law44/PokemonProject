@@ -11,6 +11,7 @@ import android.view.Window;
 
 import com.example.pokemonproject.R;
 import com.example.pokemonproject.model.GamesInfo;
+import com.example.pokemonproject.model.Moves;
 import com.example.pokemonproject.model.Pokemon;
 import com.example.pokemonproject.view.AlineationAdapter;
 import com.example.pokemonproject.view.GameActivity;
@@ -25,6 +26,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static android.support.v7.widget.RecyclerView.VERTICAL;
 
@@ -35,7 +37,7 @@ public class ModalSelectTeam {
     ArrayList<String> listGames;
     ArrayList<GamesInfo> gamesInfos = new ArrayList<>();
 
-    public ModalSelectTeam(final GameActivity context, ArrayList<Pokemon> team, String alineationID, int i, int numbergames, String idLastGame, ArrayList<String> listGames){
+    public ModalSelectTeam(final GameActivity context, ArrayList<Pokemon> team, String alineationID, int i, int numbergames, String idLastGame, ArrayList<String> listGames, ArrayList<List<Moves>> movements){
 
         this.context = context;
 
@@ -51,7 +53,7 @@ public class ModalSelectTeam {
         DividerItemDecoration itemDecor = new DividerItemDecoration(context, VERTICAL);
         recyclerView.addItemDecoration(itemDecor);
 
-        AlineationAdapter alineationAdapter = new AlineationAdapter(context, alineationID, i, numbergames, idLastGame, listGames, dialog);
+        AlineationAdapter alineationAdapter = new AlineationAdapter(context, alineationID, i, numbergames, idLastGame, listGames, dialog, movements);
         alineationAdapter.setGamesInfoArrayList(team);
 
         recyclerView.setAdapter(alineationAdapter);

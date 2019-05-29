@@ -56,7 +56,6 @@ public class CopaFragment extends Fragment implements GameActivity.QueryChangeLi
                             usersGames.set(i+1, usersGames.get(i));
                             usersGames.set(i,tmp);
                         }
-                        Log.e("Usuario", "onComplete: "+usersGames.get(i).getUser().getEmail());
                     }
                     recyclerView = mView.findViewById(R.id.rvClasificacion);
                     recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));

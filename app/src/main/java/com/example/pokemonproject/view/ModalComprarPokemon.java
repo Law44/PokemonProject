@@ -20,6 +20,7 @@ import com.example.pokemonproject.GlideApp;
 import com.example.pokemonproject.R;
 import com.example.pokemonproject.model.GamesInfo;
 import com.example.pokemonproject.model.MovementFirebase;
+import com.example.pokemonproject.model.Moves;
 import com.example.pokemonproject.model.Partida;
 import com.example.pokemonproject.model.Pokemon;
 import com.example.pokemonproject.model.Pujas;
@@ -34,6 +35,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 class ModalComprarPokemon {
@@ -44,7 +46,7 @@ class ModalComprarPokemon {
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     ArrayList<UserGame> listUsers;
 
-    public ModalComprarPokemon(final Context context, final Pokemon model, MercadoFragment mercadoFragment, String idBuyGame, final int position, final Team team, final Map<Integer, Integer> totalPujas, final ArrayList<Integer> pujaspropias, final View view) {
+    public ModalComprarPokemon(final Context context, final Pokemon model, MercadoFragment mercadoFragment, String idBuyGame, final int position, final Team team, final Map<Integer, Integer> totalPujas, final ArrayList<Integer> pujaspropias, final View view, ArrayList<List<Moves>> movements) {
         this.context = context;
         this.pokemon = model;
         this.fragment = mercadoFragment;
@@ -62,34 +64,19 @@ class ModalComprarPokemon {
         final TextView mov3 = dialog.findViewById(R.id.comprarMov3);
         final TextView mov4 = dialog.findViewById(R.id.comprarMov4);
 
-        for (int j = 0; j < pokemon.getMoves().size(); j++) {
-            final int finalJ = j;
-            db.collection("Movimientos").whereEqualTo("id", pokemon.getMoves().get(j).move.id).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot snapshot : task.getResult()) {
-                            MovementFirebase movementFirebase = snapshot.toObject(MovementFirebase.class);
-
-                            switch (finalJ) {
-                                case 0:
-                                    mov1.setText(movementFirebase.name);
-                                    break;
-                                case 1:
-                                    mov2.setText(movementFirebase.name);
-                                    break;
-                                case 2:
-                                    mov3.setText(movementFirebase.name);
-                                    break;
-                                case 3:
-                                    mov4.setText(movementFirebase.name);
-                                    break;
-                            }
-                        }
-                    }
-                }
-            });
+        if (movements.get(position).size() > 0) {
+            mov1.setText(movements.get(position).get(0).move.name);
         }
+        if (movements.get(position).size() > 1) {
+            mov2.setText(movements.get(position).get(1).move.name);
+        }
+        if (movements.get(position).size() > 2) {
+            mov3.setText(movements.get(position).get(2).move.name);
+        }
+        if (movements.get(position).size() > 3) {
+            mov4.setText(movements.get(position).get(3).move.name);
+        }
+
         if (model.getTypes().size()==2){
             int id = context.getResources().getIdentifier(model.getTypes().get(0).getType().getName(), "drawable", context.getPackageName());
             GlideApp.with(context).load(id).into((ImageView) dialog.findViewById(R.id.imgTipo1Modal));
@@ -202,6 +189,8 @@ class ModalComprarPokemon {
                                                                 Toast.makeText(context, "Ya tienes a este pokemon!", Toast.LENGTH_LONG).show();
                                                             } else {
                                                                 MercadoFragment.saldofuturo-= Integer.parseInt(etCoste.getText().toString());
+                                                                TextView futuro = view.findViewById(R.id.tvMoneyFuturaMercado);
+                                                                futuro.setText(String.valueOf(MercadoFragment.saldofuturo));
                                                                 db.collection("Pujas").document(pujasID).update("pujas", pujastemp);
                                                                 dialog.dismiss();
                                                             }

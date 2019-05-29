@@ -15,6 +15,8 @@ import android.widget.ImageView;
 import com.example.pokemonproject.GlideApp;
 import com.example.pokemonproject.R;
 import com.example.pokemonproject.model.Alineation;
+import com.example.pokemonproject.model.MovementFirebase;
+import com.example.pokemonproject.model.Moves;
 import com.example.pokemonproject.model.Partida;
 import com.example.pokemonproject.model.Team;
 import com.example.pokemonproject.model.UserGame;
@@ -23,8 +25,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static android.support.v7.widget.RecyclerView.VERTICAL;
 
@@ -38,6 +43,7 @@ public  class HomeFragment extends Fragment implements GameActivity.QueryChangeL
     private int numbergames;
     private String idLastGame;
     private ArrayList<String> listGames;
+    private ArrayList<List<Moves>> movimientos;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     View mView;
 
@@ -53,6 +59,7 @@ public  class HomeFragment extends Fragment implements GameActivity.QueryChangeL
         this.numbergames = numbergames;
         this.idLastGame = idLastGame;
         this.listGames = listGames;
+        this.movimientos = new ArrayList<>();
     }
 
     @Override
@@ -127,6 +134,39 @@ public  class HomeFragment extends Fragment implements GameActivity.QueryChangeL
                                         DocumentSnapshot documentSnapshot1 = task.getResult();
                                         team = documentSnapshot1.toObject(Team.class);
 
+                                        for (int i = 0; i < team.getEquipo().size(); i++) {
+                                            final int finalI = i;
+                                            for (int j = 0; j < team.getEquipo().get(i).getMoves().size(); j++) {
+                                                final int finalJ = j;
+                                                db.collection("Movimientos").whereEqualTo("id",team.getEquipo().get(i).getMoves().get(j).move.id).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                        if (task.isSuccessful()){
+                                                            for (QueryDocumentSnapshot snapshot: task.getResult()){
+                                                                MovementFirebase movementFirebase = snapshot.toObject(MovementFirebase.class);
+
+                                                                switch (finalJ){
+                                                                    case 0:
+                                                                        team.getEquipo().get(finalI).getMoves().get(finalJ).move.name = movementFirebase.name;
+                                                                        break;
+                                                                    case 1:
+                                                                        team.getEquipo().get(finalI).getMoves().get(finalJ).move.name = movementFirebase.name;
+                                                                        break;
+                                                                    case 2:
+                                                                        team.getEquipo().get(finalI).getMoves().get(finalJ).move.name = movementFirebase.name;
+                                                                        break;
+                                                                    case 3:
+                                                                        team.getEquipo().get(finalI).getMoves().get(finalJ).move.name = movementFirebase.name;
+                                                                        break;
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                });
+                                            }
+                                            movimientos.add(team.getEquipo().get(finalI).getMoves());
+                                        }
+
                                         RecyclerView recyclerView =  mView.findViewById(R.id.rvteamList);
                                         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
                                         DividerItemDecoration itemDecor = new DividerItemDecoration(mView.getContext(), VERTICAL);
@@ -190,7 +230,7 @@ public  class HomeFragment extends Fragment implements GameActivity.QueryChangeL
             @Override
             public void onClick(View v) {
                 if (team != null) {
-                    new ModalSelectTeam(gameActivity, team.getEquipo(), alineationID, 0, numbergames, idLastGame, listGames);
+                    new ModalSelectTeam(gameActivity, team.getEquipo(), alineationID, 0, numbergames, idLastGame, listGames, movimientos);
                 }
 
             }
@@ -200,7 +240,7 @@ public  class HomeFragment extends Fragment implements GameActivity.QueryChangeL
             @Override
             public void onClick(View v) {
                 if (team != null) {
-                    new ModalSelectTeam(gameActivity, team.getEquipo(), alineationID, 1, numbergames, idLastGame, listGames);
+                    new ModalSelectTeam(gameActivity, team.getEquipo(), alineationID, 1, numbergames, idLastGame, listGames, movimientos);
                 }
 
             }
@@ -210,7 +250,7 @@ public  class HomeFragment extends Fragment implements GameActivity.QueryChangeL
             @Override
             public void onClick(View v) {
                 if (team != null) {
-                    new ModalSelectTeam(gameActivity, team.getEquipo(), alineationID, 2, numbergames, idLastGame, listGames);
+                    new ModalSelectTeam(gameActivity, team.getEquipo(), alineationID, 2, numbergames, idLastGame, listGames, movimientos);
                 }
 
             }
@@ -220,7 +260,7 @@ public  class HomeFragment extends Fragment implements GameActivity.QueryChangeL
             @Override
             public void onClick(View v) {
                 if (team != null) {
-                    new ModalSelectTeam(gameActivity, team.getEquipo(), alineationID, 3, numbergames, idLastGame, listGames);
+                    new ModalSelectTeam(gameActivity, team.getEquipo(), alineationID, 3, numbergames, idLastGame, listGames, movimientos);
                 }
 
             }
@@ -230,7 +270,7 @@ public  class HomeFragment extends Fragment implements GameActivity.QueryChangeL
             @Override
             public void onClick(View v) {
                 if (team != null) {
-                    new ModalSelectTeam(gameActivity, team.getEquipo(), alineationID, 4, numbergames, idLastGame, listGames);
+                    new ModalSelectTeam(gameActivity, team.getEquipo(), alineationID, 4, numbergames, idLastGame, listGames, movimientos);
                 }
 
             }
@@ -240,7 +280,7 @@ public  class HomeFragment extends Fragment implements GameActivity.QueryChangeL
             @Override
             public void onClick(View v) {
                 if (team != null) {
-                    new ModalSelectTeam(gameActivity, team.getEquipo(), alineationID, 5, numbergames, idLastGame, listGames);
+                    new ModalSelectTeam(gameActivity, team.getEquipo(), alineationID, 5, numbergames, idLastGame, listGames, movimientos);
                 }
 
             }

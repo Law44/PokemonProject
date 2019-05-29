@@ -16,6 +16,7 @@ import com.example.pokemonproject.R;
 import com.example.pokemonproject.model.Alineation;
 import com.example.pokemonproject.model.GamesInfo;
 import com.example.pokemonproject.model.MovementFirebase;
+import com.example.pokemonproject.model.Moves;
 import com.example.pokemonproject.model.Pokemon;
 import com.example.pokemonproject.model.Username;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -27,6 +28,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class AlineationAdapter extends RecyclerView.Adapter<AlineationAdapter.AlineationViewHolder> {
 
@@ -37,11 +39,12 @@ public class AlineationAdapter extends RecyclerView.Adapter<AlineationAdapter.Al
     int numbergames;
     String idLastGame;
     ArrayList<String> listGames;
+    ArrayList<List<Moves>> movements;
     Dialog dialog;
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-    public AlineationAdapter(GameActivity context, String alineationID, int i, int numbergames, String idLastGame, ArrayList<String> listGames, Dialog dialog){
+    public AlineationAdapter(GameActivity context, String alineationID, int i, int numbergames, String idLastGame, ArrayList<String> listGames, Dialog dialog, ArrayList<List<Moves>> movements){
         this.context = context;
         this.alineationID = alineationID;
         this.alineationPos = i;
@@ -49,6 +52,7 @@ public class AlineationAdapter extends RecyclerView.Adapter<AlineationAdapter.Al
         this.idLastGame = idLastGame;
         this.listGames = listGames;
         this.dialog = dialog;
+        this.movements = movements;
     }
 
     @NonNull
@@ -61,6 +65,21 @@ public class AlineationAdapter extends RecyclerView.Adapter<AlineationAdapter.Al
     public void onBindViewHolder(@NonNull final AlineationAdapter.AlineationViewHolder viewHolder, final int i) {
         viewHolder.tvName.setText(pokemonsArrayList.get(i).getName());
         viewHolder.tvId.setText(String.valueOf(pokemonsArrayList.get(i).getId()));
+
+        if (movements.get(i).size() > 0) {
+            viewHolder.move1.setText(movements.get(i).get(0).move.name);
+        }
+        if (movements.get(i).size() > 1) {
+            viewHolder.move2.setText(movements.get(i).get(1).move.name);
+        }
+        if (movements.get(i).size() > 2) {
+            viewHolder.move3.setText(movements.get(i).get(2).move.name);
+        }
+        if (movements.get(i).size() > 3) {
+            viewHolder.move4.setText(movements.get(i).get(3).move.name);
+        }
+
+
 
         if (pokemonsArrayList.get(i).getTypes().size() == 2){
             int id =  viewHolder.tipo1.getContext().getResources().getIdentifier(pokemonsArrayList.get(i).getTypes().get(0).getType().getName(), "drawable",  viewHolder.tipo1.getContext().getPackageName());
@@ -142,36 +161,6 @@ public class AlineationAdapter extends RecyclerView.Adapter<AlineationAdapter.Al
 
             }
         });
-        for (int j = 0; j < pokemonsArrayList.get(i).getMoves().size(); j++) {
-            final int finalJ = j;
-            db.collection("Movimientos").whereEqualTo("id",pokemonsArrayList.get(i).getMoves().get(j).move.id).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if (task.isSuccessful()){
-                        for (QueryDocumentSnapshot snapshot: task.getResult()){
-                            MovementFirebase movementFirebase = snapshot.toObject(MovementFirebase.class);
-
-                            switch (finalJ){
-                                case 0:
-                                    viewHolder.move1.setText(movementFirebase.name);
-                                    break;
-                                case 1:
-                                    viewHolder.move2.setText(movementFirebase.name);
-                                    break;
-                                case 2:
-                                    viewHolder.move3.setText(movementFirebase.name);
-                                    break;
-                                case 3:
-                                    viewHolder.move4.setText(movementFirebase.name);
-                                    break;
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-
 
     }
 

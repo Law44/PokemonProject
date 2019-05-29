@@ -379,10 +379,13 @@ public class ServerActivity extends AppCompatActivity {
                                                                     if (task.isSuccessful()){
                                                                         final String idCombate = db.collection("Combates").document().getId();
 
-                                                                        DocumentSnapshot documentSnapshot = task.getResult();
-                                                                        alineation2 = documentSnapshot.toObject(Alineation.class);
+                                                                        DocumentSnapshot documentSnapshot2 = task.getResult();
+                                                                        alineation2 = documentSnapshot2.toObject(Alineation.class);
                                                                         partida.getUsers().get(finalI).getCombatesID().add(idCombate);
                                                                         partida.getUsers().get(finalJ).getCombatesID().add(idCombate);
+                                                                        Log.e("equipo", alineation1.getLista().get(0).getName());
+                                                                        Log.e("equipo", alineation2.getLista().get(0).getName());
+
                                                                         db.collection("Partidas").document(partida.getId()).set(partida);
                                                                         db.collection("Combates").whereEqualTo("idGame", partida.getId()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                                                             @Override

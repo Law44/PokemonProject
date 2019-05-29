@@ -12,6 +12,8 @@ import android.widget.TextView;
 import com.example.pokemonproject.GlideApp;
 import com.example.pokemonproject.R;
 import com.example.pokemonproject.model.GamesInfo;
+import com.example.pokemonproject.model.Movement;
+import com.example.pokemonproject.model.Moves;
 import com.example.pokemonproject.model.Pokemon;
 import com.example.pokemonproject.model.Team;
 import com.example.pokemonproject.model.Username;
@@ -23,6 +25,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class PujasAdapter extends RecyclerView.Adapter<PujasAdapter.PokemonViewHolder> {
@@ -38,10 +41,11 @@ public class PujasAdapter extends RecyclerView.Adapter<PujasAdapter.PokemonViewH
     Map<Integer, Integer> totalPujas;
     ArrayList<Integer> pujas;
     int money;
+    ArrayList<List<Moves>> movements;
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-    public PujasAdapter(GameActivity context, String lastgame, MercadoFragment mercadoFragment, Team team, Map<Integer, Integer> totalPujas, ArrayList<Integer> pujas){
+    public PujasAdapter(GameActivity context, String lastgame, MercadoFragment mercadoFragment, Team team, Map<Integer, Integer> totalPujas, ArrayList<Integer> pujas, ArrayList<List<Moves>> movements){
 
         this.context = context;
         this.lastgame = lastgame;
@@ -50,6 +54,7 @@ public class PujasAdapter extends RecyclerView.Adapter<PujasAdapter.PokemonViewH
         this.totalPujas = totalPujas;
         this.pujas = pujas;
         this.money = money;
+        this.movements = movements;
 
     }
 
@@ -134,7 +139,7 @@ public class PujasAdapter extends RecyclerView.Adapter<PujasAdapter.PokemonViewH
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    new ModalComprarPokemon(view.getContext(), model, mercadoFragment, lastgame, position, team, totalPujas, pujas, view);
+                    new ModalComprarPokemon(view.getContext(), model, mercadoFragment, lastgame, position, team, totalPujas, pujas, view, movements);
                 }
             });
 
