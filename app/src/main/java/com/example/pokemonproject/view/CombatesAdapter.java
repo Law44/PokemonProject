@@ -68,7 +68,7 @@ public class CombatesAdapter extends RecyclerView.Adapter<CombatesAdapter.Combat
 
     @Override
     public int getItemCount() {
-        return combateList.size();
+        return (combateList != null ? combateList.size() : 0);
     }
 
     class CombateViewHolder extends RecyclerView.ViewHolder {
