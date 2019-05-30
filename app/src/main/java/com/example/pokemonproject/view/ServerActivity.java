@@ -29,7 +29,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -139,7 +138,7 @@ public class ServerActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 estado.setText("Wait");
-                prepararCombates();
+                hacerCombate();
             }
         });
 
@@ -228,6 +227,194 @@ public class ServerActivity extends AppCompatActivity {
         subirEvoStone(a);
     }
 
+    private void hacerCombate() {
+        estado.setText("Wait");
+        db.collection("Partidas").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()){
+                    Iterator<QueryDocumentSnapshot> a = task.getResult().iterator();
+                    consultarCombates(a);
+                }
+
+            }
+        });
+    }
+
+    private void consultarCombates(Iterator<QueryDocumentSnapshot> a) {
+        if(!a.hasNext())return;
+        QueryDocumentSnapshot queryDocumentSnapshot = a.next();
+        final Partida partida = queryDocumentSnapshot.toObject(Partida.class);
+
+        if (partida.getUsers().size()> 0) {
+            if (partida.getUsers().get(0).getCombatesID().size() > 0) {
+                String combateId = partida.getUsers().get(0).getCombatesID().get(partida.getUsers().get(0).getCombatesID().size() - 1);
+                db.collection("Combates").document(combateId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            Combate combateSacarJornada = task.getResult().toObject(Combate.class);
+                            final int jornadaActual = combateSacarJornada.getJornada();
+                            db.collection("Combates").whereEqualTo("idGame",partida.getId()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        for (QueryDocumentSnapshot snapshot : task.getResult()) {
+                                            Combate combate = snapshot.toObject(Combate.class);
+                                            if (combate.getJornada() == jornadaActual) {
+                                                combate = lucharCombate(combate);
+                                                db.collection("Combates").document(snapshot.getId()).set(combate);
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    private Combate lucharCombate(Combate combate) {
+        Equipo izquierda = combate.getEquipo1();
+        Equipo derecha = combate.getEquipo2();
+
+        for (int i = 0; i < izquierda.getAlineacion().getLista().size(); i++) {
+            if (izquierda.getAlineacion().getLista().get(i)!= null && derecha.getAlineacion().getLista().get(i)!= null) {
+                Pokemon leftside = izquierda.getAlineacion().getLista().get(i);
+                Pokemon rightside = derecha.getAlineacion().getLista().get(i);
+                Pokemon atacante;
+                Pokemon defensor;
+                if (leftside.getStats().get(0).base_stat> rightside.getStats().get(0).base_stat){
+                    atacante = leftside;
+                    defensor = rightside;
+                }else {
+                    atacante = rightside;
+                    defensor = leftside;
+                }
+                pokemon1vs1(atacante,defensor);
+            }
+        }
+        return combate;
+    }
+
+    private void asignarPujasPiedras(){
+        estado.setText("Wait");
+        db.collection("Partidas").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()){
+                    Iterator<QueryDocumentSnapshot> a = task.getResult().iterator();
+                    consultarPartidasPiedras(a);
+                }
+
+            }
+        });
+    }
+
+    private void consultarPartidasPiedras(Iterator<QueryDocumentSnapshot> a){
+        if (!a.hasNext())return;
+        Map<Integer,String> idjugadores = new HashMap<>();
+        Map<Integer,Integer> pujas = new HashMap<>();
+
+        QueryDocumentSnapshot queryDocumentSnapshot = a.next();
+        idPujas = new ArrayList<>();
+        for (int i = 0; i<10;i++){
+            idjugadores.put(i,"");
+            pujas.put(i,0);
+        }
+        Partida partida = queryDocumentSnapshot.toObject(Partida.class);
+
+        consultarPujasPiedras(partida, 0,idjugadores,pujas);
+
+        consultarPartidasPiedras(a);
+    }
+
+    private void consultarPujasPiedras(final Partida partida, final int i, final Map<Integer, String> idjugadores, final Map<Integer, Integer> pujas) {
+
+        if(i>=partida.getUsers().size()) {
+            subirDatosPujasPiedras(partida,0,idjugadores,pujas);
+            return;
+        }
+
+        idPujas.add(partida.getUsers().get(i).getTeamID());
+        /**
+         * Cambia el nombre de la ruta de firestore
+         * Y el modelo de datos del task.getResult()
+         */
+        db.collection("").document(partida.getUsers().get(i).getPujasID()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()){
+                    Pujas listaPujas = new Pujas();
+                    listaPujas = task.getResult().toObject(Pujas.class);
+                    for (int j =0;j<listaPujas.getPujas().size();j++){
+                        if (pujas.get(j) < listaPujas.getPujas().get(j)){
+                            idjugadores.put(j,task.getResult().getId());
+                            pujas.put(j,listaPujas.getPujas().get(j));
+
+                        }
+                    }
+                    consultarPujas(partida, i+1, idjugadores, pujas);
+                    Pujas pujasAZero = new Pujas();
+                    db.collection("").document(partida.getUsers().get(i).getPujasID()).set(pujasAZero);
+                }
+            }
+        });
+
+    }
+
+    private void subirDatosPujasPiedras(final Partida partida, final int i, final Map<Integer, String> idjugadores, final Map<Integer, Integer> pujas) {
+        if (i>=idjugadores.size()){
+            /**
+             * refrescar mercado de piedras
+             */
+            estado.setText("Done");
+            return;
+        }
+        /**
+         * hay que cambiar el nombre de las rutas de firestore y las variables de modelo de datos
+         */
+        if (pujas.get(i)>0){
+            for (int j = 0; j < partida.getUsers().size(); j++) {
+                if (partida.getUsers().get(j).getPujasID().equals(idjugadores.get(i))){
+                    final String idTeamJugador = partida.getUsers().get(j).getTeamID();
+                    final int pokemonPos = i;
+                    final int posJugadorPartida = j;
+                    db.collection("Equipos").document(idTeamJugador).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                final Team team = task.getResult().toObject(Team.class);
+                                db.collection("Mercado").document(partida.getId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            ListaPujas mercado = task.getResult().toObject(ListaPujas.class);
+                                            team.getEquipo().add(mercado.getLista().get(pokemonPos));
+                                            db.collection("Equipos").document(idTeamJugador).update("equipo", team.getEquipo());
+
+                                            partida.getUsers().get(posJugadorPartida).setMoney(partida.getUsers().get(posJugadorPartida).getMoney()-pujas.get(i));
+                                            db.collection("Partidas").document(partida.getId()).set(partida);
+
+
+                                            subirDatos(partida,i+1,idjugadores,pujas);
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+            }
+
+        }else subirDatos(partida,i+1,idjugadores,pujas);
+
+    }
+
+
     private void asignarPujas() {
 
         estado.setText("Wait");
@@ -276,10 +463,7 @@ public class ServerActivity extends AppCompatActivity {
             estado.setText("Done");
             return;
         }
-        Log.e("ListaPujas",String.valueOf(i)+"   "+String.valueOf(idjugadores.size()));
         if (pujas.get(i)>0){
-            final String idPujaJugador = idjugadores.get(i);
-
             for (int j = 0; j < partida.getUsers().size(); j++) {
                 if (partida.getUsers().get(j).getPujasID().equals(idjugadores.get(i))){
                     final String idTeamJugador = partida.getUsers().get(j).getTeamID();
@@ -349,24 +533,24 @@ public class ServerActivity extends AppCompatActivity {
 
     private void refrescarMercado() {
 
-        db.collection("Partidas").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()){
-                    int i =0;
-                    for (QueryDocumentSnapshot snapshot: task.getResult()) {
-                        ListaPujas lista = new ListaPujas();
-                        List<Pokemon> listaMercado = hacerListaMercado();
-                        lista.setLista((ArrayList<Pokemon>) listaMercado);
+            db.collection("Partidas").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        int i = 0;
+                        for (QueryDocumentSnapshot snapshot : task.getResult()) {
+                            ListaPujas lista = new ListaPujas();
+                            List<Pokemon> listaMercado = hacerListaMercado();
+                            lista.setLista((ArrayList<Pokemon>) listaMercado);
 
-                        db.collection("Mercado").document(snapshot.getId()).set(lista);
+                            db.collection("Mercado").document(snapshot.getId()).set(lista);
 
+                        }
+                        estado.setText("Ready");
                     }
-                    estado.setText("Ready");
                 }
-            }
-        });
-    }
+            });
+        }
 
     private void refrescarMercadPiedras() {
 
@@ -436,12 +620,40 @@ public class ServerActivity extends AppCompatActivity {
         });
     }
 
+
+    private void pokemon1vs1(Pokemon atacante, Pokemon defensor) {
+        Random random = new Random();
+        int idMovAtk = atacante.getMoves().get(random.nextInt(atacante.getMoves().size())).move.id;
+        int danoAtk = movementList.get(idMovAtk).power;
+        double stab = 1;
+        for (int i = 0; i < atacante.getTypes().size(); i++) {
+            if (atacante.getTypes().get(i).getType().getName().equals(movementList.get(idMovAtk).type)){
+                stab = 1.5;
+            }
+        }
+        int statAtk = atacante.getStats().get(2).base_stat;
+        int statDef = defensor.getStats().get(1).base_stat;
+        int variable = random.nextInt(17)+84;
+
+        int dano = (int) (0.01*variable*((11*statAtk*danoAtk)/(25*statDef))*stab);
+        defensor.setLife(defensor.getLife()-dano);
+
+
+        if (atacante.getLife()>0 && defensor.getLife()>0){
+            pokemon1vs1(defensor,atacante);
+        }else {
+            defensor.setLife(0);
+        }
+    }
+
+
     private List<Pokemon> hacerListaMercado() {
         int cantidad = 0;
         Random random = new Random();
         int[] idCogidos = new int[10];
+        boolean igualdad = false;
         do {
-
+            igualdad = false;
             for (int i = 0; i < idCogidos.length; i++) {
                 idCogidos[i] = random.nextInt(151);
             }
@@ -449,7 +661,14 @@ public class ServerActivity extends AppCompatActivity {
             for (int i = 0; i < idCogidos.length; i++) {
                 cantidad += pkemonList.get(idCogidos[i]).getPrice();
             }
-        }while (cantidad>18000);
+            for (int i = 0; i < idCogidos.length; i++) {
+                for (int j = idCogidos.length-1; j >i ; j--) {
+                    if (idCogidos[i]==idCogidos[j]){
+                        igualdad= true;
+                    }
+                }
+            }
+        }while (cantidad>18000 || igualdad);
         List<Pokemon> listaMercado = new ArrayList<>();
         List<MovementFirebase> listaTemp = new ArrayList<>();
         for (int i = 0; i <10 ; i++) {
@@ -483,95 +702,92 @@ public class ServerActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()){
-                    for (QueryDocumentSnapshot snapshot : task.getResult()){
-                        partidas.add(snapshot.getId());
-                    }
+                    Iterator<QueryDocumentSnapshot> a = task.getResult().iterator();
 
-                    for (int i = 0; i < partidas.size(); i++) {
-                        calculojornada = false;
-                        jornada = 0;
-                        db.collection("Partidas").document(partidas.get(i)).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if (task.isSuccessful()){
-                                    DocumentSnapshot snapshot = task.getResult();
-                                        partida = snapshot.toObject(Partida.class);
-                                        for (int i = partida.getUsers().size()-1; i > 0; i--) {
-                                            for (int j = 0; j < i; j++) {
-                                                final int finalJ = j;
-                                                final int finalI = i;
-                                                db.collection("Alineaciones").document(partida.getUsers().get(i).getAlineationID()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                        if (task.isSuccessful()){
-                                                            DocumentSnapshot documentSnapshot = task.getResult();
-                                                            alineation1 = documentSnapshot.toObject(Alineation.class);
-                                                            db.collection("Alineaciones").document(partida.getUsers().get(finalJ).getAlineationID()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                                @Override
-                                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                                    if (task.isSuccessful()){
-                                                                        final String idCombate = db.collection("Combates").document().getId();
-
-                                                                        DocumentSnapshot documentSnapshot2 = task.getResult();
-                                                                        alineation2 = documentSnapshot2.toObject(Alineation.class);
-                                                                        partida.getUsers().get(finalI).getCombatesID().add(idCombate);
-                                                                        partida.getUsers().get(finalJ).getCombatesID().add(idCombate);
-                                                                        Log.e("equipo", alineation1.getLista().get(0).getName());
-                                                                        Log.e("equipo", alineation2.getLista().get(0).getName());
-
-                                                                        db.collection("Partidas").document(partida.getId()).set(partida);
-                                                                        db.collection("Combates").whereEqualTo("idGame", partida.getId()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                                            @Override
-                                                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                                                if (task.isSuccessful()){
-                                                                                    for (QueryDocumentSnapshot snapshot : task.getResult()) {
-                                                                                        Combate combate = snapshot.toObject(Combate.class);
-                                                                                        if (combate.getJornada() > jornada && !calculojornada) {
-                                                                                            jornada = combate.getJornada();
-                                                                                        }
-                                                                                    }
-                                                                                    if (!calculojornada) {
-                                                                                        calculojornada = true;
-                                                                                        jornada++;
-                                                                                    }
-                                                                                    Equipo equipo1 = new Equipo(partida.getUsers().get(finalI).getUser().getUsername(), partida.getUsers().get(finalI).getUser().getEmail(), alineation1, partida.getUsers().get(finalI).getUser().getImgurl());
-                                                                                    Equipo equipo2 = new Equipo(partida.getUsers().get(finalJ).getUser().getUsername(), partida.getUsers().get(finalJ).getUser().getEmail(), alineation2, partida.getUsers().get(finalJ).getUser().getImgurl());
-                                                                                    Combate nextCombate = new Combate(equipo1, equipo2, jornada, partida.getId());
-                                                                                    db.collection("Combates").document(idCombate).set(nextCombate);
-                                                                                }
-                                                                                else {
-                                                                                    Equipo equipo1 = new Equipo(partida.getUsers().get(finalI).getUser().getUsername(), partida.getUsers().get(finalI).getUser().getEmail(), alineation1, partida.getUsers().get(finalI).getUser().getImgurl());
-                                                                                    Equipo equipo2 = new Equipo(partida.getUsers().get(finalJ).getUser().getUsername(), partida.getUsers().get(finalJ).getUser().getEmail(), alineation2, partida.getUsers().get(finalJ).getUser().getImgurl());
-                                                                                    Combate combate = new Combate(equipo1, equipo2, 1, partida.getId());
-                                                                                    db.collection("Combates").document(idCombate).set(combate);
-                                                                                }
-                                                                            }
-
-
-                                                                        });
-
-
-
-                                                                    }
-                                                                }
-                                                            });
-                                                        }
-                                                    }
-                                                });
-                                            }
-                                        }
-
-                                }
-                            }
-                        });
-                    }
-                    estado.setText("Ready");
-
+                    sacarPartidaParaCombate(a,0);
                 }
             }
         });
 
 
+    }
+
+    private void sacarPartidaParaCombate(final Iterator<QueryDocumentSnapshot> a, final int i) {
+        if (!a.hasNext())return;
+
+        calculojornada = false;
+        jornada = 0;
+        QueryDocumentSnapshot snapshot = a.next();
+
+        db.collection("Partidas").document(snapshot.getId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()){
+                    DocumentSnapshot snapshot = task.getResult();
+                    partida = snapshot.toObject(Partida.class);
+                    sacarAlineacion(partida,0,partida.getUsers().size()-1,0);
+                }
+                sacarPartidaParaCombate(a,i+1);
+            }
+        });
+    }
+
+    private void sacarAlineacion(final Partida partida, final int primerJugador, final int segundoJguador, int limite) {
+        if (segundoJguador<=primerJugador){
+            limite++;
+            if (limite>=partida.getUsers().size()-1){
+                estado.setText("Ready");
+            }else {
+                sacarAlineacion(partida, limite, partida.getUsers().size() - 1, limite);
+            }
+        }else {
+            final int finalLimite = limite;
+            db.collection("Alineaciones").document(partida.getUsers().get(primerJugador).getAlineationID()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot documentSnapshot = task.getResult();
+                        alineation1 = documentSnapshot.toObject(Alineation.class);
+                        db.collection("Alineaciones").document(partida.getUsers().get(segundoJguador).getAlineationID()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    final String idCombate = db.collection("Combates").document().getId();
+
+                                    DocumentSnapshot documentSnapshot = task.getResult();
+                                    alineation2 = documentSnapshot.toObject(Alineation.class);
+                                    partida.getUsers().get(primerJugador).getCombatesID().add(idCombate);
+                                    partida.getUsers().get(segundoJguador).getCombatesID().add(idCombate);
+                                    db.collection("Partidas").document(partida.getId()).set(partida);
+                                    db.collection("Combates").whereEqualTo("idGame", partida.getId()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                            if (task.isSuccessful()) {
+                                                for (QueryDocumentSnapshot snapshot : task.getResult()) {
+                                                    Combate combate = snapshot.toObject(Combate.class);
+                                                    if (combate.getJornada() > jornada && !calculojornada) {
+                                                        jornada = combate.getJornada();
+                                                    }
+                                                }
+                                                if (!calculojornada) {
+                                                    calculojornada = true;
+                                                    jornada++;
+                                                }
+                                                Equipo equipo1 = new Equipo(partida.getUsers().get(primerJugador).getUser().getUsername(), partida.getUsers().get(primerJugador).getUser().getEmail(), alineation1, partida.getUsers().get(primerJugador).getUser().getImgurl());
+                                                Equipo equipo2 = new Equipo(partida.getUsers().get(segundoJguador).getUser().getUsername(), partida.getUsers().get(segundoJguador).getUser().getEmail(), alineation2, partida.getUsers().get(segundoJguador).getUser().getImgurl());
+                                                Combate nextCombate = new Combate(equipo1, equipo2, jornada, partida.getId());
+                                                db.collection("Combates").document(idCombate).set(nextCombate);
+                                                sacarAlineacion(partida, primerJugador, segundoJguador - 1, finalLimite);
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+        }
     }
 
     public void readApi(){
@@ -1382,23 +1598,23 @@ public class ServerActivity extends AppCompatActivity {
         estado.setText("Ready");
     }
 
-    public void readApiMovements(){
-        for (int i = 1; i < 729; i++) {
-            pokemonApi.getMovement(i).enqueue(new Callback<Movement>() {
-                @Override
-                public void onResponse(Call<Movement> call, final Response<Movement> response) {
-                    executor2.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (response.body() != null) {
+    public void readApiMovements() {
+            for (int i = 1; i < 729; i++) {
+                pokemonApi.getMovement(i).enqueue(new Callback<Movement>() {
+                    @Override
+                    public void onResponse(Call<Movement> call, final Response<Movement> response) {
+                        executor2.execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (response.body() != null) {
                                     Movement movement = new Movement(response.body().id, response.body().name, response.body().names, response.body().power, response.body().pp, response.body().accuracy, response.body().priority, response.body().type, response.body().getDamage_class());
                                     String nombre = "";
                                     for (int j = 0; j < movement.getNames().size(); j++) {
-                                        if (movement.getNames().get(j).language.name.equals("es")){
+                                        if (movement.getNames().get(j).language.name.equals("es")) {
                                             nombre = movement.getNames().get(j).name;
                                         }
                                     }
-                                    if (response.body().power == null){
+                                    if (response.body().power == null) {
                                         movement.power = "0";
                                     }
                                     MovementFirebase movementFirebase = new MovementFirebase(movement.getId(), movement.getAccuracy(), Integer.parseInt(movement.getPower()), movement.getPp(), movement.getPriority(), movement.getType().getName(), nombre, movement.getDamage_class().name);
@@ -1406,17 +1622,19 @@ public class ServerActivity extends AppCompatActivity {
                                             .add(movementFirebase);
 
 
+                                }
                             }
-                        }
-                    });
-                }
+                        });
+                    }
 
-                @Override
-                public void onFailure(Call<Movement> call, Throwable t) {
-                    Log.e("ERROR", t.getMessage());
-                }
-            });
+                    @Override
+                    public void onFailure(Call<Movement> call, Throwable t) {
+                        Log.e("ERROR", t.getMessage());
+                    }
+                });
+            }
+            estado.setText("Ready");
+
         }
-        estado.setText("Ready");
-    }
 }
+

@@ -4,25 +4,97 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.pokemonproject.R;
+import com.example.pokemonproject.model.Combate;
+import com.example.pokemonproject.model.Partida;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
-public class JornadaFragment extends Fragment implements GameActivity.QueryChangeListener {
+import java.util.ArrayList;
+import java.util.List;
 
+import static android.support.v7.widget.RecyclerView.VERTICAL;
+
+public class JornadaFragment extends Fragment {
+    private String idPartida ="";
+    List<Combate> combateList;
     View mView;
-
+    FirebaseFirestore db;
+    private RecyclerView recyclerView;
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable final Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_jornada, container, false);
+        db = FirebaseFirestore.getInstance();
+        combateList = new ArrayList<>();
+
+        db.collection("Partidas").document(idPartida).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()){
+                    Partida partida = task.getResult().toObject(Partida.class);
+
+                    for (int i =0;i<partida.getUsers().size(); i++) {
+                        if (partida.getUsers().get(i).getUser().getEmail().equals(FirebaseAuth.getInstance().getCurrentUser().getEmail())) {
+                            if (partida.getUsers().get(i).getCombatesID().size() > 0) {
+                                final String combateId = partida.getUsers().get(i).getCombatesID().get(partida.getUsers().get(i).getCombatesID().size() - 1);
+                                db.collection("Combates").document(combateId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            Combate combateSacarJornada = task.getResult().toObject(Combate.class);
+//                                        if (combateSacarJornada==null)return;
+                                            final int jornadaActual = combateSacarJornada.getJornada();
+                                            db.collection("Combates").whereEqualTo("idGame", idPartida).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                    if (task.isSuccessful()) {
+                                                        for (QueryDocumentSnapshot snapshot : task.getResult()) {
+                                                            Combate combate = snapshot.toObject(Combate.class);
+                                                            if (combate.getJornada() == jornadaActual) {
+                                                                combateList.add(combate);
+                                                            }
+                                                        }
+                                                        Log.e("Combates", "" + combateList.size());
+                                                        CombatesAdapter combatesAdapter = new CombatesAdapter(combateList);
+                                                        recyclerView = mView.findViewById(R.id.rvMercadoPokemon);
+                                                        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                                                        DividerItemDecoration itemDecor = new DividerItemDecoration(mView.getContext(), VERTICAL);
+                                                        recyclerView.addItemDecoration(itemDecor);
+                                                        recyclerView.setAdapter(combatesAdapter);
+
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    }
+                                });
+
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+
         return mView;
     }
 
-    @Override
-    public void onQueryChange(String query) {
-
+    public void setIdLastPartida(String id) {
+        this.idPartida = id;
     }
 }
