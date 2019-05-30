@@ -18,6 +18,7 @@ import com.example.pokemonproject.R;
 import com.example.pokemonproject.model.Alineation;
 import com.example.pokemonproject.model.ListaPujas;
 import com.example.pokemonproject.model.Partida;
+import com.example.pokemonproject.model.PiedrasUser;
 import com.example.pokemonproject.model.Pokemon;
 import com.example.pokemonproject.model.Pujas;
 import com.example.pokemonproject.model.PujasPiedras;
@@ -41,7 +42,7 @@ public class NewLeagueActivity extends AppCompatActivity {
     EditText etGameName, etTeamName;
 
     Username creator;
-    String idUser, teamID, pujasID, alineationID, pujasPiedrasID;
+    String idUser, teamID, pujasID, alineationID, pujasPiedrasID, piedrasID;
     String games;
     String lastGame;
     ArrayList<String> listGame;
@@ -103,13 +104,16 @@ public class NewLeagueActivity extends AppCompatActivity {
                 pujasID = db.collection("Pujas").document().getId();
                 alineationID = db.collection("Alineaciones").document().getId();
                 pujasPiedrasID = db.collection("PujasPiedras").document().getId();
+                piedrasID = db.collection("PiedrasUser").document().getId();
+                PiedrasUser piedrasUser = new PiedrasUser();
+                db.collection("PiedrasUser").document(piedrasID).set(piedrasUser);
                 PujasPiedras pujasPiedras = new PujasPiedras();
                 db.collection("PujasPiedras").document(pujasPiedrasID).set(pujasPiedras);
                 Alineation alineation = new Alineation();
                 db.collection("Alineaciones").document(alineationID).set(alineation);
                 Pujas pujas = new Pujas();
                 db.collection("Pujas").document(pujasID).set(pujas);
-                usergames.add(new UserGame(creator, etTeamName.getText().toString(), 0, teamID, Integer.parseInt(spinner.getSelectedItem().toString()), pujasID, alineationID, pujasPiedrasID));
+                usergames.add(new UserGame(creator, etTeamName.getText().toString(), 0, teamID, Integer.parseInt(spinner.getSelectedItem().toString()), pujasID, alineationID, pujasPiedrasID, piedrasID));
                 Team equipo = new Team();
                 db.collection("Equipos").document(teamID).set(equipo);
                 String id = db.collection("Partidas").document().getId();

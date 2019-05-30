@@ -15,12 +15,13 @@ public class UserGame {
     private String alineationID;
     private ArrayList<String> combatesID;
     private String pujasPiedras;
+    private String objetosID;
 
     public UserGame(){
 
     }
 
-    public UserGame(Username user, String teamName, int points, String teamID, int money, String pujasID, String alineationID, String pujasPiedras) {
+    public UserGame(Username user, String teamName, int points, String teamID, int money, String pujasID, String alineationID, String pujasPiedras, String objetosID) {
         this.user = user;
         this.teamName = teamName;
         this.points = points;
@@ -30,6 +31,7 @@ public class UserGame {
         this.alineationID = alineationID;
         this.combatesID = new ArrayList<>();
         this.pujasPiedras = pujasPiedras;
+        this.objetosID = objetosID;
     }
 
     public String getPujasPiedras() {
@@ -38,6 +40,14 @@ public class UserGame {
 
     public void setPujasPiedras(String pujasPiedras) {
         this.pujasPiedras = pujasPiedras;
+    }
+
+    public String getObjetosID() {
+        return objetosID;
+    }
+
+    public void setObjetosID(String objetosID) {
+        this.objetosID = objetosID;
     }
 
     public ArrayList<String> getCombatesID() {
