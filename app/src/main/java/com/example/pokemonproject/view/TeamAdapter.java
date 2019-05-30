@@ -69,6 +69,13 @@ public class TeamAdapter extends RecyclerView.Adapter<TeamAdapter.TeamViewHolder
                 .circleCrop()
                 .into((ImageView) viewHolder.itemView.findViewById(R.id.imgPokemonImageList));
 
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new ModalEvolution(context, pokemonsArrayList.get(i));
+            }
+        });
+
 
     }
 
