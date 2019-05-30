@@ -41,23 +41,21 @@ public  class HomeFragment extends Fragment implements GameActivity.QueryChangeL
     private Team team;
     private Alineation alineation;
     private int numbergames;
-    private String idLastGame;
+
     private ArrayList<String> listGames;
     private ArrayList<List<Moves>> movimientos;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     View mView;
 
 
-    public HomeFragment(){
 
+    public HomeFragment() {
     }
 
-    @SuppressLint("ValidFragment")
-    public HomeFragment(GameActivity gameActivity, String id, int numbergames, String idLastGame, ArrayList<String> listGames) {
+    public void setInfo(GameActivity gameActivity, String id, int numbergames, ArrayList<String> listGames){
         this.gameActivity = gameActivity;
         this.idGame = id;
         this.numbergames = numbergames;
-        this.idLastGame = idLastGame;
         this.listGames = listGames;
         this.movimientos = new ArrayList<>();
     }
@@ -230,7 +228,7 @@ public  class HomeFragment extends Fragment implements GameActivity.QueryChangeL
             @Override
             public void onClick(View v) {
                 if (team != null) {
-                    new ModalSelectTeam(gameActivity, team.getEquipo(), alineationID, 0, numbergames, idLastGame, listGames, movimientos);
+                    new ModalSelectTeam(gameActivity, team.getEquipo(), alineationID, 0, numbergames, idGame, listGames, movimientos);
                 }
 
             }
@@ -240,7 +238,7 @@ public  class HomeFragment extends Fragment implements GameActivity.QueryChangeL
             @Override
             public void onClick(View v) {
                 if (team != null) {
-                    new ModalSelectTeam(gameActivity, team.getEquipo(), alineationID, 1, numbergames, idLastGame, listGames, movimientos);
+                    new ModalSelectTeam(gameActivity, team.getEquipo(), alineationID, 1, numbergames, idGame, listGames, movimientos);
                 }
 
             }
@@ -250,7 +248,7 @@ public  class HomeFragment extends Fragment implements GameActivity.QueryChangeL
             @Override
             public void onClick(View v) {
                 if (team != null) {
-                    new ModalSelectTeam(gameActivity, team.getEquipo(), alineationID, 2, numbergames, idLastGame, listGames, movimientos);
+                    new ModalSelectTeam(gameActivity, team.getEquipo(), alineationID, 2, numbergames, idGame, listGames, movimientos);
                 }
 
             }
@@ -260,7 +258,7 @@ public  class HomeFragment extends Fragment implements GameActivity.QueryChangeL
             @Override
             public void onClick(View v) {
                 if (team != null) {
-                    new ModalSelectTeam(gameActivity, team.getEquipo(), alineationID, 3, numbergames, idLastGame, listGames, movimientos);
+                    new ModalSelectTeam(gameActivity, team.getEquipo(), alineationID, 3, numbergames, idGame, listGames, movimientos);
                 }
 
             }
@@ -270,7 +268,7 @@ public  class HomeFragment extends Fragment implements GameActivity.QueryChangeL
             @Override
             public void onClick(View v) {
                 if (team != null) {
-                    new ModalSelectTeam(gameActivity, team.getEquipo(), alineationID, 4, numbergames, idLastGame, listGames, movimientos);
+                    new ModalSelectTeam(gameActivity, team.getEquipo(), alineationID, 4, numbergames, idGame, listGames, movimientos);
                 }
 
             }
@@ -280,7 +278,7 @@ public  class HomeFragment extends Fragment implements GameActivity.QueryChangeL
             @Override
             public void onClick(View v) {
                 if (team != null) {
-                    new ModalSelectTeam(gameActivity, team.getEquipo(), alineationID, 5, numbergames, idLastGame, listGames, movimientos);
+                    new ModalSelectTeam(gameActivity, team.getEquipo(), alineationID, 5, numbergames, idGame, listGames, movimientos);
                 }
 
             }

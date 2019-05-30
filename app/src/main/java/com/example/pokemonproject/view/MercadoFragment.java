@@ -60,7 +60,9 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
     ArrayList<List<Moves>> movimientos;
     TextView tvMoneyMercado, tvMoneyFuturaMercado;
 
-    public MercadoFragment(GameActivity context, String id) {
+    public MercadoFragment() {
+    }
+    public void setInfo(GameActivity context, String id){
         lastgame = id;
         this.context = context;
         this.totalPujas = new HashMap<>();
@@ -68,10 +70,7 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
             totalPujas.put(i,0);
         }
         this.movimientos = new ArrayList<>();
-
-
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
