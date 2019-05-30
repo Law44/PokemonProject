@@ -1,7 +1,6 @@
 package com.example.pokemonproject.view;
 
 import android.annotation.SuppressLint;
-import android.arch.paging.PagedList;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -12,25 +11,25 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.example.pokemonproject.GlideApp;
 import com.example.pokemonproject.R;
 import com.example.pokemonproject.model.ListaPujas;
+import com.example.pokemonproject.model.ListaPujasPiedras;
 import com.example.pokemonproject.model.MovementFirebase;
 import com.example.pokemonproject.model.Moves;
 import com.example.pokemonproject.model.Partida;
+import com.example.pokemonproject.model.PiedrasEvoUser;
 import com.example.pokemonproject.model.Pokemon;
-import com.example.pokemonproject.model.Pujas;
 import com.example.pokemonproject.model.Team;
-import com.firebase.ui.firestore.paging.FirestorePagingAdapter;
 import com.firebase.ui.firestore.paging.FirestorePagingOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -48,11 +47,12 @@ import static android.support.v7.widget.RecyclerView.VERTICAL;
 public class MercadoFragment extends Fragment implements GameActivity.QueryChangeListener {
     private Query query;
     private FirestorePagingOptions<Pokemon> options;
-    private RecyclerView recyclerView;
+    private RecyclerView recyclerViewPokemon, recyclerViewObjetos;
     String lastgame, teamID, pujasID;
     GameActivity context;
     Team team;
     ArrayList<Pokemon> listaPokemon;
+    ArrayList<PiedrasEvoUser> piedrasEvo;
     ArrayList<Integer> pujas;
     Map<Integer, Integer> totalPujas;
     int money;
@@ -72,25 +72,58 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
 
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              final Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View mView = inflater.inflate(R.layout.fragment_mercado, container, false);
+        final View mView = inflater.inflate(R.layout.fragment_mercado, container, false);
 
         tvMoneyMercado = mView.findViewById(R.id.tvMoneyMercado);
         tvMoneyFuturaMercado = mView.findViewById(R.id.tvMoneyFuturaMercado);
 
-        recyclerView = mView.findViewById(R.id.rvMercadoPokemon);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerViewPokemon = mView.findViewById(R.id.rvMercadoPokemon);
+        recyclerViewPokemon.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        recyclerViewObjetos = mView.findViewById(R.id.rvMercadoObjetos);
+        recyclerViewObjetos.setLayoutManager(new LinearLayoutManager(getActivity()));
+
         ImageView dolar1 = mView.findViewById(R.id.imgPokedolarPartida1);
         GlideApp.with(this).load(R.drawable.pokemondollar).into(dolar1);
 
         ImageView dolar2 = mView.findViewById(R.id.imgPokedolarPartida2);
         GlideApp.with(this).load(R.drawable.pokemondollar).into(dolar2);
 
+        RadioButton pokemon = mView.findViewById(R.id.pokemon);
+
+        pokemon.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    recyclerViewObjetos.setVisibility(View.INVISIBLE);
+                    recyclerViewPokemon.setVisibility(View.VISIBLE);
+                    PujasAdapter pujasAdapter = new PujasAdapter(context, lastgame, MercadoFragment.this, team, totalPujas, pujas, movimientos);
+                    pujasAdapter.setPokemonPujas(listaPokemon);
+
+                    recyclerViewPokemon.setAdapter(pujasAdapter);
+
+                }
+                else {
+                    recyclerViewPokemon.setVisibility(View.INVISIBLE);
+                    recyclerViewObjetos.setVisibility(View.VISIBLE);
+                    PujasAdapterPiedras pujasAdapterPiedras = new PujasAdapterPiedras(context, lastgame, MercadoFragment.this, team, totalPujas, pujas, movimientos);
+                    pujasAdapterPiedras.setPokemonPujas(piedrasEvo);
+
+                    recyclerViewPokemon.setAdapter(pujasAdapterPiedras);
+
+
+                }
+            }
+        });
+
+
         DividerItemDecoration itemDecor = new DividerItemDecoration(mView.getContext(), VERTICAL);
-        recyclerView.addItemDecoration(itemDecor);
+        recyclerViewPokemon.addItemDecoration(itemDecor);
         final FirebaseFirestore rootRef = FirebaseFirestore.getInstance();
         query = rootRef.collection("Mercado").whereEqualTo("id", lastgame);
         rootRef.collection("Mercado")
@@ -187,10 +220,23 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
 
                                                                     }
 
+                                                                    rootRef.collection("PiedrasMercado").document(lastgame).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                                        @Override
+                                                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                                            if (task.isSuccessful()){
+                                                                                DocumentSnapshot documentSnapshot = task.getResult();
+                                                                                ListaPujasPiedras listaPujasPiedras = documentSnapshot.toObject(ListaPujasPiedras.class);
+                                                                                if (listaPujasPiedras != null) {
+                                                                                    piedrasEvo = listaPujasPiedras.getLista();
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    });
+
                                                                     PujasAdapter pujasAdapter = new PujasAdapter(context, lastgame, MercadoFragment.this, team, totalPujas, pujas, movimientos);
                                                                     pujasAdapter.setPokemonPujas(listaPokemon);
 
-                                                                    recyclerView.setAdapter(pujasAdapter);
+                                                                    recyclerViewPokemon.setAdapter(pujasAdapter);
                                                                 }
                                                             }
                                                         });

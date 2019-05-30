@@ -89,6 +89,18 @@
         app:layout_constraintTop_toBottomOf="@+id/Combates" />
 
         <Button
+            android:id="@+id/MercadoPiedras"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="8dp"
+            android:text="Refrescar Mercado Piedras"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/Mercado" />
+
+        <Button
             android:id="@+id/listapokemon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -98,7 +110,7 @@
             android:text="Crear Lista Pokemon"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/Mercado" />
+            app:layout_constraintTop_toBottomOf="@+id/MercadoPiedras" />
 
         <Button
             android:id="@+id/listamovimientos"

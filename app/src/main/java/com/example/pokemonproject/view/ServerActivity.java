@@ -15,11 +15,13 @@ import com.example.pokemonproject.model.Alineation;
 import com.example.pokemonproject.model.Combate;
 import com.example.pokemonproject.model.Equipo;
 import com.example.pokemonproject.model.ListaPujas;
+import com.example.pokemonproject.model.ListaPujasPiedras;
 import com.example.pokemonproject.model.Movement;
 import com.example.pokemonproject.model.MovementFirebase;
 import com.example.pokemonproject.model.Partida;
 import com.example.pokemonproject.model.PiedraEvo;
 import com.example.pokemonproject.model.PiedrasEvoFirebase;
+import com.example.pokemonproject.model.PiedrasEvoUser;
 import com.example.pokemonproject.model.Pokemon;
 import com.example.pokemonproject.model.Pujas;
 import com.example.pokemonproject.model.Team;
@@ -59,6 +61,9 @@ public class ServerActivity extends AppCompatActivity {
     int jornada = 0;
     boolean calculojornada;
     ArrayList<PiedrasEvoFirebase> listaPiedras;
+    ArrayList<PiedrasEvoUser> listaPiedrasMercado;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +75,7 @@ public class ServerActivity extends AppCompatActivity {
         movementList = new ArrayList<>();
         pokemonApi = PokemonModule.getAPI();
         listaPiedras = new ArrayList<>();
+        listaPiedrasMercado = new ArrayList<>();
 
         Button btnCombates = findViewById(R.id.Combates);
         Button btnRefrescarMercado = findViewById(R.id.Mercado);
@@ -80,6 +86,7 @@ public class ServerActivity extends AppCompatActivity {
         Button btnLoadPokemon = findViewById(R.id.loadPokemon);
         Button btnLoadMovement = findViewById(R.id.loadMovement);
         Button btnListaPiedrasEvo = findViewById(R.id.listapiedrasevo);
+        Button btnRefrescarMercadoPiedras = findViewById(R.id.MercadoPiedras);
 
         btnLoadPokemon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -143,6 +150,14 @@ public class ServerActivity extends AppCompatActivity {
                 refrescarMercado();
             }
         });
+        btnRefrescarMercadoPiedras.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                estado.setText("Wait");
+                refrescarMercadPiedras();
+            }
+        });
+
         btnPujas.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -348,6 +363,74 @@ public class ServerActivity extends AppCompatActivity {
 
                     }
                     estado.setText("Ready");
+                }
+            }
+        });
+    }
+
+    private void refrescarMercadPiedras() {
+
+        db.collection("Partidas").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()){
+                    for (QueryDocumentSnapshot snapshot: task.getResult()) {
+                        hacerListaPiedras(snapshot.getId());
+
+                    }
+                }
+            }
+        });
+    }
+
+    private void hacerListaPiedras(final String id){
+        final Random random = new Random();
+        final ArrayList<String> totalIDS = new ArrayList<>();
+        final ArrayList<String> idsFinales = new ArrayList<>();
+        listaPiedrasMercado = new ArrayList<>();
+
+
+        db.collection("PiedrasEvolucion").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()){
+                        for (QueryDocumentSnapshot snapshot: task.getResult()){
+                            totalIDS.add(snapshot.getId());
+                        }
+
+                        for (int i = 0; i < 10; i++) {
+                            int position = random.nextInt(totalIDS.size());
+                            idsFinales.add(totalIDS.get(position));
+                        }
+
+                        randomPiedras(idsFinales, 0, id);
+
+                    }
+            }
+        });
+    }
+
+    private void randomPiedras(final ArrayList<String> idsFinales, final int i, final String id) {
+        final Random random = new Random();
+
+        if (i == idsFinales.size()){
+            ListaPujasPiedras lista = new ListaPujasPiedras();
+            lista.setLista(listaPiedrasMercado);
+            db.collection("PiedrasMercado").document(id).set(lista);
+            estado.setText("Ready");
+            return;
+        }
+
+        db.collection("PiedrasEvolucion").document(idsFinales.get(i)).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()){
+                    DocumentSnapshot documentSnapshot = task.getResult();
+                    PiedrasEvoFirebase piedrasEvoFirebase = documentSnapshot.toObject(PiedrasEvoFirebase.class);
+                    int cantidad = random.nextInt(3) + 1;
+                    listaPiedrasMercado.add(new PiedrasEvoUser(piedrasEvoFirebase.getId(), piedrasEvoFirebase.getName(), cantidad));
+
+                    randomPiedras(idsFinales, i+1, id);
                 }
             }
         });

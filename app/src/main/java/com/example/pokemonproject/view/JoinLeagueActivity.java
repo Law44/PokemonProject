@@ -17,6 +17,7 @@ import com.example.pokemonproject.model.Alineation;
 import com.example.pokemonproject.model.Partida;
 import com.example.pokemonproject.model.Pokemon;
 import com.example.pokemonproject.model.Pujas;
+import com.example.pokemonproject.model.PujasPiedras;
 import com.example.pokemonproject.model.Team;
 import com.example.pokemonproject.model.UserGame;
 import com.example.pokemonproject.model.Username;
@@ -40,7 +41,7 @@ public class JoinLeagueActivity extends AppCompatActivity {
 
     Username creator;
     Partida users;
-    String idUser, teamID, pujasID, alineationID;
+    String idUser, teamID, pujasID, alineationID, pujasPiedrasID;
     String games;
     String lastGame;
     ArrayList<String> listGame;
@@ -142,11 +143,14 @@ public class JoinLeagueActivity extends AppCompatActivity {
                                             teamID = db.collection("Equipos").document().getId();
                                             pujasID = db.collection("Pujas").document().getId();
                                             alineationID = db.collection("Alineaciones").document().getId();
+                                            pujasPiedrasID = db.collection("PujasPiedras").document().getId();
+                                            PujasPiedras pujasPiedras = new PujasPiedras();
+                                            db.collection("PujasPiedras").document(pujasPiedrasID).set(pujasPiedras);
                                             Alineation alineation = new Alineation();
                                             db.collection("Alineaciones").document(alineationID).set(alineation);
                                             Pujas pujas = new Pujas();
                                             db.collection("Pujas").document(pujasID).set(pujas);
-                                            UserGame userGame = new UserGame(creator, etTeamName.getText().toString(), 0, teamID, users.getInitialMoney(), pujasID, alineationID);
+                                            UserGame userGame = new UserGame(creator, etTeamName.getText().toString(), 0, teamID, users.getInitialMoney(), pujasID, alineationID, pujasPiedrasID);
                                             Team equipo = new Team();
                                             db.collection("Equipos").document(teamID).set(equipo);
 
