@@ -251,7 +251,7 @@ public class ServerActivity extends AppCompatActivity {
         });
     }
 
-    private void consultarCombates(Iterator<QueryDocumentSnapshot> a) {
+    private void consultarCombates(final Iterator<QueryDocumentSnapshot> a) {
         if(!a.hasNext()){
             estado.setText("Ready");
             return;
@@ -261,7 +261,7 @@ public class ServerActivity extends AppCompatActivity {
 
         if (partida.getUsers().size()> 0) {
             if (partida.getUsers().get(0).getCombatesID().size() > 0) {
-                String combateId = partida.getUsers().get(0).getCombatesID().get(partida.getUsers().get(0).getCombatesID().size() - 1);
+                final String combateId = partida.getUsers().get(0).getCombatesID().get(partida.getUsers().get(0).getCombatesID().size() - 1);
                 db.collection("Combates").document(combateId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -277,8 +277,42 @@ public class ServerActivity extends AppCompatActivity {
                                             if (combate.getJornada() == jornadaActual) {
                                                 combate = lucharCombate(combate);
                                                 db.collection("Combates").document(snapshot.getId()).set(combate);
+                                                int cantidad = 0;
+                                                for (int i = 0; i <combate.getEquipo1().getAlineacion().getLista().size();  i++) {
+                                                    if (combate.getEquipo1().getAlineacion().getLista().get(i)!=null) {
+                                                        if (combate.getEquipo1().getAlineacion().getLista().get(i).getLife() > 0) {
+                                                            cantidad++;
+                                                        }
+                                                    }
+                                                }
+                                                int cantidad2 = 0;
+                                                for (int i = 0; i <combate.getEquipo2().getAlineacion().getLista().size();  i++) {
+                                                    if (combate.getEquipo2().getAlineacion().getLista().get(i)!= null) {
+                                                        if (combate.getEquipo2().getAlineacion().getLista().get(i).getLife() > 0) {
+                                                            cantidad2++;
+                                                        }
+                                                    }
+                                                }
+                                                for (int i = 0; i < partida.getUsers().size(); i++) {
+                                                    if (partida.getUsers().get(i).getUser().getEmail().equals(combate.getEquipo1().getUseremail())){
+                                                        if (cantidad>cantidad2){
+                                                            partida.getUsers().get(i).setPoints(partida.getUsers().get(i).getPoints()+ 2);
+                                                        }
+                                                        partida.getUsers().get(i).setPoints(partida.getUsers().get(i).getPoints()+ cantidad);
+                                                        partida.getUsers().get(i).setMoney(partida.getUsers().get(i).getMoney()+200+50*cantidad);
+                                                    }
+                                                    if (partida.getUsers().get(i).getUser().getEmail().equals(combate.getEquipo2().getUseremail())){
+                                                        if (cantidad<cantidad2){
+                                                            partida.getUsers().get(i).setPoints(partida.getUsers().get(i).getPoints()+ 2);
+                                                        }
+                                                        partida.getUsers().get(i).setPoints(partida.getUsers().get(i).getPoints() + cantidad2);
+                                                        partida.getUsers().get(i).setMoney(partida.getUsers().get(i).getMoney()+200+50*cantidad2);
+                                                    }
+                                                }
+                                                db.collection("Partidas").document(partida.getId()).set(partida);
                                             }
                                         }
+                                        consultarCombates(a);
                                     }
                                 }
                             });
@@ -526,7 +560,7 @@ public class ServerActivity extends AppCompatActivity {
     void consultarPujas(final Partida partida, final int i, final Map<Integer, String> idjugadores, final Map<Integer, Integer> pujas){
 
         if(i>=partida.getUsers().size()) {
-            subirDatosPujasPiedras(partida,0,idjugadores,pujas);
+            subirDatos(partida,0,idjugadores,pujas);
             return;
         }
 
@@ -710,7 +744,7 @@ public class ServerActivity extends AppCompatActivity {
                     }
                 }
             }
-
+            Log.e("Pokemon", pokemon.getName());
             do {
                 pokemon.getMoves().remove( pokemon.getMoves().get(random.nextInt(pokemon.getMoves().size())));
             }while (pokemon.getMoves().size()>4);
