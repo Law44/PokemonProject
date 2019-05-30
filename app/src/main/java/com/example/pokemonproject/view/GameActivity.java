@@ -195,6 +195,7 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
                     case 4:
                         makeIconsWhite(tabLayout);
                         item.setVisible(true);
+                        queryChangeListener3.onQueryChange("");
                         tab.setIcon(R.drawable.icons8_pokedex_filled_52_red);
                         title.setText(R.string.pokemonsCaps);
                         break;
