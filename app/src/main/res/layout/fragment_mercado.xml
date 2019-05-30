@@ -14,12 +14,12 @@
         <TextView
             android:id="@+id/textView14"
             android:layout_width="wrap_content"
-            android:layout_height="15dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
             android:layout_marginTop="16dp"
             android:text="Dinero"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.178"
+            app:layout_constraintHorizontal_bias="0.104"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -46,10 +46,11 @@
             android:id="@+id/textView15"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="56dp"
             android:layout_marginTop="16dp"
             android:text="Saldo Futuro"
-            app:layout_constraintStart_toEndOf="@+id/tvMoneyMercado"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.679"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView

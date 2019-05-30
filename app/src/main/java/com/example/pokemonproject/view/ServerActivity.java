@@ -22,8 +22,10 @@ import com.example.pokemonproject.model.Partida;
 import com.example.pokemonproject.model.PiedraEvo;
 import com.example.pokemonproject.model.PiedrasEvoFirebase;
 import com.example.pokemonproject.model.PiedrasEvoUser;
+import com.example.pokemonproject.model.PiedrasUser;
 import com.example.pokemonproject.model.Pokemon;
 import com.example.pokemonproject.model.Pujas;
+import com.example.pokemonproject.model.PujasPiedras;
 import com.example.pokemonproject.model.Team;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -344,12 +346,12 @@ public class ServerActivity extends AppCompatActivity {
          * Cambia el nombre de la ruta de firestore
          * Y el modelo de datos del task.getResult()
          */
-        db.collection("").document(partida.getUsers().get(i).getPujasID()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        db.collection("PujasPiedras").document(partida.getUsers().get(i).getPujasID()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()){
-                    Pujas listaPujas = new Pujas();
-                    listaPujas = task.getResult().toObject(Pujas.class);
+                    PujasPiedras listaPujas = new PujasPiedras();
+                    listaPujas = task.getResult().toObject(PujasPiedras.class);
                     for (int j =0;j<listaPujas.getPujas().size();j++){
                         if (pujas.get(j) < listaPujas.getPujas().get(j)){
                             idjugadores.put(j,task.getResult().getId());
@@ -357,8 +359,8 @@ public class ServerActivity extends AppCompatActivity {
 
                         }
                     }
-                    consultarPujas(partida, i+1, idjugadores, pujas);
-                    Pujas pujasAZero = new Pujas();
+                    consultarPujasPiedras(partida, i+1, idjugadores, pujas);
+                    PujasPiedras pujasAZero = new PujasPiedras();
                     db.collection("").document(partida.getUsers().get(i).getPujasID()).set(pujasAZero);
                 }
             }
@@ -368,9 +370,7 @@ public class ServerActivity extends AppCompatActivity {
 
     private void subirDatosPujasPiedras(final Partida partida, final int i, final Map<Integer, String> idjugadores, final Map<Integer, Integer> pujas) {
         if (i>=idjugadores.size()){
-            /**
-             * refrescar mercado de piedras
-             */
+            refrescarMercadPiedras();
             estado.setText("Done");
             return;
         }
@@ -380,27 +380,37 @@ public class ServerActivity extends AppCompatActivity {
         if (pujas.get(i)>0){
             for (int j = 0; j < partida.getUsers().size(); j++) {
                 if (partida.getUsers().get(j).getPujasID().equals(idjugadores.get(i))){
-                    final String idTeamJugador = partida.getUsers().get(j).getTeamID();
-                    final int pokemonPos = i;
+                    final String idTeamJugador = partida.getUsers().get(j).getObjetosID();
+                    final int piedraPos = i;
                     final int posJugadorPartida = j;
-                    db.collection("Equipos").document(idTeamJugador).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    db.collection("PiedrasUser").document(idTeamJugador).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                             if (task.isSuccessful()) {
-                                final Team team = task.getResult().toObject(Team.class);
-                                db.collection("Mercado").document(partida.getId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                final PiedrasUser team = task.getResult().toObject(PiedrasUser.class);
+                                db.collection("PiedrasMercado").document(partida.getId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                     @Override
                                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                         if (task.isSuccessful()) {
-                                            ListaPujas mercado = task.getResult().toObject(ListaPujas.class);
-                                            team.getEquipo().add(mercado.getLista().get(pokemonPos));
-                                            db.collection("Equipos").document(idTeamJugador).update("equipo", team.getEquipo());
+                                            ListaPujasPiedras mercado = task.getResult().toObject(ListaPujasPiedras.class);
+                                            boolean existepiedra = false;
+                                            for (int i = 0; i < team.getPiedras().size(); i++) {
+                                                if (team.getPiedras().get(i).getId()== mercado.getLista().get(piedraPos).getId()){
+                                                    team.getPiedras().get(i).setCantidad(team.getPiedras().get(i).getCantidad()+mercado.getLista().get(piedraPos).getCantidad());
+                                                    existepiedra = true;
+                                                }
+                                            }
+                                            if (!existepiedra){
+                                                team.getPiedras().add(mercado.getLista().get(piedraPos));
+                                            }
+
+                                            db.collection("PiedrasUser").document(idTeamJugador).update("piedras", team.getPiedras());
 
                                             partida.getUsers().get(posJugadorPartida).setMoney(partida.getUsers().get(posJugadorPartida).getMoney()-pujas.get(i));
                                             db.collection("Partidas").document(partida.getId()).set(partida);
 
 
-                                            subirDatos(partida,i+1,idjugadores,pujas);
+                                            subirDatosPujasPiedras(partida,i+1,idjugadores,pujas);
                                         }
                                     }
                                 });
