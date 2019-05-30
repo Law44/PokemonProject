@@ -22,6 +22,7 @@ import com.example.pokemonproject.model.Partida;
 import com.example.pokemonproject.model.PiedraEvo;
 import com.example.pokemonproject.model.PiedrasEvoFirebase;
 import com.example.pokemonproject.model.PiedrasEvoUser;
+import com.example.pokemonproject.model.PiedrasUser;
 import com.example.pokemonproject.model.Pokemon;
 import com.example.pokemonproject.model.Pujas;
 import com.example.pokemonproject.model.PujasPiedras;
@@ -379,21 +380,31 @@ public class ServerActivity extends AppCompatActivity {
         if (pujas.get(i)>0){
             for (int j = 0; j < partida.getUsers().size(); j++) {
                 if (partida.getUsers().get(j).getPujasID().equals(idjugadores.get(i))){
-                    final String idTeamJugador = partida.getUsers().get(j).getTeamID();
+                    final String idTeamJugador = partida.getUsers().get(j).getObjetosID();
                     final int piedraPos = i;
                     final int posJugadorPartida = j;
-                    db.collection("Equipos").document(idTeamJugador).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    db.collection("PiedrasUser").document(idTeamJugador).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                             if (task.isSuccessful()) {
-                                final Team team = task.getResult().toObject(Team.class);
+                                final PiedrasUser team = task.getResult().toObject(PiedrasUser.class);
                                 db.collection("PiedrasMercado").document(partida.getId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                     @Override
                                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                         if (task.isSuccessful()) {
                                             ListaPujasPiedras mercado = task.getResult().toObject(ListaPujasPiedras.class);
-//                                            team.getEquipo().add(mercado.getLista().get(piedraPos));
-                                            db.collection("Equipos").document(idTeamJugador).update("equipo", team.getEquipo());
+                                            boolean existepiedra = false;
+                                            for (int i = 0; i < team.getPiedras().size(); i++) {
+                                                if (team.getPiedras().get(i).getId()== mercado.getLista().get(piedraPos).getId()){
+                                                    team.getPiedras().get(i).setCantidad(team.getPiedras().get(i).getCantidad()+mercado.getLista().get(piedraPos).getCantidad());
+                                                    existepiedra = true;
+                                                }
+                                            }
+                                            if (!existepiedra){
+                                                team.getPiedras().add(mercado.getLista().get(piedraPos));
+                                            }
+
+                                            db.collection("PiedrasUser").document(idTeamJugador).update("piedras", team.getPiedras());
 
                                             partida.getUsers().get(posJugadorPartida).setMoney(partida.getUsers().get(posJugadorPartida).getMoney()-pujas.get(i));
                                             db.collection("Partidas").document(partida.getId()).set(partida);

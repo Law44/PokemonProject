@@ -82,16 +82,16 @@ public class PujasAdapterPiedras extends RecyclerView.Adapter<PujasAdapterPiedra
 
 
         public void setPokemon(final PiedrasEvoUser model, final int position) {
-            TextView tvName = view.findViewById(R.id.tvPokemonNameMercado);
-            TextView tvId = view.findViewById(R.id.tvPokemonPokedexMercado);
-            TextView tvCostePokemon = view.findViewById(R.id.tvPokemonCosteMercado);
+            TextView tvName = view.findViewById(R.id.tvPiedra);
+            TextView tvCostePokemon = view.findViewById(R.id.tvCantidad);
+            TextView tvCostePiedra = view.findViewById(R.id.tvcostePiedra);
             ImageView fondo = view.findViewById(R.id.imgFondo);
             ImageView button = view.findViewById(R.id.imgButtonPagar);
 
 
             tvName.setText(model.getName());
-            tvId.setText(String.valueOf(model.getId()));
-            tvCostePokemon.setText(String.valueOf(100));
+            tvCostePokemon.setText(String.valueOf(model.getCantidad()));
+            tvCostePiedra.setText(String.valueOf(100));
 
 
             GlideApp.with(view)

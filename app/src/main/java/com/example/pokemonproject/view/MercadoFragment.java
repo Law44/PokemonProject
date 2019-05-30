@@ -112,8 +112,7 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
                     recyclerViewObjetos.setVisibility(View.VISIBLE);
                     PujasAdapterPiedras pujasAdapterPiedras = new PujasAdapterPiedras(context, lastgame, MercadoFragment.this, team, totalPujas, pujas, movimientos);
                     pujasAdapterPiedras.setPokemonPujas(piedrasEvo);
-
-                    recyclerViewPokemon.setAdapter(pujasAdapterPiedras);
+                    recyclerViewObjetos.setAdapter(pujasAdapterPiedras);
 
 
                 }
@@ -225,17 +224,16 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
                                                                             if (task.isSuccessful()){
                                                                                 DocumentSnapshot documentSnapshot = task.getResult();
                                                                                 ListaPujasPiedras listaPujasPiedras = documentSnapshot.toObject(ListaPujasPiedras.class);
-                                                                                if (listaPujasPiedras != null) {
-                                                                                    piedrasEvo = listaPujasPiedras.getLista();
-                                                                                }
+                                                                                piedrasEvo = listaPujasPiedras.getLista();
+
+
+                                                                                PujasAdapter pujasAdapter = new PujasAdapter(context, lastgame, MercadoFragment.this, team, totalPujas, pujas, movimientos);
+                                                                                pujasAdapter.setPokemonPujas(listaPokemon);
+
+                                                                                recyclerViewPokemon.setAdapter(pujasAdapter);
                                                                             }
                                                                         }
                                                                     });
-
-                                                                    PujasAdapter pujasAdapter = new PujasAdapter(context, lastgame, MercadoFragment.this, team, totalPujas, pujas, movimientos);
-                                                                    pujasAdapter.setPokemonPujas(listaPokemon);
-
-                                                                    recyclerViewPokemon.setAdapter(pujasAdapter);
                                                                 }
                                                             }
                                                         });

@@ -67,6 +67,8 @@ import retrofit2.Response;
 
 public class GameActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+    private Menu menu;
+
     interface QueryChangeListener {
         void onQueryChange(String query);
     }
@@ -133,13 +135,14 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
         searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                queryChangeListener3.onQueryChange(query);
+
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                return false;
+
+                queryChangeListener3.onQueryChange(newText);return false;
             }
         });
 
@@ -162,34 +165,36 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
 
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
+
+                MenuItem item = menu.findItem(R.id.action_search);
                 switch (tab.getPosition()){
                     case 0:
                         makeIconsWhite(tabLayout);
-                        findViewById(R.id.action_search).setVisibility(View.INVISIBLE);
+                        item.setVisible(false);
                         tab.setIcon(R.drawable.icons8_home_48_red);
                         title.setText(R.string.inicioCaps);
                         break;
                     case 1:
                         makeIconsWhite(tabLayout);
-                        findViewById(R.id.action_search).setVisibility(View.INVISIBLE);
+                        item.setVisible(false);
                         tab.setIcon(R.drawable.icons8_leaderboard_filled_50_red);
                         title.setText(R.string.clasificacionCaps);
                         break;
                     case 2:
                         makeIconsWhite(tabLayout);
-                        findViewById(R.id.action_search).setVisibility(View.INVISIBLE);
+                        item.setVisible(false);
                         tab.setIcon(R.drawable.icons8_pokeball_48_red);
                         title.setText(R.string.mercadoCaps);
                         break;
                     case 3:
                         makeIconsWhite(tabLayout);
-                        findViewById(R.id.action_search).setVisibility(View.INVISIBLE);
+                        item.setVisible(false);
                         tab.setIcon(R.drawable.icons8_explosion_filled_50_red);
                         title.setText(R.string.combateCaps);
                         break;
                     case 4:
                         makeIconsWhite(tabLayout);
-                        findViewById(R.id.action_search).setVisibility(View.VISIBLE);
+                        item.setVisible(true);
                         tab.setIcon(R.drawable.icons8_pokedex_filled_52_red);
                         title.setText(R.string.pokemonsCaps);
                         break;
@@ -373,10 +378,11 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
+        this.menu = menu;
         getMenuInflater().inflate(R.menu.menu_game,menu);
         MenuItem item = menu.findItem(R.id.action_search);
         searchView.setMenuItem(item);
+        item.setVisible(false);
 
         return true;
     }
