@@ -5,16 +5,27 @@ public class PiedrasEvoUser {
     private String name;
     private int cantidad;
     private int precio;
+    private String sprite;
 
-    public PiedrasEvoUser(int id, String name, int cantidad) {
+
+    public PiedrasEvoUser(int id, String name, int cantidad, String sprite) {
         this.id = id;
         this.name = name;
         this.cantidad = cantidad;
         this.precio = 200;
+        this.sprite = sprite;
     }
 
     public PiedrasEvoUser(){
 
+    }
+
+    public String getSprite() {
+        return sprite;
+    }
+
+    public void setSprite(String sprite) {
+        this.sprite = sprite;
     }
 
     public int getPrecio() {

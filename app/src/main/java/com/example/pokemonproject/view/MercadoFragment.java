@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +25,6 @@ import com.example.pokemonproject.model.Partida;
 import com.example.pokemonproject.model.PiedrasEvoUser;
 import com.example.pokemonproject.model.Pokemon;
 import com.example.pokemonproject.model.Team;
-import com.firebase.ui.firestore.paging.FirestorePagingOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -46,15 +44,14 @@ import static android.support.v7.widget.RecyclerView.VERTICAL;
 @SuppressLint("ValidFragment")
 public class MercadoFragment extends Fragment implements GameActivity.QueryChangeListener {
     private Query query;
-    private FirestorePagingOptions<Pokemon> options;
     private RecyclerView recyclerViewPokemon, recyclerViewObjetos;
-    String lastgame, teamID, pujasID;
+    String lastgame, teamID, pujasID, pujasPiedrasID;
     GameActivity context;
     Team team;
     ArrayList<Pokemon> listaPokemon;
     ArrayList<PiedrasEvoUser> piedrasEvo;
-    ArrayList<Integer> pujas;
-    Map<Integer, Integer> totalPujas;
+    ArrayList<Integer> pujas, pujasPiedras;
+    Map<Integer, Integer> totalPujas, totalPujasPiedras;
     int money;
     public static int saldofuturo;
     ArrayList<List<Moves>> movimientos;
@@ -68,6 +65,10 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
         this.totalPujas = new HashMap<>();
         for (int i = 0; i < 10; i++) {
             totalPujas.put(i,0);
+        }
+        this.totalPujasPiedras = new HashMap<>();
+        for (int i = 0; i < 10; i++) {
+            totalPujasPiedras.put(i,0);
         }
         this.movimientos = new ArrayList<>();
     }
@@ -109,8 +110,8 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
                     } else {
                         recyclerViewPokemon.setVisibility(View.INVISIBLE);
                         recyclerViewObjetos.setVisibility(View.VISIBLE);
-                        PujasAdapterPiedras pujasAdapterPiedras = new PujasAdapterPiedras(context, lastgame, MercadoFragment.this, team, totalPujas, pujas, movimientos);
-                        pujasAdapterPiedras.setPokemonPujas(piedrasEvo);
+                        PujasAdapterPiedras pujasAdapterPiedras = new PujasAdapterPiedras(context, lastgame, MercadoFragment.this, totalPujasPiedras, pujasPiedras);
+                        pujasAdapterPiedras.setPiedrasPujas(piedrasEvo);
                         recyclerViewObjetos.setAdapter(pujasAdapterPiedras);
 
 
@@ -132,7 +133,7 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful()) {
                             if (task.getResult().toObject(ListaPujas.class) != null) {
-                                ListaPujas listaPujas = task.getResult().toObject(ListaPujas.class);
+                                final ListaPujas listaPujas = task.getResult().toObject(ListaPujas.class);
                                 listaPokemon = listaPujas.getLista();
 
                                 rootRef.collection("Partidas").document(lastgame).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -144,6 +145,7 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
                                                 if (partida.getUsers().get(i).getUser().getEmail().equals(FirebaseAuth.getInstance().getCurrentUser().getEmail())){
                                                     teamID = partida.getUsers().get(i).getTeamID();
                                                     pujasID = partida.getUsers().get(i).getPujasID();
+                                                    pujasPiedrasID = partida.getUsers().get(i).getPujasPiedras();
                                                     money = partida.getUsers().get(i).getMoney();
                                                     saldofuturo = money;
                                                     tvMoneyMercado.setText(String.valueOf(money));
@@ -224,13 +226,45 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
                                                                             if (task.isSuccessful()){
                                                                                 DocumentSnapshot documentSnapshot = task.getResult();
                                                                                 ListaPujasPiedras listaPujasPiedras = documentSnapshot.toObject(ListaPujasPiedras.class);
-                                                                                piedrasEvo = listaPujasPiedras.getLista();
+                                                                                if (listaPujasPiedras != null) {
+                                                                                    piedrasEvo = listaPujasPiedras.getLista();
+                                                                                }
+
+                                                                                rootRef.collection("PujasPiedras").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                                    @Override
+                                                                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                                        if (task.isSuccessful()) {
+                                                                                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                                                if (document.getId().equals(pujasPiedrasID)) {
+                                                                                                    pujasPiedras = (ArrayList<Integer>) document.get("pujas");
+                                                                                                    for (int i = 0; i < pujasPiedras.size(); i++) {
+                                                                                                        saldofuturo -= Integer.parseInt(String.valueOf(pujasPiedras.get(i)));
+                                                                                                    }
+                                                                                                    tvMoneyFuturaMercado.setText(String.valueOf(saldofuturo));
+
+                                                                                                }
+                                                                                                ArrayList<Integer> pujastemp = (ArrayList<Integer>) document.get("pujas");
+                                                                                                for (int i = 0; i < totalPujasPiedras.size(); i++) {
+                                                                                                    totalPujasPiedras.put(i, 0);
+
+                                                                                                }
+
+                                                                                                for (int i = 0; i < pujastemp.size(); i++) {
+                                                                                                    if (Integer.parseInt(String.valueOf(pujastemp.get(i))) > 0) {
+                                                                                                        totalPujasPiedras.put(i, Integer.parseInt(String.valueOf(totalPujasPiedras.get(i))) + 1);
+                                                                                                    }
+                                                                                                }
+                                                                                            }
+                                                                                            PujasAdapter pujasAdapter = new PujasAdapter(context, lastgame, MercadoFragment.this, team, totalPujas, pujas, movimientos);
+                                                                                            pujasAdapter.setPokemonPujas(listaPokemon);
+
+                                                                                            recyclerViewPokemon.setAdapter(pujasAdapter);
+                                                                                        }
+                                                                                    }
+                                                                                });
 
 
-                                                                                PujasAdapter pujasAdapter = new PujasAdapter(context, lastgame, MercadoFragment.this, team, totalPujas, pujas, movimientos);
-                                                                                pujasAdapter.setPokemonPujas(listaPokemon);
 
-                                                                                recyclerViewPokemon.setAdapter(pujasAdapter);
                                                                             }
                                                                         }
                                                                     });

@@ -10,18 +10,14 @@ import android.widget.TextView;
 
 import com.example.pokemonproject.GlideApp;
 import com.example.pokemonproject.R;
-import com.example.pokemonproject.model.Moves;
 import com.example.pokemonproject.model.PiedrasEvoUser;
-import com.example.pokemonproject.model.Pokemon;
-import com.example.pokemonproject.model.Team;
 import com.example.pokemonproject.model.Username;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
-public class PujasAdapterPiedras extends RecyclerView.Adapter<PujasAdapterPiedras.PokemonViewHolder> {
+public class PujasAdapterPiedras extends RecyclerView.Adapter<PujasAdapterPiedras.PiedraViewHolder> {
 
     private GameActivity context;
     ArrayList<PiedrasEvoUser> piedrasArrayList;
@@ -30,36 +26,30 @@ public class PujasAdapterPiedras extends RecyclerView.Adapter<PujasAdapterPiedra
     ArrayList<String> listGame;
     Username creator;
     MercadoFragment mercadoFragment;
-    Team team;
     Map<Integer, Integer> totalPujas;
     ArrayList<Integer> pujas;
-    int money;
-    ArrayList<List<Moves>> movements;
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-    public PujasAdapterPiedras(GameActivity context, String lastgame, MercadoFragment mercadoFragment, Team team, Map<Integer, Integer> totalPujas, ArrayList<Integer> pujas, ArrayList<List<Moves>> movements){
+    public PujasAdapterPiedras(GameActivity context, String lastgame, MercadoFragment mercadoFragment, Map<Integer, Integer> totalPujas, ArrayList<Integer> pujas){
 
         this.context = context;
         this.lastgame = lastgame;
         this.mercadoFragment = mercadoFragment;
-        this.team = team;
         this.totalPujas = totalPujas;
         this.pujas = pujas;
-        this.money = money;
-        this.movements = movements;
 
     }
 
     @NonNull
     @Override
-    public PujasAdapterPiedras.PokemonViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        return new PokemonViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_piedra_mercado, viewGroup, false));
+    public PiedraViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+        return new PiedraViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_piedra_mercado, viewGroup, false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull PujasAdapterPiedras.PokemonViewHolder viewHolder, final int i) {
-        viewHolder.setPokemon(piedrasArrayList.get(i), i);
+    public void onBindViewHolder(@NonNull PiedraViewHolder viewHolder, final int i) {
+        viewHolder.setPiedra(piedrasArrayList.get(i), i);
     }
 
     @Override
@@ -67,36 +57,49 @@ public class PujasAdapterPiedras extends RecyclerView.Adapter<PujasAdapterPiedra
         return piedrasArrayList.size();
     }
 
-    public void setPokemonPujas(ArrayList<PiedrasEvoUser> pokemonarray) {
+    public void setPiedrasPujas(ArrayList<PiedrasEvoUser> pokemonarray) {
         piedrasArrayList = pokemonarray;
     }
 
-    class PokemonViewHolder extends RecyclerView.ViewHolder {
+    class PiedraViewHolder extends RecyclerView.ViewHolder {
         private View view;
 
-        PokemonViewHolder(View itemView) {
+        PiedraViewHolder(View itemView) {
             super(itemView);
             view = itemView;
         }
 
 
 
-        public void setPokemon(final PiedrasEvoUser model, final int position) {
+        public void setPiedra(final PiedrasEvoUser model, final int position) {
             TextView tvName = view.findViewById(R.id.tvPiedra);
-            TextView tvCostePokemon = view.findViewById(R.id.tvCantidad);
             TextView tvCostePiedra = view.findViewById(R.id.tvcostePiedra);
             ImageView fondo = view.findViewById(R.id.imgFondo);
             ImageView button = view.findViewById(R.id.imgButtonPagar);
 
 
-            tvName.setText(model.getName());
-            tvCostePokemon.setText(String.valueOf(model.getCantidad()));
-            tvCostePiedra.setText(String.valueOf(model.getPrecio()));
+            if (model.getCantidad() == 1) {
+                tvName.setText(model.getCantidad() + " Piedra " + model.getName());
+            }
+            else if (model.getCantidad() > 1){
+                tvName.setText(model.getCantidad() + " Piedras " + model.getName());
+            }
+            tvCostePiedra.setText(String.valueOf(model.getPrecio() * model.getCantidad()));
 
 
             GlideApp.with(view)
                     .load(R.drawable.pokemondollar)
                     .into((ImageView) view.findViewById(R.id.imgPokedolar));
+
+            GlideApp.with(view)
+                    .load(R.drawable.stone)
+                    .into((ImageView) view.findViewById(R.id.piedra));
+
+            GlideApp.with(view)
+                    .load(model.getSprite())
+                    .circleCrop()
+                    .into((ImageView)  view.findViewById(R.id.piedraSprite));
+
 
             if (Integer.parseInt(String.valueOf(pujas.get(position))) > 0){
                 fondo.setBackgroundColor(view.getResources().getColor(R.color.colorBuy));

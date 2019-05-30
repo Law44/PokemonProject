@@ -46,7 +46,7 @@ class ModalComprarPokemon {
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     ArrayList<UserGame> listUsers;
 
-    public ModalComprarPokemon(final Context context, final Pokemon model, MercadoFragment mercadoFragment, String idBuyGame, final int position, final Team team, final Map<Integer, Integer> totalPujas, final ArrayList<Integer> pujaspropias, final View view, ArrayList<List<Moves>> movements) {
+    public ModalComprarPokemon(final Context context, final Pokemon model, final MercadoFragment mercadoFragment, String idBuyGame, final int position, final Team team, final Map<Integer, Integer> totalPujas, final ArrayList<Integer> pujaspropias, final View view, ArrayList<List<Moves>> movements) {
         this.context = context;
         this.pokemon = model;
         this.fragment = mercadoFragment;
@@ -102,10 +102,10 @@ class ModalComprarPokemon {
         TextView tvpujasActivas = dialog.findViewById(R.id.pujasActivas);
         if (Integer.parseInt(String.valueOf(totalPujas.get(position))) > 0){
             if (Integer.parseInt(String.valueOf(totalPujas.get(position))) == 1){
-                tvpujasActivas.setText(String.valueOf(totalPujas.get(position)) + " puja");
+                tvpujasActivas.setText(totalPujas.get(position) + " puja");
             }
             else {
-                tvpujasActivas.setText(String.valueOf(totalPujas.get(position)) + " pujas");
+                tvpujasActivas.setText(totalPujas.get(position) + " pujas");
             }
         }
         final Button btnAdd = dialog.findViewById(R.id.btnAddModal);
@@ -164,7 +164,6 @@ class ModalComprarPokemon {
                                                         @Override
                                                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                                             if (Integer.parseInt(String.valueOf(pujaspropias.get(position))) == 0) {
-                                                                Log.e("PUJAS", String.valueOf(totalPujas.get(position)));
                                                                 String kk = "" + totalPujas.get(position);
                                                                 Integer integer = Integer.valueOf(kk);
                                                                 integer += 1;
@@ -189,7 +188,7 @@ class ModalComprarPokemon {
                                                                 Toast.makeText(context, "Ya tienes a este pokemon!", Toast.LENGTH_LONG).show();
                                                             } else {
                                                                 MercadoFragment.saldofuturo-= Integer.parseInt(etCoste.getText().toString());
-                                                                TextView futuro = view.findViewById(R.id.tvMoneyFuturaMercado);
+                                                                TextView futuro = mercadoFragment.getView().findViewById(R.id.tvMoneyFuturaMercado);
                                                                 futuro.setText(String.valueOf(MercadoFragment.saldofuturo));
                                                                 db.collection("Pujas").document(pujasID).update("pujas", pujastemp);
                                                                 dialog.dismiss();

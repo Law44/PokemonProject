@@ -463,6 +463,7 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
                     case 1:
                         CopaFragment copaFragment = new CopaFragment();
                         copaFragment.setIdLastPartida(id);
+                        copaFragment.setGameActivity(GameActivity.this);
                         return copaFragment;
                     case 2:
                         MercadoFragment mercadoFragment = new MercadoFragment();

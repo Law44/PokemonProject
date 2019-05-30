@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,17 +14,12 @@ import android.widget.TextView;
 
 import com.example.pokemonproject.R;
 import com.example.pokemonproject.model.Partida;
-import com.example.pokemonproject.model.Pokemon;
 import com.example.pokemonproject.model.UserGame;
-import com.firebase.ui.auth.data.model.User;
-import com.firebase.ui.firestore.paging.FirestorePagingAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 
 import java.util.ArrayList;
@@ -33,12 +27,18 @@ import java.util.ArrayList;
 import static android.support.v7.widget.RecyclerView.VERTICAL;
 
 public class CopaFragment extends Fragment implements GameActivity.QueryChangeListener {
+    private GameActivity gameActivity;
     private UserGameRecyclerAdapter adapter;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     String idGame ="";
     ArrayList<UserGame> usersGames = new ArrayList<>();
     RecyclerView recyclerView;
     View mView;
+
+    public void setGameActivity(GameActivity gameActivity) {
+        this.gameActivity = gameActivity;
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -95,12 +95,21 @@ public class CopaFragment extends Fragment implements GameActivity.QueryChangeLi
 
         @Override
         public void onBindViewHolder(@NonNull UserGameViewHolder holder, int i) {
-            UserGame userGame = list.get(i);
+            final UserGame userGame = list.get(i);
 
             holder.userGameName.setText(userGame.getUser().getUsername());
             holder.userGameTeam.setText(userGame.getTeamName());
             holder.userGamePoints.setText(String.valueOf(userGame.getPoints()));
             holder.userGamePosition.setText(String.valueOf(i+1));
+
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!userGame.getUser().getEmail().equals(FirebaseAuth.getInstance().getCurrentUser().getEmail())) {
+                        new ModalEnemyTeam(gameActivity, userGame.getUser().getEmail(), idGame);
+                    }
+                }
+            });
         }
 
         @Override

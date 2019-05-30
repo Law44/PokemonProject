@@ -90,18 +90,18 @@ public class ListaFragment extends Fragment implements GameActivity.QueryChangeL
 //                            .setQuery(query, config, Pokemon.class)
 //                            .build();
 //
-//                    adapter = new FirestorePagingAdapter<Pokemon, PokemonViewHolder>(options) {
+//                    adapter = new FirestorePagingAdapter<Pokemon, PiedraViewHolder>(options) {
 //                        @NonNull
 //                        @Override
-//                        public PokemonViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+//                        public PiedraViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
 //
 //                            View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_pokemon, viewGroup, false);
-//                            return new PokemonViewHolder(view);
+//                            return new PiedraViewHolder(view);
 //                        }
 //
 //                        @Override
-//                        protected void onBindViewHolder(@NonNull PokemonViewHolder holder, int position, @NonNull Pokemon model) {
-//                            holder.setPokemon(model);
+//                        protected void onBindViewHolder(@NonNull PiedraViewHolder holder, int position, @NonNull Pokemon model) {
+//                            holder.setPiedra(model);
 //                        }
 //                    };
 //                    recyclerView.setAdapter(adapter);

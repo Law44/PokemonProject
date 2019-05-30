@@ -88,6 +88,7 @@ public class ServerActivity extends AppCompatActivity {
         Button btnLoadMovement = findViewById(R.id.loadMovement);
         Button btnListaPiedrasEvo = findViewById(R.id.listapiedrasevo);
         Button btnRefrescarMercadoPiedras = findViewById(R.id.MercadoPiedras);
+        Button btnPujasPiedras = findViewById(R.id.PujasPiedras);
 
         btnLoadPokemon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -167,6 +168,13 @@ public class ServerActivity extends AppCompatActivity {
             }
         });
 
+        btnPujasPiedras.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                asignarPujasPiedras();
+            }
+        });
+
         btnListaPokemon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -224,7 +232,7 @@ public class ServerActivity extends AppCompatActivity {
             }
         }
         if (!presente && pokemon.getPiedrasEvo().getId() != 0){
-            listaPiedras.add(new PiedrasEvoFirebase(pokemon.getPiedrasEvo().getId(), pokemon.getName()));
+            listaPiedras.add(new PiedrasEvoFirebase(pokemon.getPiedrasEvo().getId(), pokemon.getName(), pokemon.getSprites().front_default));
         }
         subirEvoStone(a);
     }
@@ -346,12 +354,11 @@ public class ServerActivity extends AppCompatActivity {
          * Cambia el nombre de la ruta de firestore
          * Y el modelo de datos del task.getResult()
          */
-        db.collection("PujasPiedras").document(partida.getUsers().get(i).getPujasID()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        db.collection("PujasPiedras").document(partida.getUsers().get(i).getPujasPiedras()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()){
-                    PujasPiedras listaPujas = new PujasPiedras();
-                    listaPujas = task.getResult().toObject(PujasPiedras.class);
+                    PujasPiedras listaPujas = task.getResult().toObject(PujasPiedras.class);
                     for (int j =0;j<listaPujas.getPujas().size();j++){
                         if (pujas.get(j) < listaPujas.getPujas().get(j)){
                             idjugadores.put(j,task.getResult().getId());
@@ -361,7 +368,7 @@ public class ServerActivity extends AppCompatActivity {
                     }
                     consultarPujasPiedras(partida, i+1, idjugadores, pujas);
                     PujasPiedras pujasAZero = new PujasPiedras();
-                    db.collection("").document(partida.getUsers().get(i).getPujasID()).set(pujasAZero);
+                    db.collection("PujasPiedras").document(partida.getUsers().get(i).getPujasPiedras()).set(pujasAZero);
                 }
             }
         });
@@ -622,7 +629,7 @@ public class ServerActivity extends AppCompatActivity {
                     DocumentSnapshot documentSnapshot = task.getResult();
                     PiedrasEvoFirebase piedrasEvoFirebase = documentSnapshot.toObject(PiedrasEvoFirebase.class);
                     int cantidad = random.nextInt(3) + 1;
-                    listaPiedrasMercado.add(new PiedrasEvoUser(piedrasEvoFirebase.getId(), piedrasEvoFirebase.getName(), cantidad));
+                    listaPiedrasMercado.add(new PiedrasEvoUser(piedrasEvoFirebase.getId(), piedrasEvoFirebase.getName(), cantidad, piedrasEvoFirebase.getSprite()));
 
                     randomPiedras(idsFinales, i+1, id);
                 }
