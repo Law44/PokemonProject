@@ -71,7 +71,7 @@ public class PujasAdapter extends RecyclerView.Adapter<PujasAdapter.PokemonViewH
 
     @Override
     public int getItemCount() {
-        return pokemonArrayList.size();
+        return  (pokemonArrayList != null ? pokemonArrayList.size() : 0);
     }
 
     public void setPokemonPujas(ArrayList<Pokemon> pokemonarray) {

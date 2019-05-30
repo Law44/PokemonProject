@@ -166,7 +166,7 @@ public class AlineationAdapter extends RecyclerView.Adapter<AlineationAdapter.Al
 
     @Override
     public int getItemCount() {
-        return pokemonsArrayList.size();
+        return  (pokemonsArrayList != null ? pokemonsArrayList.size() : 0);
     }
 
     public void setGamesInfoArrayList(ArrayList<Pokemon> pokemonsarray) {
