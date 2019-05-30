@@ -54,7 +54,7 @@ public class PujasAdapterPiedras extends RecyclerView.Adapter<PujasAdapterPiedra
 
     @Override
     public int getItemCount() {
-        return piedrasArrayList.size();
+        return  (piedrasArrayList != null ? piedrasArrayList.size() : 0);
     }
 
     public void setPiedrasPujas(ArrayList<PiedrasEvoUser> pokemonarray) {

@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,11 +51,17 @@ public class CopaFragment extends Fragment implements GameActivity.QueryChangeLi
                     DocumentSnapshot documentSnapshot = task.getResult();
                     Partida partida = documentSnapshot.toObject(Partida.class);
                     usersGames = partida.getUsers();
-                    for (int i = 0; i < usersGames.size()-1; i++) {
+                    int limite = usersGames.size()-1;
+                    for (int i = 0; i < limite;) {
                         if (usersGames.get(i).getPoints()<usersGames.get(i+1).getPoints()){
                             UserGame tmp = usersGames.get(i+1);
                             usersGames.set(i+1, usersGames.get(i));
                             usersGames.set(i,tmp);
+                        }
+                        i++;
+                        if (i == limite){
+                            i = 0;
+                            limite--;
                         }
                     }
                     recyclerView = mView.findViewById(R.id.rvClasificacion);
