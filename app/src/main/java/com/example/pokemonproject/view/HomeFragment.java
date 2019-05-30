@@ -18,6 +18,8 @@ import com.example.pokemonproject.model.Alineation;
 import com.example.pokemonproject.model.MovementFirebase;
 import com.example.pokemonproject.model.Moves;
 import com.example.pokemonproject.model.Partida;
+import com.example.pokemonproject.model.PiedrasEvoUser;
+import com.example.pokemonproject.model.PiedrasUser;
 import com.example.pokemonproject.model.Team;
 import com.example.pokemonproject.model.UserGame;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -36,7 +38,7 @@ import static android.support.v7.widget.RecyclerView.VERTICAL;
 public  class HomeFragment extends Fragment implements GameActivity.QueryChangeListener {
 
     private GameActivity gameActivity;
-    private String teamID, alineationID;
+    private String teamID, alineationID, piedrasID;
     private String idGame;
     private Team team;
     private Alineation alineation;
@@ -44,6 +46,7 @@ public  class HomeFragment extends Fragment implements GameActivity.QueryChangeL
 
     private ArrayList<String> listGames;
     private ArrayList<List<Moves>> movimientos;
+
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     View mView;
 
@@ -120,6 +123,7 @@ public  class HomeFragment extends Fragment implements GameActivity.QueryChangeL
                             if (listUsers.get(j).getUser().getEmail().equals(FirebaseAuth.getInstance().getCurrentUser().getEmail())) {
                                 teamID = listUsers.get(j).getTeamID();
                                 alineationID = listUsers.get(j).getAlineationID();
+                                piedrasID = listUsers.get(j).getObjetosID();
                             }
                         }
 
@@ -165,15 +169,26 @@ public  class HomeFragment extends Fragment implements GameActivity.QueryChangeL
                                             movimientos.add(team.getEquipo().get(finalI).getMoves());
                                         }
 
-                                        RecyclerView recyclerView =  mView.findViewById(R.id.rvteamList);
-                                        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-                                        DividerItemDecoration itemDecor = new DividerItemDecoration(mView.getContext(), VERTICAL);
-                                        recyclerView.addItemDecoration(itemDecor);
+                                        db.collection("PiedrasUser").document(piedrasID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                if (task.isSuccessful()){
+                                                    PiedrasUser piedrasUser = task.getResult().toObject(PiedrasUser.class);
 
-                                        TeamAdapter teamAdapter = new TeamAdapter(gameActivity);
-                                        teamAdapter.setGamesInfoArrayList(team.getEquipo());
+                                                    RecyclerView recyclerView =  mView.findViewById(R.id.rvteamList);
+                                                    recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                                                    DividerItemDecoration itemDecor = new DividerItemDecoration(mView.getContext(), VERTICAL);
+                                                    recyclerView.addItemDecoration(itemDecor);
 
-                                        recyclerView.setAdapter(teamAdapter);
+                                                    TeamAdapter teamAdapter = new TeamAdapter(gameActivity, piedrasUser.getPiedras(), teamID, alineationID, piedrasID);
+                                                    teamAdapter.setGamesInfoArrayList(team.getEquipo());
+
+                                                    recyclerView.setAdapter(teamAdapter);
+                                                }
+                                            }
+                                        });
+
+
 
                                     }
                                 });

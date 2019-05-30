@@ -1280,7 +1280,7 @@ public class ServerActivity extends AppCompatActivity {
                                     pokemon.setPiedrasEvo(new PiedraEvo(0, 0));
                                     break;
                                 case 86:
-                                    pokemon.setIdEvo(86);
+                                    pokemon.setIdEvo(87);
                                     pokemon.setPrice(900);
                                     pokemon.setPiedrasEvo(new PiedraEvo(86, 5));
                                     break;

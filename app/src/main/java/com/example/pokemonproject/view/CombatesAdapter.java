@@ -22,6 +22,8 @@ public class CombatesAdapter extends RecyclerView.Adapter<CombatesAdapter.Combat
     List<Combate> combateList;
     int counterWinRight = 0;
     int counterWinLeft = 0;
+    int nullleft = 0;
+    int nullRight = 0;
 
     public CombatesAdapter(List<Combate> combateList) {
         this.combateList = combateList;
@@ -46,32 +48,46 @@ public class CombatesAdapter extends RecyclerView.Adapter<CombatesAdapter.Combat
         loadEquipoIzquierda(holder,equipoIzquierda);
         loadEquipoDerecha(holder,equipoDerecha);
 
-        if (counterWinLeft > counterWinRight){
+
+
+        holder.resultadoLeft.setText("ESPERANDO");
+        holder.resultadoRight.setText("ESPERANDO");
+
+
+        if (counterWinLeft > counterWinRight) {
             holder.resultadoLeft.setText("GANADOR");
             holder.resultadoLeft.setTextColor(holder.itemView.getResources().getColor(R.color.colorWin));
             holder.resultadoRight.setText("PERDEDOR");
             holder.resultadoRight.setTextColor(holder.itemView.getResources().getColor(R.color.colorLose));
-        }
-        else if (counterWinRight == counterWinLeft){
+        } else if (counterWinRight == counterWinLeft) {
             holder.resultadoLeft.setText("EMPATE");
             holder.resultadoLeft.setTextColor(holder.itemView.getResources().getColor(R.color.colorBuy));
             holder.resultadoRight.setText("EMPATE");
             holder.resultadoRight.setTextColor(holder.itemView.getResources().getColor(R.color.colorBuy));
-        }
-        else {
+        } else {
             holder.resultadoLeft.setText("PERDEDOR");
             holder.resultadoLeft.setTextColor(holder.itemView.getResources().getColor(R.color.colorLose));
             holder.resultadoRight.setText("GANADOR");
             holder.resultadoRight.setTextColor(holder.itemView.getResources().getColor(R.color.colorWin));
         }
 
+
+        if (nullleft == 6 && nullRight == 6){
+            holder.resultadoLeft.setText("EMPATE");
+            holder.resultadoLeft.setTextColor(holder.itemView.getResources().getColor(R.color.colorBuy));
+            holder.resultadoRight.setText("EMPATE");
+            holder.resultadoRight.setTextColor(holder.itemView.getResources().getColor(R.color.colorBuy));
+        }
+
         counterWinLeft = 0;
         counterWinRight = 0;
+        nullRight = 0;
+        nullleft = 0;
+
 
     }
 
     private void loadEquipoDerecha(CombateViewHolder holder, Equipo equipoDerecha) {
-
 
         for (int j = 0; j<equipoDerecha.getAlineacion().getLista().size();j++){
             if (equipoDerecha.getAlineacion().getLista().get(j)!=null) {
@@ -87,12 +103,13 @@ public class CombatesAdapter extends RecyclerView.Adapter<CombatesAdapter.Combat
                     holder.pokesImgDer.get(j).setBackgroundColor(holder.itemView.getResources().getColor(R.color.colorLose));
                 }
             }
+            else {
+                nullRight++;
+            }
         }
-
     }
 
     private void loadEquipoIzquierda(CombateViewHolder holder, Equipo equipoIzquierda) {
-
 
         for (int j = 0; j<equipoIzquierda.getAlineacion().getLista().size();j++){
             if (equipoIzquierda.getAlineacion().getLista().get(j)!=null) {
@@ -108,9 +125,10 @@ public class CombatesAdapter extends RecyclerView.Adapter<CombatesAdapter.Combat
                     holder.pokesImgIzq.get(j).setBackgroundColor(holder.itemView.getResources().getColor(R.color.colorLose));
                 }
             }
+            else{
+                nullleft++;
+            }
         }
-
-
     }
 
     @Override
