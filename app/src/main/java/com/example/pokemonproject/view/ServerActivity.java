@@ -232,6 +232,121 @@ public class ServerActivity extends AppCompatActivity {
         return combate;
     }
 
+    private void asignarPujasPiedras(){
+        estado.setText("Wait");
+        db.collection("Partidas").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()){
+                    Iterator<QueryDocumentSnapshot> a = task.getResult().iterator();
+                    consultarPartidasPiedras(a);
+                }
+
+            }
+        });
+    }
+
+    private void consultarPartidasPiedras(Iterator<QueryDocumentSnapshot> a){
+        if (!a.hasNext())return;
+        Map<Integer,String> idjugadores = new HashMap<>();
+        Map<Integer,Integer> pujas = new HashMap<>();
+
+        QueryDocumentSnapshot queryDocumentSnapshot = a.next();
+        idPujas = new ArrayList<>();
+        for (int i = 0; i<10;i++){
+            idjugadores.put(i,"");
+            pujas.put(i,0);
+        }
+        Partida partida = queryDocumentSnapshot.toObject(Partida.class);
+
+        consultarPujasPiedras(partida, 0,idjugadores,pujas);
+
+        consultarPartidasPiedras(a);
+    }
+
+    private void consultarPujasPiedras(final Partida partida, final int i, final Map<Integer, String> idjugadores, final Map<Integer, Integer> pujas) {
+
+        if(i>=partida.getUsers().size()) {
+            subirDatosPujasPiedras(partida,0,idjugadores,pujas);
+            return;
+        }
+
+        idPujas.add(partida.getUsers().get(i).getTeamID());
+        /**
+         * Cambia el nombre de la ruta de firestore
+         * Y el modelo de datos del task.getResult()
+         */
+        db.collection("").document(partida.getUsers().get(i).getPujasID()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()){
+                    Pujas listaPujas = new Pujas();
+                    listaPujas = task.getResult().toObject(Pujas.class);
+                    for (int j =0;j<listaPujas.getPujas().size();j++){
+                        if (pujas.get(j) < listaPujas.getPujas().get(j)){
+                            idjugadores.put(j,task.getResult().getId());
+                            pujas.put(j,listaPujas.getPujas().get(j));
+
+                        }
+                    }
+                    consultarPujas(partida, i+1, idjugadores, pujas);
+                    Pujas pujasAZero = new Pujas();
+                    db.collection("").document(partida.getUsers().get(i).getPujasID()).set(pujasAZero);
+                }
+            }
+        });
+
+    }
+
+    private void subirDatosPujasPiedras(final Partida partida, final int i, final Map<Integer, String> idjugadores, final Map<Integer, Integer> pujas) {
+        if (i>=idjugadores.size()){
+            /**
+             * refrescar mercado de piedras
+             */
+            estado.setText("Done");
+            return;
+        }
+        /**
+         * hay que cambiar el nombre de las rutas de firestore y las variables de modelo de datos
+         */
+        if (pujas.get(i)>0){
+            for (int j = 0; j < partida.getUsers().size(); j++) {
+                if (partida.getUsers().get(j).getPujasID().equals(idjugadores.get(i))){
+                    final String idTeamJugador = partida.getUsers().get(j).getTeamID();
+                    final int pokemonPos = i;
+                    final int posJugadorPartida = j;
+                    db.collection("Equipos").document(idTeamJugador).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                final Team team = task.getResult().toObject(Team.class);
+                                db.collection("Mercado").document(partida.getId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            ListaPujas mercado = task.getResult().toObject(ListaPujas.class);
+                                            team.getEquipo().add(mercado.getLista().get(pokemonPos));
+                                            db.collection("Equipos").document(idTeamJugador).update("equipo", team.getEquipo());
+
+                                            partida.getUsers().get(posJugadorPartida).setMoney(partida.getUsers().get(posJugadorPartida).getMoney()-pujas.get(i));
+                                            db.collection("Partidas").document(partida.getId()).set(partida);
+
+
+                                            subirDatos(partida,i+1,idjugadores,pujas);
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+            }
+
+        }else subirDatos(partida,i+1,idjugadores,pujas);
+
+    }
+
+
     private void asignarPujas() {
 
         estado.setText("Wait");
@@ -281,8 +396,6 @@ public class ServerActivity extends AppCompatActivity {
             return;
         }
         if (pujas.get(i)>0){
-            final String idPujaJugador = idjugadores.get(i);
-
             for (int j = 0; j < partida.getUsers().size(); j++) {
                 if (partida.getUsers().get(j).getPujasID().equals(idjugadores.get(i))){
                     final String idTeamJugador = partida.getUsers().get(j).getTeamID();
@@ -402,8 +515,9 @@ public class ServerActivity extends AppCompatActivity {
         int cantidad = 0;
         Random random = new Random();
         int[] idCogidos = new int[10];
+        boolean igualdad = false;
         do {
-
+            igualdad = false;
             for (int i = 0; i < idCogidos.length; i++) {
                 idCogidos[i] = random.nextInt(151);
             }
@@ -411,7 +525,14 @@ public class ServerActivity extends AppCompatActivity {
             for (int i = 0; i < idCogidos.length; i++) {
                 cantidad += pkemonList.get(idCogidos[i]).getPrice();
             }
-        }while (cantidad>18000);
+            for (int i = 0; i < idCogidos.length; i++) {
+                for (int j = idCogidos.length-1; j >i ; j--) {
+                    if (idCogidos[i]==idCogidos[j]){
+                        igualdad= true;
+                    }
+                }
+            }
+        }while (cantidad>18000 || igualdad);
         List<Pokemon> listaMercado = new ArrayList<>();
         List<MovementFirebase> listaTemp = new ArrayList<>();
         for (int i = 0; i <10 ; i++) {
@@ -448,83 +569,6 @@ public class ServerActivity extends AppCompatActivity {
                     Iterator<QueryDocumentSnapshot> a = task.getResult().iterator();
 
                     sacarPartidaParaCombate(a,0);
-//                    for (int i = 0; i < partidas.size(); i++) {
-//                        calculojornada = false;
-//                        jornada = 0;
-//                        db.collection("Partidas").document(partidas.get(i)).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//                            @Override
-//                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                                if (task.isSuccessful()){
-//                                    DocumentSnapshot snapshot = task.getResult();
-//                                        partida = snapshot.toObject(Partida.class);
-//                                        for (int i = partida.getUsers().size()-1; i > 0; i--) {
-//                                            for (int j = 0; j < i; j++) {
-//                                                final int finalJ = j;
-//                                                final int finalI = i;
-//                                                db.collection("Alineaciones").document(partida.getUsers().get(i).getAlineationID()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//                                                    @Override
-//                                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                                                        if (task.isSuccessful()){
-//                                                            DocumentSnapshot documentSnapshot = task.getResult();
-//                                                            alineation1 = documentSnapshot.toObject(Alineation.class);
-//                                                            db.collection("Alineaciones").document(partida.getUsers().get(finalJ).getAlineationID()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//                                                                @Override
-//                                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                                                                    if (task.isSuccessful()){
-//                                                                        final String idCombate = db.collection("Combates").document().getId();
-//
-//                                                                        DocumentSnapshot documentSnapshot = task.getResult();
-//                                                                        alineation2 = documentSnapshot.toObject(Alineation.class);
-//                                                                        partida.getUsers().get(finalI).getCombatesID().add(idCombate);
-//                                                                        partida.getUsers().get(finalJ).getCombatesID().add(idCombate);
-//                                                                        db.collection("Partidas").document(partida.getId()).set(partida);
-//                                                                        db.collection("Combates").whereEqualTo("idGame", partida.getId()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//                                                                            @Override
-//                                                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                                                                                if (task.isSuccessful()){
-//                                                                                    for (QueryDocumentSnapshot snapshot : task.getResult()) {
-//                                                                                        Combate combate = snapshot.toObject(Combate.class);
-//                                                                                        if (combate.getJornada() > jornada && !calculojornada) {
-//                                                                                            jornada = combate.getJornada();
-//                                                                                        }
-//                                                                                    }
-//                                                                                    if (!calculojornada) {
-//                                                                                        calculojornada = true;
-//                                                                                        jornada++;
-//                                                                                    }
-//                                                                                    Equipo equipo1 = new Equipo(partida.getUsers().get(finalI).getUser().getUsername(), partida.getUsers().get(finalI).getUser().getEmail(), alineation1, partida.getUsers().get(finalI).getUser().getImgurl());
-//                                                                                    Equipo equipo2 = new Equipo(partida.getUsers().get(finalJ).getUser().getUsername(), partida.getUsers().get(finalJ).getUser().getEmail(), alineation2, partida.getUsers().get(finalJ).getUser().getImgurl());
-//                                                                                    Combate nextCombate = new Combate(equipo1, equipo2, jornada, partida.getId());
-//                                                                                    db.collection("Combates").document(idCombate).set(nextCombate);
-//                                                                                }
-//                                                                                else {
-//                                                                                    Equipo equipo1 = new Equipo(partida.getUsers().get(finalI).getUser().getUsername(), partida.getUsers().get(finalI).getUser().getEmail(), alineation1, partida.getUsers().get(finalI).getUser().getImgurl());
-//                                                                                    Equipo equipo2 = new Equipo(partida.getUsers().get(finalJ).getUser().getUsername(), partida.getUsers().get(finalJ).getUser().getEmail(), alineation2, partida.getUsers().get(finalJ).getUser().getImgurl());
-//                                                                                    Combate combate = new Combate(equipo1, equipo2, 1, partida.getId());
-//                                                                                    db.collection("Combates").document(idCombate).set(combate);
-//                                                                                }
-//                                                                            }
-//
-//
-//                                                                        });
-//
-//
-//
-//                                                                    }
-//                                                                }
-//                                                            });
-//                                                        }
-//                                                    }
-//                                                });
-//                                            }
-//                                        }
-//
-//                                }
-//                            }
-//                        });
-//                    }
-
-
                 }
             }
         });
@@ -546,14 +590,6 @@ public class ServerActivity extends AppCompatActivity {
                     DocumentSnapshot snapshot = task.getResult();
                     partida = snapshot.toObject(Partida.class);
                     sacarAlineacion(partida,0,partida.getUsers().size()-1,0);
-//                    for (int i = partida.getUsers().size()-1; i > 0; i--) {
-//                        for (int j = 0; j < i; j++) {
-//                            final int finalJ = j;
-//                            final int finalI = i;
-//
-//                        }
-//                    }
-
                 }
                 sacarPartidaParaCombate(a,i+1);
             }
