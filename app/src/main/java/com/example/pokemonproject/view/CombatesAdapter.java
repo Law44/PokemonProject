@@ -41,10 +41,6 @@ public class CombatesAdapter extends RecyclerView.Adapter<CombatesAdapter.Combat
 
         loadEquipoIzquierda(holder,equipoIzquierda);
         loadEquipoDerecha(holder,equipoDerecha);
-
-
-        GlideApp.with(holder.itemView.getContext()).load(equipoDerecha.getAlineacion().getLista().get(0).getSprites().front_default).into(holder.imgPokeImg1Der);
-        holder.tvPokeName1Derecha.setText(equipoDerecha.getAlineacion().getLista().get(0).getName());
     }
 
     private void loadEquipoDerecha(CombateViewHolder holder, Equipo equipoDerecha) {
@@ -52,6 +48,14 @@ public class CombatesAdapter extends RecyclerView.Adapter<CombatesAdapter.Combat
             if (equipoDerecha.getAlineacion().getLista().get(j)!=null) {
                 GlideApp.with(holder.itemView.getContext()).load(equipoDerecha.getAlineacion().getLista().get(j).getSprites().front_default).into(holder.pokesImgDer.get(j));
                 holder.pokesTvDer.get(j).setText(equipoDerecha.getAlineacion().getLista().get(j).getName());
+                if (equipoDerecha.getAlineacion().getLista().get(j).getLife() > 0){
+                    holder.pokesTvDer.get(j).setBackgroundColor(holder.itemView.getResources().getColor(R.color.colorWin));
+                    holder.pokesImgDer.get(j).setBackgroundColor(holder.itemView.getResources().getColor(R.color.colorWin));
+                }
+                else {
+                    holder.pokesTvDer.get(j).setBackgroundColor(holder.itemView.getResources().getColor(R.color.colorLose));
+                    holder.pokesImgDer.get(j).setBackgroundColor(holder.itemView.getResources().getColor(R.color.colorLose));
+                }
             }
         }
 
@@ -62,6 +66,14 @@ public class CombatesAdapter extends RecyclerView.Adapter<CombatesAdapter.Combat
             if (equipoIzquierda.getAlineacion().getLista().get(j)!=null) {
                 GlideApp.with(holder.itemView.getContext()).load(equipoIzquierda.getAlineacion().getLista().get(j).getSprites().front_default).into(holder.pokesImgIzq.get(j));
                 holder.pokesTvIzq.get(j).setText(equipoIzquierda.getAlineacion().getLista().get(j).getName());
+                if (equipoIzquierda.getAlineacion().getLista().get(j).getLife() > 0){
+                    holder.pokesTvIzq.get(j).setBackgroundColor(holder.itemView.getResources().getColor(R.color.colorWin));
+                    holder.pokesImgIzq.get(j).setBackgroundColor(holder.itemView.getResources().getColor(R.color.colorWin));
+                }
+                else {
+                    holder.pokesTvIzq.get(j).setBackgroundColor(holder.itemView.getResources().getColor(R.color.colorLose));
+                    holder.pokesImgIzq.get(j).setBackgroundColor(holder.itemView.getResources().getColor(R.color.colorLose));
+                }
             }
         }
     }

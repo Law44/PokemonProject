@@ -70,7 +70,7 @@ public class JornadaFragment extends Fragment implements GameActivity.QueryChang
                                                         }
                                                         Log.e("Combates", "" + combateList.size());
                                                         CombatesAdapter combatesAdapter = new CombatesAdapter(combateList);
-                                                        recyclerView = mView.findViewById(R.id.rvMercadoPokemon);
+                                                        recyclerView = mView.findViewById(R.id.rvCombates);
                                                         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
                                                         DividerItemDecoration itemDecor = new DividerItemDecoration(mView.getContext(), VERTICAL);
                                                         recyclerView.addItemDecoration(itemDecor);
