@@ -28,6 +28,7 @@ public class SplashScreen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
+        getSupportActionBar().hide();
         if (firebaseUser!= null) {
             db.collection("Users")
                     .whereEqualTo("email", FirebaseAuth.getInstance().getCurrentUser().getEmail())

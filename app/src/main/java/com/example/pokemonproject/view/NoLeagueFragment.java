@@ -12,7 +12,7 @@ import android.widget.Button;
 
 import com.example.pokemonproject.R;
 
-public class NoLeagueFragment extends Fragment {
+public class NoLeagueFragment extends Fragment implements GameActivity.QueryChangeListener {
 
     @Nullable
     @Override
@@ -37,6 +37,11 @@ public class NoLeagueFragment extends Fragment {
         });
 
         return mView;
+
+    }
+
+    @Override
+    public void onQueryChange(String query) {
 
     }
 }

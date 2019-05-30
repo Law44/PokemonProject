@@ -1,9 +1,12 @@
 package com.example.pokemonproject.view;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -12,10 +15,13 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.example.pokemonproject.R;
+import com.example.pokemonproject.model.Alineation;
 import com.example.pokemonproject.model.ListaPujas;
 import com.example.pokemonproject.model.Partida;
+import com.example.pokemonproject.model.PiedrasUser;
 import com.example.pokemonproject.model.Pokemon;
 import com.example.pokemonproject.model.Pujas;
+import com.example.pokemonproject.model.PujasPiedras;
 import com.example.pokemonproject.model.Team;
 import com.example.pokemonproject.model.UserGame;
 import com.example.pokemonproject.model.Username;
@@ -36,7 +42,7 @@ public class NewLeagueActivity extends AppCompatActivity {
     EditText etGameName, etTeamName;
 
     Username creator;
-    String idUser, teamID, pujasID;
+    String idUser, teamID, pujasID, alineationID, pujasPiedrasID, piedrasID;
     String games;
     String lastGame;
     ArrayList<String> listGame;
@@ -51,7 +57,7 @@ public class NewLeagueActivity extends AppCompatActivity {
         etTeamName = findViewById(R.id.etTeamName);
 
         String[] opcionesSpinner = new String[] {
-                "500000", "1000000", "1500000", "2000000" };
+                "2500", "5000", "7500", "10000", "15000" };
         final Spinner spinner = findViewById(R.id.etInitialMoney);
         ArrayAdapter<String> spinneroptions = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, opcionesSpinner);
@@ -79,15 +85,35 @@ public class NewLeagueActivity extends AppCompatActivity {
         findViewById(R.id.crear).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                games = String.valueOf(Integer.parseInt(games)+1);
+                if (TextUtils.isEmpty(etGameName.getText().toString()) || TextUtils.isEmpty(etTeamName.getText().toString())) {
+                    AlertDialog alertDialog = new AlertDialog.Builder(NewLeagueActivity.this).create();
+                    alertDialog.setMessage("No puede haber campos vacios");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
+                else{
+                    games = String.valueOf(Integer.parseInt(games) + 1);
 
                 ArrayList<UserGame> usergames = new ArrayList<>();
                 teamID = db.collection("Equipos").document().getId();
                 pujasID = db.collection("Pujas").document().getId();
+                alineationID = db.collection("Alineaciones").document().getId();
+                pujasPiedrasID = db.collection("PujasPiedras").document().getId();
+                piedrasID = db.collection("PiedrasUser").document().getId();
+                PiedrasUser piedrasUser = new PiedrasUser();
+                db.collection("PiedrasUser").document(piedrasID).set(piedrasUser);
+                PujasPiedras pujasPiedras = new PujasPiedras();
+                db.collection("PujasPiedras").document(pujasPiedrasID).set(pujasPiedras);
+                Alineation alineation = new Alineation();
+                db.collection("Alineaciones").document(alineationID).set(alineation);
                 Pujas pujas = new Pujas();
                 db.collection("Pujas").document(pujasID).set(pujas);
-                usergames.add(new UserGame(creator, etTeamName.getText().toString(), 0, teamID, Integer.parseInt(spinner.getSelectedItem().toString()), pujasID));
+                usergames.add(new UserGame(creator, etTeamName.getText().toString(), 0, teamID, Integer.parseInt(spinner.getSelectedItem().toString()), pujasID, alineationID, pujasPiedrasID, piedrasID));
                 Team equipo = new Team();
                 db.collection("Equipos").document(teamID).set(equipo);
                 String id = db.collection("Partidas").document().getId();
@@ -111,6 +137,7 @@ public class NewLeagueActivity extends AppCompatActivity {
                 intent.putExtra("lastGame", lastGame);
                 intent.putExtra("listGames", listGame);
                 startActivity(intent);
+            }
 
             }
         });

@@ -22,6 +22,8 @@
         android:layout_height="18dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="4dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintStart_toEndOf="@+id/imgPokemonTipo2List"
         app:layout_constraintTop_toBottomOf="@+id/tvPokemonDefList" />
@@ -32,6 +34,8 @@
         android:layout_height="18dp"
         android:layout_marginStart="88dp"
         android:layout_marginTop="4dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintStart_toEndOf="@+id/tvPokemonIdList"
         app:layout_constraintTop_toBottomOf="@+id/tvPokemonDefList" />
@@ -42,6 +46,8 @@
         android:layout_height="18dp"
         android:layout_marginStart="56dp"
         android:layout_marginTop="4dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintStart_toEndOf="@+id/tvPokemonIdList"
         app:layout_constraintTop_toBottomOf="@+id/tvPokemonSpeedList" />

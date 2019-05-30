@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.example.pokemonproject.GlideApp;
 import com.example.pokemonproject.R;
 import com.example.pokemonproject.model.GamesInfo;
+import com.example.pokemonproject.model.PiedrasEvoUser;
 import com.example.pokemonproject.model.Pokemon;
 import com.example.pokemonproject.model.Username;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -27,11 +28,17 @@ public class TeamAdapter extends RecyclerView.Adapter<TeamAdapter.TeamViewHolder
 
     private GameActivity context;
     ArrayList<Pokemon> pokemonsArrayList;
+    ArrayList<PiedrasEvoUser> piedrasEvoUsers;
+    String teamID, alineationID, piedrasID;
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-    public TeamAdapter(GameActivity context){
+    public TeamAdapter(GameActivity context, ArrayList<PiedrasEvoUser> piedrasEvoUsers, String teamID, String alineationID, String piedrasID){
         this.context = context;
+        this.piedrasEvoUsers = piedrasEvoUsers;
+        this.teamID = teamID;
+        this.alineationID = alineationID;
+        this.piedrasID = piedrasID;
     }
 
     @NonNull
@@ -68,6 +75,13 @@ public class TeamAdapter extends RecyclerView.Adapter<TeamAdapter.TeamViewHolder
                 .load(pokemonsArrayList.get(i).getSprites().front_default)
                 .circleCrop()
                 .into((ImageView) viewHolder.itemView.findViewById(R.id.imgPokemonImageList));
+
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new ModalEvolution(context, pokemonsArrayList.get(i), piedrasEvoUsers, teamID, i, pokemonsArrayList, alineationID, piedrasID);
+            }
+        });
 
 
     }

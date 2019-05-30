@@ -8,8 +8,13 @@ public class MovementFirebase {
     public int priority;
     public String type;
     public String name;
+    public String categoria;
 
-    public MovementFirebase(int id, int accuracy, int power, int pp, int priority, String type, String name) {
+    public MovementFirebase(){
+
+    }
+
+    public MovementFirebase(int id, int accuracy, int power, int pp, int priority, String type, String name, String categoria) {
         this.id = id;
         this.accuracy = accuracy;
         this.power = power;
@@ -17,6 +22,15 @@ public class MovementFirebase {
         this.priority = priority;
         this.type = type;
         this.name = name;
+        this.categoria = categoria;
+    }
+
+    public String getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
     }
 
     public int getId() {
