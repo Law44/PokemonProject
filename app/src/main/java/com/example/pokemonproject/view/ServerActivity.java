@@ -370,6 +370,7 @@ public class ServerActivity extends AppCompatActivity {
                         }
                     }
                     consultarPujasPiedras(partida, i+1, idjugadores, pujas);
+                    Log.e("Pujas",""+i);
                     PujasPiedras pujasAZero = new PujasPiedras();
                     db.collection("PujasPiedras").document(partida.getUsers().get(i).getPujasPiedras()).set(pujasAZero);
                 }
@@ -389,7 +390,7 @@ public class ServerActivity extends AppCompatActivity {
          */
         if (pujas.get(i)>0){
             for (int j = 0; j < partida.getUsers().size(); j++) {
-                if (partida.getUsers().get(j).getPujasID().equals(idjugadores.get(i))){
+                if (partida.getUsers().get(j).getPujasPiedras().equals(idjugadores.get(i))){
                     final String idTeamJugador = partida.getUsers().get(j).getObjetosID();
                     final int piedraPos = i;
                     final int posJugadorPartida = j;
@@ -398,6 +399,7 @@ public class ServerActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                             if (task.isSuccessful()) {
                                 final PiedrasUser team = task.getResult().toObject(PiedrasUser.class);
+                                Log.e("Piedra", ""+team.getPiedras().size());
                                 db.collection("PiedrasMercado").document(partida.getId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                     @Override
                                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -413,6 +415,7 @@ public class ServerActivity extends AppCompatActivity {
                                             if (!existepiedra){
                                                 team.getPiedras().add(mercado.getLista().get(piedraPos));
                                             }
+                                            Log.e("Piedra", idTeamJugador);
 
                                             db.collection("PiedrasUser").document(idTeamJugador).update("piedras", team.getPiedras());
 
@@ -430,7 +433,7 @@ public class ServerActivity extends AppCompatActivity {
                 }
             }
 
-        }else subirDatos(partida,i+1,idjugadores,pujas);
+        }else subirDatosPujasPiedras(partida,i+1,idjugadores,pujas);
 
     }
 
@@ -523,11 +526,11 @@ public class ServerActivity extends AppCompatActivity {
     void consultarPujas(final Partida partida, final int i, final Map<Integer, String> idjugadores, final Map<Integer, Integer> pujas){
 
         if(i>=partida.getUsers().size()) {
-            subirDatos(partida,0,idjugadores,pujas);
+            subirDatosPujasPiedras(partida,0,idjugadores,pujas);
             return;
         }
 
-        idPujas.add(partida.getUsers().get(i).getTeamID());
+        idPujas.add(partida.getUsers().get(i).getPujasID());
 
         db.collection("Pujas").document(partida.getUsers().get(i).getPujasID()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -663,6 +666,7 @@ public class ServerActivity extends AppCompatActivity {
             pokemon1vs1(defensor,atacante);
         }else {
             defensor.setLife(0);
+
         }
     }
 
