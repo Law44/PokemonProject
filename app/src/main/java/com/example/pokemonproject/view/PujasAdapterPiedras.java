@@ -91,7 +91,7 @@ public class PujasAdapterPiedras extends RecyclerView.Adapter<PujasAdapterPiedra
 
             tvName.setText(model.getName());
             tvCostePokemon.setText(String.valueOf(model.getCantidad()));
-            tvCostePiedra.setText(String.valueOf(100));
+            tvCostePiedra.setText(String.valueOf(model.getPrecio()));
 
 
             GlideApp.with(view)
@@ -105,10 +105,15 @@ public class PujasAdapterPiedras extends RecyclerView.Adapter<PujasAdapterPiedra
                 fondo.setBackgroundColor(view.getResources().getColor(R.color.searchWhite));
             }
 
+            GlideApp.with(view)
+                    .load(R.drawable.icons8_pokeball_80)
+                    .circleCrop()
+                    .into((ImageView)view.findViewById(R.id.imgButtonPagar));
+
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    new ModalComprarPiedra(view.getContext(), model, mercadoFragment, lastgame, position, team, totalPujas, pujas, view);
+                    new ModalComprarPiedra(view.getContext(), model, mercadoFragment, lastgame, position, totalPujas, pujas, view);
                 }
             });
 

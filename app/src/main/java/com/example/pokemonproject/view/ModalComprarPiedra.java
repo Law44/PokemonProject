@@ -40,7 +40,7 @@ class ModalComprarPiedra {
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     ArrayList<UserGame> listUsers;
 
-    public ModalComprarPiedra(final Context context, final PiedrasEvoUser model, MercadoFragment mercadoFragment, String idBuyGame, final int position, final Team team, final Map<Integer, Integer> totalPujas, final ArrayList<Integer> pujaspropias, final View view) {
+    public ModalComprarPiedra(final Context context, final PiedrasEvoUser model, MercadoFragment mercadoFragment, String idBuyGame, final int position, final Map<Integer, Integer> totalPujas, final ArrayList<Integer> pujaspropias, final View view) {
         this.context = context;
         this.piedrasEvoUser = model;
         this.fragment = mercadoFragment;

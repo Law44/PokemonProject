@@ -95,29 +95,29 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
 
         RadioButton pokemon = mView.findViewById(R.id.pokemon);
 
-        pokemon.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
-                    recyclerViewObjetos.setVisibility(View.INVISIBLE);
-                    recyclerViewPokemon.setVisibility(View.VISIBLE);
-                    PujasAdapter pujasAdapter = new PujasAdapter(context, lastgame, MercadoFragment.this, team, totalPujas, pujas, movimientos);
-                    pujasAdapter.setPokemonPujas(listaPokemon);
+            pokemon.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (isChecked) {
+                        recyclerViewObjetos.setVisibility(View.INVISIBLE);
+                        recyclerViewPokemon.setVisibility(View.VISIBLE);
+                        PujasAdapter pujasAdapter = new PujasAdapter(context, lastgame, MercadoFragment.this, team, totalPujas, pujas, movimientos);
+                        pujasAdapter.setPokemonPujas(listaPokemon);
 
-                    recyclerViewPokemon.setAdapter(pujasAdapter);
+                        recyclerViewPokemon.setAdapter(pujasAdapter);
 
+                    } else {
+                        recyclerViewPokemon.setVisibility(View.INVISIBLE);
+                        recyclerViewObjetos.setVisibility(View.VISIBLE);
+                        PujasAdapterPiedras pujasAdapterPiedras = new PujasAdapterPiedras(context, lastgame, MercadoFragment.this, team, totalPujas, pujas, movimientos);
+                        pujasAdapterPiedras.setPokemonPujas(piedrasEvo);
+                        recyclerViewObjetos.setAdapter(pujasAdapterPiedras);
+
+
+                    }
                 }
-                else {
-                    recyclerViewPokemon.setVisibility(View.INVISIBLE);
-                    recyclerViewObjetos.setVisibility(View.VISIBLE);
-                    PujasAdapterPiedras pujasAdapterPiedras = new PujasAdapterPiedras(context, lastgame, MercadoFragment.this, team, totalPujas, pujas, movimientos);
-                    pujasAdapterPiedras.setPokemonPujas(piedrasEvo);
-                    recyclerViewObjetos.setAdapter(pujasAdapterPiedras);
+            });
 
-
-                }
-            }
-        });
 
 
         DividerItemDecoration itemDecor = new DividerItemDecoration(mView.getContext(), VERTICAL);
