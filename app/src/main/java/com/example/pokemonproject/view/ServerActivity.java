@@ -252,7 +252,10 @@ public class ServerActivity extends AppCompatActivity {
     }
 
     private void consultarCombates(Iterator<QueryDocumentSnapshot> a) {
-        if(!a.hasNext())return;
+        if(!a.hasNext()){
+            estado.setText("Ready");
+            return;
+        }
         QueryDocumentSnapshot queryDocumentSnapshot = a.next();
         final Partida partida = queryDocumentSnapshot.toObject(Partida.class);
 
