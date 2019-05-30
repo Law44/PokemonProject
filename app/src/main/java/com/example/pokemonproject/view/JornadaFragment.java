@@ -28,7 +28,7 @@ import java.util.List;
 
 import static android.support.v7.widget.RecyclerView.VERTICAL;
 
-public class JornadaFragment extends Fragment {
+public class JornadaFragment extends Fragment implements GameActivity.QueryChangeListener {
     private String idPartida ="";
     List<Combate> combateList;
     View mView;
@@ -96,5 +96,10 @@ public class JornadaFragment extends Fragment {
 
     public void setIdLastPartida(String id) {
         this.idPartida = id;
+    }
+
+    @Override
+    public void onQueryChange(String query) {
+
     }
 }
