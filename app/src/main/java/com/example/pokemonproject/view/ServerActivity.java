@@ -727,7 +727,7 @@ public class ServerActivity extends AppCompatActivity {
                     }
                 }
             }
-        }while (cantidad>18000 || igualdad);
+        }while (cantidad>18000 && !igualdad);
         List<Pokemon> listaMercado = new ArrayList<>();
         List<MovementFirebase> listaTemp = new ArrayList<>();
         for (int i = 0; i <10 ; i++) {
