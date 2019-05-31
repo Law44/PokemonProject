@@ -16,8 +16,8 @@
 
     <ImageView
         android:id="@+id/piedra"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_marginStart="4dp"
         android:layout_marginBottom="8dp"
         android:alpha="0.5"
@@ -28,46 +28,42 @@
 
     <ImageView
         android:id="@+id/piedraSprite"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="50dp"
-        android:layout_marginBottom="50dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/tvPiedra"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/imgFondo"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.564" />
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:layout_constraintBottom_toBottomOf="@+id/piedra"
+        app:layout_constraintEnd_toEndOf="@+id/piedra"
+        app:layout_constraintStart_toStartOf="@+id/piedra"
+        app:layout_constraintTop_toTopOf="@+id/piedra" />
 
 
     <TextView
         android:id="@+id/tvPiedra"
-        android:layout_width="wrap_content"
-        android:layout_height="20dp"
-        android:layout_marginStart="24dp"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/piedra"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.47" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/imgPokedolar"
         android:layout_width="18dp"
         android:layout_height="18dp"
         android:layout_marginTop="24dp"
-        android:layout_marginEnd="48dp"
+        android:layout_marginEnd="20dp"
         app:layout_constraintEnd_toStartOf="@+id/imgButtonPagar"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tvcostePiedra"
-        android:layout_width="wrap_content"
-        android:layout_height="20dp"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="8dp"
+        android:textAlignment="textEnd"
         app:layout_constraintEnd_toStartOf="@+id/imgPokedolar"
         app:layout_constraintHorizontal_bias="0.921"
         app:layout_constraintStart_toEndOf="@+id/tvPiedra"
@@ -77,8 +73,8 @@
         android:id="@+id/imgButtonPagar"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="28dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintTop_toTopOf="parent" />

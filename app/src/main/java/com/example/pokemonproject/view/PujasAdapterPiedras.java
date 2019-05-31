@@ -92,7 +92,7 @@ public class PujasAdapterPiedras extends RecyclerView.Adapter<PujasAdapterPiedra
                     .into((ImageView) view.findViewById(R.id.imgPokedolar));
 
             GlideApp.with(view)
-                    .load(R.drawable.stone)
+                    .load(R.drawable.stonemega)
                     .into((ImageView) view.findViewById(R.id.piedra));
 
             GlideApp.with(view)

@@ -11,7 +11,6 @@ import android.widget.TextView;
 import com.example.pokemonproject.GlideApp;
 import com.example.pokemonproject.R;
 import com.example.pokemonproject.model.PiedrasEvoUser;
-import com.example.pokemonproject.model.Username;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -65,18 +64,20 @@ public class InventarioAdapterPiedras extends RecyclerView.Adapter<InventarioAda
         public void setPiedra(final PiedrasEvoUser model, final int position) {
             TextView tvName = view.findViewById(R.id.tvPiedra);
             ImageView fondo = view.findViewById(R.id.imgFondo);
+            TextView tvCantidad = view.findViewById(R.id.tvPiedraCantidad);
 
 
             if (model.getCantidad() == 1) {
-                tvName.setText(model.getCantidad() + " Piedra " + model.getName());
+                tvName.setText("Piedra " + model.getName());
             }
             else if (model.getCantidad() > 1){
-                tvName.setText(model.getCantidad() + " Piedras " + model.getName());
+                tvName.setText("Piedras " + model.getName());
             }
+            tvCantidad.setText(""+model.getCantidad());
 
 
             GlideApp.with(view)
-                    .load(R.drawable.stone)
+                    .load(R.drawable.stonemega)
                     .into((ImageView) view.findViewById(R.id.piedra));
 
             GlideApp.with(view)

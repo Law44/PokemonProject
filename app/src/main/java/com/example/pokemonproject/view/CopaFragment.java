@@ -11,8 +11,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.pokemonproject.GlideApp;
 import com.example.pokemonproject.R;
 import com.example.pokemonproject.model.Partida;
 import com.example.pokemonproject.model.UserGame;
@@ -109,6 +111,7 @@ public class CopaFragment extends Fragment implements GameActivity.QueryChangeLi
             holder.userGameTeam.setText(userGame.getTeamName());
             holder.userGamePoints.setText(String.valueOf(userGame.getPoints()));
             holder.userGamePosition.setText(String.valueOf(i+1));
+            GlideApp.with(holder.itemView.getContext()).load(userGame.getUser().getImgurl()).circleCrop().into(holder.userGameImg);
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -130,12 +133,14 @@ public class CopaFragment extends Fragment implements GameActivity.QueryChangeLi
             private TextView userGameTeam;
             private TextView userGamePoints;
             private TextView userGamePosition;
+            private ImageView userGameImg;
             public UserGameViewHolder(@NonNull View itemView) {
                 super(itemView);
                 userGameName =itemView.findViewById(R.id.tvClasUserGameName);
                 userGameTeam = itemView.findViewById(R.id.tvClasUserGameTeamName);
                 userGamePoints = itemView.findViewById(R.id.tvClasUserGamePoints);
                 userGamePosition = itemView.findViewById(R.id.tvPosicionUsergame);
+                userGameImg = itemView.findViewById(R.id.imgUserClas);
             }
         }
     }
