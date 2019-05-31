@@ -148,7 +148,13 @@ class ModalEvolution {
                                                         for (int i = 0; i < piedrasEvoUsers.size(); i++) {
                                                             if (piedrasEvoUsers.get(i).getId() == model.getPiedrasEvo().getId()){
                                                                 piedrasEvoUsers.get(i).setCantidad(piedrasEvoUsers.get(i).getCantidad()-pokemon.getPiedrasEvo().getCantidad());
-                                                                db.collection("PiedrasUser").document(piedrasID).update("piedras", piedrasEvoUsers);
+                                                                if (piedrasEvoUsers.get(i).getCantidad() > 0) {
+                                                                    db.collection("PiedrasUser").document(piedrasID).update("piedras", piedrasEvoUsers);
+                                                                }
+                                                                else if (piedrasEvoUsers.get(i).getCantidad() == 0){
+                                                                    piedrasEvoUsers.remove(i);
+                                                                    db.collection("PiedrasUser").document(piedrasID).update("piedras", piedrasEvoUsers);
+                                                                }
                                                                 break;
                                                             }
                                                         }
