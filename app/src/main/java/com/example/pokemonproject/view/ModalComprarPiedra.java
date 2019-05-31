@@ -5,7 +5,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -16,12 +15,9 @@ import android.widget.Toast;
 
 import com.example.pokemonproject.GlideApp;
 import com.example.pokemonproject.R;
-import com.example.pokemonproject.model.Moves;
 import com.example.pokemonproject.model.Partida;
 import com.example.pokemonproject.model.PiedrasEvoUser;
-import com.example.pokemonproject.model.Pujas;
 import com.example.pokemonproject.model.PujasPiedras;
-import com.example.pokemonproject.model.Team;
 import com.example.pokemonproject.model.UserGame;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -30,7 +26,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 class ModalComprarPiedra {
@@ -52,7 +47,9 @@ class ModalComprarPiedra {
         dialog.setCancelable(false);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.setContentView(R.layout.activity_modal_compra_piedra);
-        GlideApp.with(context).load(R.drawable.boxpokemonmodal).centerCrop().into((ImageView) dialog.findViewById(R.id.imgModalBoxFondo));
+        GlideApp.with(context).load(R.drawable.fondo_piedras).centerCrop().into((ImageView) dialog.findViewById(R.id.imgModalBoxFondo));
+        GlideApp.with(context).load(R.drawable.stonemega).circleCrop().into((ImageView) dialog.findViewById(R.id.imgPiedraModal));
+        GlideApp.with(context).load(model.getSprite()).into((ImageView) dialog.findViewById(R.id.imgPiedraPokemonModal));
 
         TextView tipoPiedra = dialog.findViewById(R.id.tipoPiedra);
         if (model.getCantidad() == 1) {

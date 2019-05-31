@@ -9,7 +9,7 @@
     <android.support.v7.widget.CardView
         android:id="@+id/cardPokemonModal"
         android:layout_width="300dp"
-        android:layout_height="300dp"
+        android:layout_height="200dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="48dp"
         android:layout_marginEnd="8dp"
@@ -45,6 +45,15 @@
                 android:layout_marginTop="8dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/imgPiedraPokemonModal"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                app:layout_constraintBottom_toBottomOf="@+id/imgPiedraModal"
+                app:layout_constraintEnd_toEndOf="@+id/imgPiedraModal"
+                app:layout_constraintStart_toStartOf="@+id/imgPiedraModal"
+                app:layout_constraintTop_toTopOf="@+id/imgPiedraModal" />
 
             <TextView
                 android:id="@+id/tipoPiedra"

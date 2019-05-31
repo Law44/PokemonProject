@@ -83,10 +83,10 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
         super.onCreateView(inflater, container, savedInstanceState);
         final View mView = inflater.inflate(R.layout.fragment_mercado, container, false);
 
-        final ProgressDialog progress = new ProgressDialog(context);
-        progress.setTitle("Cargando datos");
-        progress.setMessage("Espere unos segundos por favor...");
-        progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+        final ProgressDialog progress = new CustomProgressDialog(context);
+//        progress.setTitle("Cargando datos");
+//        progress.setMessage("Espere unos segundos por favor...");
+//        progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
         progress.show();
 
         tvMoneyMercado = mView.findViewById(R.id.tvMoneyMercado);
@@ -133,6 +133,7 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
 
         DividerItemDecoration itemDecor = new DividerItemDecoration(mView.getContext(), VERTICAL);
         recyclerViewPokemon.addItemDecoration(itemDecor);
+        recyclerViewObjetos.addItemDecoration(itemDecor);
         final FirebaseFirestore rootRef = FirebaseFirestore.getInstance();
         query = rootRef.collection("Mercado").whereEqualTo("id", lastgame);
         rootRef.collection("Mercado")
