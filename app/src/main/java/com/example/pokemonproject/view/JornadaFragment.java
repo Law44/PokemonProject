@@ -43,11 +43,15 @@ public class JornadaFragment extends Fragment implements GameActivity.QueryChang
         db = FirebaseFirestore.getInstance();
         combateList = new ArrayList<>();
 
-        db.collection("Partidas").document(idPartida).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        db.collection("Partidas").document(idPartida).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+            public void onEvent(@javax.annotation.Nullable DocumentSnapshot documentSnapshot, @javax.annotation.Nullable FirebaseFirestoreException e) {
 
-                    DocumentSnapshot documentSnapshot = task.getResult();
+                if (e != null){
+                    return;
+                }
+
+
 
                     Partida partida = documentSnapshot.toObject(Partida.class);
 
@@ -60,7 +64,7 @@ public class JornadaFragment extends Fragment implements GameActivity.QueryChang
                                     public void onEvent(@javax.annotation.Nullable DocumentSnapshot documentSnapshot, @javax.annotation.Nullable FirebaseFirestoreException e) {
 
                                         Combate combateSacarJornada = documentSnapshot.toObject(Combate.class);
-//                                        if (combateSacarJornada==null)return;
+                                        if (combateSacarJornada==null)return;
                                             final int jornadaActual = combateSacarJornada.getJornada();
                                             db.collection("Combates").whereEqualTo("idGame", idPartida).addSnapshotListener(new EventListener<QuerySnapshot>() {
                                                 @Override
