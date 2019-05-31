@@ -276,6 +276,7 @@ public class ServerActivity extends AppCompatActivity {
                                             Combate combate = snapshot.toObject(Combate.class);
                                             if (combate.getJornada() == jornadaActual) {
                                                 combate = lucharCombate(combate);
+                                                combate.setFinalizado("si");
                                                 db.collection("Combates").document(snapshot.getId()).set(combate);
                                                 int cantidad = 0;
                                                 for (int i = 0; i <combate.getEquipo1().getAlineacion().getLista().size();  i++) {
