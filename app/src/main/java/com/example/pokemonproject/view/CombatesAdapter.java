@@ -49,40 +49,42 @@ public class CombatesAdapter extends RecyclerView.Adapter<CombatesAdapter.Combat
         loadEquipoDerecha(holder,equipoDerecha);
 
 
+        if (!combateList.get(i).getFinalizado().equals("no")) {
 
-        holder.resultadoLeft.setText("ESPERANDO");
-        holder.resultadoRight.setText("ESPERANDO");
+            if (counterWinLeft > counterWinRight) {
+                holder.resultadoLeft.setText("GANADOR");
+                holder.resultadoLeft.setTextColor(holder.itemView.getResources().getColor(R.color.colorWin));
+                holder.resultadoRight.setText("PERDEDOR");
+                holder.resultadoRight.setTextColor(holder.itemView.getResources().getColor(R.color.colorLose));
+            } else if (counterWinRight == counterWinLeft) {
+                holder.resultadoLeft.setText("EMPATE");
+                holder.resultadoLeft.setTextColor(holder.itemView.getResources().getColor(R.color.colorBuy));
+                holder.resultadoRight.setText("EMPATE");
+                holder.resultadoRight.setTextColor(holder.itemView.getResources().getColor(R.color.colorBuy));
+            } else {
+                holder.resultadoLeft.setText("PERDEDOR");
+                holder.resultadoLeft.setTextColor(holder.itemView.getResources().getColor(R.color.colorLose));
+                holder.resultadoRight.setText("GANADOR");
+                holder.resultadoRight.setTextColor(holder.itemView.getResources().getColor(R.color.colorWin));
+            }
 
 
-        if (counterWinLeft > counterWinRight) {
-            holder.resultadoLeft.setText("GANADOR");
-            holder.resultadoLeft.setTextColor(holder.itemView.getResources().getColor(R.color.colorWin));
-            holder.resultadoRight.setText("PERDEDOR");
-            holder.resultadoRight.setTextColor(holder.itemView.getResources().getColor(R.color.colorLose));
-        } else if (counterWinRight == counterWinLeft) {
-            holder.resultadoLeft.setText("EMPATE");
-            holder.resultadoLeft.setTextColor(holder.itemView.getResources().getColor(R.color.colorBuy));
-            holder.resultadoRight.setText("EMPATE");
-            holder.resultadoRight.setTextColor(holder.itemView.getResources().getColor(R.color.colorBuy));
-        } else {
-            holder.resultadoLeft.setText("PERDEDOR");
-            holder.resultadoLeft.setTextColor(holder.itemView.getResources().getColor(R.color.colorLose));
-            holder.resultadoRight.setText("GANADOR");
-            holder.resultadoRight.setTextColor(holder.itemView.getResources().getColor(R.color.colorWin));
+            if (nullleft == 6 && nullRight == 6) {
+                holder.resultadoLeft.setText("EMPATE");
+                holder.resultadoLeft.setTextColor(holder.itemView.getResources().getColor(R.color.colorBuy));
+                holder.resultadoRight.setText("EMPATE");
+                holder.resultadoRight.setTextColor(holder.itemView.getResources().getColor(R.color.colorBuy));
+            }
+
+            counterWinLeft = 0;
+            counterWinRight = 0;
+            nullRight = 0;
+            nullleft = 0;
         }
-
-
-        if (nullleft == 6 && nullRight == 6){
-            holder.resultadoLeft.setText("EMPATE");
-            holder.resultadoLeft.setTextColor(holder.itemView.getResources().getColor(R.color.colorBuy));
-            holder.resultadoRight.setText("EMPATE");
-            holder.resultadoRight.setTextColor(holder.itemView.getResources().getColor(R.color.colorBuy));
+        else {
+            holder.resultadoLeft.setText("ESPERANDO");
+            holder.resultadoRight.setText("ESPERANDO");
         }
-
-        counterWinLeft = 0;
-        counterWinRight = 0;
-        nullRight = 0;
-        nullleft = 0;
 
 
     }

@@ -315,6 +315,13 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
                 break;
             }
 
+            case R.id.inventario:{
+                Intent intent = new Intent(GameActivity.this, InventarioActivity.class);
+                intent.putExtra("idGame", id);
+                startActivity(intent);
+                break;
+            }
+
             case R.id.invite: {
                 sendInvitation();
                 break;

@@ -5,16 +5,26 @@ public class Combate {
     private Equipo equipo2;
     private int jornada;
     private String idGame;
+    private String finalizado;
 
     public Combate(Equipo equipo1, Equipo equipo2, int jornada, String idGame) {
         this.equipo1 = equipo1;
         this.equipo2 = equipo2;
         this.jornada = jornada;
         this.idGame = idGame;
+        this.finalizado = "no";
     }
 
     public Combate(){
 
+    }
+
+    public String getFinalizado() {
+        return finalizado;
+    }
+
+    public void setFinalizado(String finalizado) {
+        this.finalizado = finalizado;
     }
 
     public int getJornada() {
