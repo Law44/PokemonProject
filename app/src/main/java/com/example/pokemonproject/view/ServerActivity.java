@@ -700,13 +700,18 @@ public class ServerActivity extends AppCompatActivity {
             }
         }
 
-        if (movementList.get(idMovAtk).categoria.equals("physical")) {
+        if (movementList.get(idMovAtk-1).categoria.equals("physical")) {
             statAtk = atacante.getStats().get(4).base_stat;
             statDef = defensor.getStats().get(3).base_stat;
+            Log.e("Mov","fisico");
 
-        }else{
+        }else if (movementList.get(idMovAtk-1).categoria.equals("special")){
             statAtk = atacante.getStats().get(2).base_stat;
             statDef = defensor.getStats().get(1).base_stat;
+            Log.e("Mov","special");
+        }else {
+            Log.e("Mov",""+idMovAtk);
+            statDef =1;
         }
 
         int variable = random.nextInt(17)+84;
