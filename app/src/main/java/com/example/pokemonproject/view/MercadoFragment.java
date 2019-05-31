@@ -127,6 +127,7 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
         recyclerViewPokemon.addItemDecoration(itemDecor);
         recyclerViewObjetos.addItemDecoration(itemDecor);
         final FirebaseFirestore rootRef = FirebaseFirestore.getInstance();
+
         query = rootRef.collection("Mercado").whereEqualTo("id", lastgame);
         rootRef.collection("Mercado")
                 .document(lastgame)
@@ -139,7 +140,6 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
                             if (documentSnapshot.toObject(ListaPujas.class) != null) {
                                 final ListaPujas listaPujas = documentSnapshot.toObject(ListaPujas.class);
                                 listaPokemon = listaPujas.getLista();
-
                                 rootRef.collection("Partidas").document(lastgame).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                     @Override
                                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -279,6 +279,9 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
                                         }
                                     }
                                 });
+                            }
+                            else {
+                                progress.dismiss();
                             }
                     }
                 });

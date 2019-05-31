@@ -93,6 +93,7 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
+
         numbergames = getIntent().getIntExtra("games", 0);
         id = getIntent().getStringExtra("lastGame");
         listGames = getIntent().getStringArrayListExtra("listGames");
@@ -235,6 +236,14 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
         }
 
 
+
+        if (id.equals("")){
+            nav_Menu.findItem(R.id.inventario).setVisible(false);
+            nav_Menu.findItem(R.id.invite).setVisible(false);
+            nav_Menu.findItem(R.id.gamesList).setVisible(false);
+        }
+
+
         View header = navigationView.getHeaderView(0);
         header.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
         ImageView photo = header.findViewById(R.id.userPhoto);
@@ -305,8 +314,6 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-
-
 
         switch (item.getItemId()) {
 

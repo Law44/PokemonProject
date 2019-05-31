@@ -52,7 +52,6 @@ public class JornadaFragment extends Fragment implements GameActivity.QueryChang
                 }
 
 
-
                     Partida partida = documentSnapshot.toObject(Partida.class);
 
                     for (int i =0;i<partida.getUsers().size(); i++) {
