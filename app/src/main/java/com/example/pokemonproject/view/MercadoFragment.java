@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -112,19 +113,10 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
                     if (isChecked) {
                         recyclerViewObjetos.setVisibility(View.INVISIBLE);
                         recyclerViewPokemon.setVisibility(View.VISIBLE);
-                        PujasAdapter pujasAdapter = new PujasAdapter(context, lastgame, MercadoFragment.this, team, totalPujas, pujas, movimientos);
-                        pujasAdapter.setPokemonPujas(listaPokemon);
-
-                        recyclerViewPokemon.setAdapter(pujasAdapter);
 
                     } else {
                         recyclerViewPokemon.setVisibility(View.INVISIBLE);
                         recyclerViewObjetos.setVisibility(View.VISIBLE);
-                        PujasAdapterPiedras pujasAdapterPiedras = new PujasAdapterPiedras(context, lastgame, MercadoFragment.this, totalPujasPiedras, pujasPiedras);
-                        pujasAdapterPiedras.setPiedrasPujas(piedrasEvo);
-                        recyclerViewObjetos.setAdapter(pujasAdapterPiedras);
-
-
                     }
                 }
             });
@@ -179,10 +171,7 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
 
                                                             }
                                                             ArrayList<Integer> pujastemp = (ArrayList<Integer>) document.get("pujas");
-                                                            for (int i = 0; i < totalPujas.size(); i++) {
-                                                                totalPujas.put(i, 0);
 
-                                                            }
 
                                                             for (int i = 0; i < pujastemp.size(); i++) {
                                                                 if (Integer.parseInt(String.valueOf(pujastemp.get(i))) > 0){
@@ -254,10 +243,6 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
 
                                                                                                 }
                                                                                                 ArrayList<Integer> pujastemp = (ArrayList<Integer>) document.get("pujas");
-                                                                                                for (int i = 0; i < totalPujasPiedras.size(); i++) {
-                                                                                                    totalPujasPiedras.put(i, 0);
-
-                                                                                                }
 
                                                                                                 for (int i = 0; i < pujastemp.size(); i++) {
                                                                                                     if (Integer.parseInt(String.valueOf(pujastemp.get(i))) > 0) {
@@ -265,6 +250,8 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
                                                                                                     }
                                                                                                 }
                                                                                             }
+
+
                                                                                             PujasAdapter pujasAdapter = new PujasAdapter(context, lastgame, MercadoFragment.this, team, totalPujas, pujas, movimientos);
                                                                                             pujasAdapter.setPokemonPujas(listaPokemon);
 
