@@ -47,6 +47,7 @@ class ModalComprarPiedra {
         dialog.setCancelable(false);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.setContentView(R.layout.activity_modal_compra_piedra);
+        dialog.setCanceledOnTouchOutside(true);
         GlideApp.with(context).load(R.drawable.fondo_piedras).centerCrop().into((ImageView) dialog.findViewById(R.id.imgModalBoxFondo));
         GlideApp.with(context).load(R.drawable.stonemega).circleCrop().into((ImageView) dialog.findViewById(R.id.imgPiedraModal));
         GlideApp.with(context).load(model.getSprite()).into((ImageView) dialog.findViewById(R.id.imgPiedraPokemonModal));
