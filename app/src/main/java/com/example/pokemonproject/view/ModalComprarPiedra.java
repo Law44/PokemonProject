@@ -97,7 +97,7 @@ class ModalComprarPiedra {
         btnMin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (Integer.parseInt(etCoste.getText().toString()) > model.getPrecio()){
+                if (Integer.parseInt(etCoste.getText().toString()) > (model.getPrecio() * model.getCantidad())){
                     etCoste.setText(String.valueOf(Integer.parseInt(etCoste.getText().toString())-10));
                 }
                 else {
@@ -117,7 +117,7 @@ class ModalComprarPiedra {
         btnPujarModal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                if (Integer.parseInt(etCoste.getText().toString()) >= model.getPrecio()) {
+                if (Integer.parseInt(etCoste.getText().toString()) >= (model.getPrecio() * model.getCantidad())) {
                     if (Integer.parseInt(etCoste.getText().toString()) > MercadoFragment.saldofuturo) {
                         Toast.makeText(context, "No puedes pujar mas de tu saldo actual o tu futuro saldo", Toast.LENGTH_LONG).show();
                     }

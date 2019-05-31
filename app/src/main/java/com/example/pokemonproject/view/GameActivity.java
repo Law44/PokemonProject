@@ -368,7 +368,7 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
             Intent waIntent = new Intent(Intent.ACTION_SEND);
             waIntent.setType("text/plain");
 
-            String text = "Utiliza este codigo para unirte a la liga " + nameGame + " creada por " + user + ":\n" + id;
+            String text = id;
 
             PackageInfo info= pm.getPackageInfo("com.whatsapp", PackageManager.GET_META_DATA);
             waIntent.setPackage("com.whatsapp");
