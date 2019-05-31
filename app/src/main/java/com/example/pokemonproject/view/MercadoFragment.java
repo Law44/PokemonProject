@@ -46,7 +46,6 @@ import javax.annotation.Nullable;
 
 import static android.support.v7.widget.RecyclerView.VERTICAL;
 
-@SuppressLint("ValidFragment")
 public class MercadoFragment extends Fragment implements GameActivity.QueryChangeListener {
     private Query query;
     private RecyclerView recyclerViewPokemon, recyclerViewObjetos;

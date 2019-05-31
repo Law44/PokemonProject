@@ -32,7 +32,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EnemyTeamAdapter extends RecyclerView.Adapter<EnemyTeamAdapter.EnemyViewHolder> {
+public class EnemyTeamAdapter extends RecyclerView.Adapter<PokemonViewHolder> {
 
     private GameActivity context;
     ArrayList<Pokemon> pokemonsArrayList;
@@ -44,38 +44,19 @@ public class EnemyTeamAdapter extends RecyclerView.Adapter<EnemyTeamAdapter.Enem
         this.context = context;
     }
 
+
     @NonNull
     @Override
-    public EnemyTeamAdapter.EnemyViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        return new EnemyViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_enemy_team, viewGroup, false));
+    public PokemonViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+        return new PokemonViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_pokemon, viewGroup, false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final EnemyTeamAdapter.EnemyViewHolder viewHolder, final int i) {
-
-        viewHolder.tvName.setText(pokemonsArrayList.get(i).getName());
-        viewHolder.tvId.setText(String.valueOf(pokemonsArrayList.get(i).getId()));
+    public void onBindViewHolder(@NonNull final PokemonViewHolder viewHolder, final int i) {
+        viewHolder.setPokemon(pokemonsArrayList.get(i));
 
 
 
-
-        if (pokemonsArrayList.get(i).getTypes().size() == 2){
-            int id =  viewHolder.tipo1.getContext().getResources().getIdentifier(pokemonsArrayList.get(i).getTypes().get(0).getType().getName(), "drawable",  viewHolder.tipo1.getContext().getPackageName());
-            GlideApp.with(viewHolder.itemView.getContext()).load(id).into( viewHolder.tipo1);
-            int id2 =  viewHolder.tipo1.getContext().getResources().getIdentifier(pokemonsArrayList.get(i).getTypes().get(1).getType().getName(), "drawable",  viewHolder.tipo2.getContext().getPackageName());
-            GlideApp.with(viewHolder.itemView.getContext()).load(id2).into( viewHolder.tipo2);
-
-            GlideApp.with(viewHolder.itemView.getContext()).load(0).into( viewHolder.tipounico);
-        }else {
-            int id =  viewHolder.tipo1.getContext().getResources().getIdentifier(pokemonsArrayList.get(i).getTypes().get(0).getType().getName(), "drawable",  viewHolder.tipounico.getContext().getPackageName());
-            GlideApp.with(viewHolder.itemView.getContext()).load(id).into( viewHolder.tipounico);
-            GlideApp.with(viewHolder.itemView.getContext()).load(0).into( viewHolder.tipo1);
-            GlideApp.with(viewHolder.itemView.getContext()).load(0).into( viewHolder.tipo2);
-        }
-        GlideApp.with(viewHolder.itemView.getContext())
-                .load(pokemonsArrayList.get(i).getSprites().front_default)
-                .circleCrop()
-                .into((ImageView) viewHolder.itemView.findViewById(R.id.imgPokemon));
 
     }
 
@@ -88,23 +69,5 @@ public class EnemyTeamAdapter extends RecyclerView.Adapter<EnemyTeamAdapter.Enem
         pokemonsArrayList = pokemonsarray;
     }
 
-    class EnemyViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName;
-        TextView tvId;
-        ImageView tipo1;
-        ImageView tipo2;
-        ImageView tipounico;
 
-        EnemyViewHolder(View view){
-            super(view);
-
-            tvName = view.findViewById(R.id.tvPokemonName);
-            tvId = view.findViewById(R.id.tvPokemonPokedex);
-            tipo1 = view.findViewById(R.id.imgPokemonTipo1);
-            tipo2 = view.findViewById(R.id.imgPokemonTipo2);
-            tipounico = view.findViewById(R.id.imgPokemonTipoUnico);
-
-        }
-
-    }
 }
