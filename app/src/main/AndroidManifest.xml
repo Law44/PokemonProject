@@ -10,6 +10,7 @@
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".view.InventarioActivity"></activity>
         <activity android:name=".view.SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,7 +27,7 @@
         <activity android:name=".view.MainActivity" />
         <activity android:name=".view.NewLeagueActivity" />
         <activity android:name=".view.JoinLeagueActivity" />
-        <activity android:name=".view.ServerActivity"></activity>
+        <activity android:name=".view.ServerActivity" />
     </application>
 
 </manifest>

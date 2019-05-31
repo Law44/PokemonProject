@@ -269,6 +269,11 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
                                                                                             pujasAdapter.setPokemonPujas(listaPokemon);
 
                                                                                             recyclerViewPokemon.setAdapter(pujasAdapter);
+
+                                                                                            PujasAdapterPiedras pujasAdapterPiedras = new PujasAdapterPiedras(context, lastgame, MercadoFragment.this, totalPujasPiedras, pujasPiedras);
+                                                                                            pujasAdapterPiedras.setPiedrasPujas(piedrasEvo);
+                                                                                            recyclerViewObjetos.setAdapter(pujasAdapterPiedras);
+
                                                                                             progress.dismiss();
                                                                                         }
                                                                                     }

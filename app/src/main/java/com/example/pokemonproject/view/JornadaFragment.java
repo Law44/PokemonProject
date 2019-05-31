@@ -60,11 +60,17 @@ public class JornadaFragment extends Fragment implements GameActivity.QueryChang
                                         Combate combateSacarJornada = documentSnapshot.toObject(Combate.class);
 //                                        if (combateSacarJornada==null)return;
                                             final int jornadaActual = combateSacarJornada.getJornada();
-                                            db.collection("Combates").whereEqualTo("idGame", idPartida).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            db.collection("Combates").whereEqualTo("idGame", idPartida).addSnapshotListener(new EventListener<QuerySnapshot>() {
                                                 @Override
-                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                    if (task.isSuccessful()) {
-                                                        for (QueryDocumentSnapshot snapshot : task.getResult()) {
+                                                public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots, @javax.annotation.Nullable FirebaseFirestoreException e) {
+
+                                                    if (e != null){
+                                                        return;
+                                                    }
+
+                                                    combateList = new ArrayList<>();
+
+                                                    for (QueryDocumentSnapshot snapshot : queryDocumentSnapshots) {
                                                             Combate combate = snapshot.toObject(Combate.class);
                                                             if (combate.getJornada() == jornadaActual) {
                                                                 combateList.add(combate);
@@ -78,7 +84,7 @@ public class JornadaFragment extends Fragment implements GameActivity.QueryChang
                                                         recyclerView.addItemDecoration(itemDecor);
                                                         recyclerView.setAdapter(combatesAdapter);
 
-                                                    }
+
                                                 }
                                             });
 
