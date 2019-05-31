@@ -138,6 +138,15 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
                                 return;
                             }
                             if (documentSnapshot.toObject(ListaPujas.class) != null) {
+                                totalPujas = new HashMap<>();
+                                for (int i = 0; i < 10; i++) {
+                                    totalPujas.put(i,0);
+                                }
+                                totalPujasPiedras = new HashMap<>();
+                                for (int i = 0; i < 10; i++) {
+                                    totalPujasPiedras.put(i,0);
+                                }
+
                                 final ListaPujas listaPujas = documentSnapshot.toObject(ListaPujas.class);
                                 listaPokemon = listaPujas.getLista();
                                 rootRef.collection("Partidas").document(lastgame).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
