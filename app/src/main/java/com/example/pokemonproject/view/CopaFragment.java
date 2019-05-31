@@ -20,7 +20,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 
 
 import java.util.ArrayList;
@@ -44,35 +46,34 @@ public class CopaFragment extends Fragment implements GameActivity.QueryChangeLi
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_copa, container, false);
-        db.collection("Partidas").document(idGame).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        db.collection("Partidas").document(idGame).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()){
-                    DocumentSnapshot documentSnapshot = task.getResult();
-                    Partida partida = documentSnapshot.toObject(Partida.class);
-                    usersGames = partida.getUsers();
-                    int limite = usersGames.size()-1;
-                    for (int i = 0; i < limite;) {
-                        if (usersGames.get(i).getPoints()<usersGames.get(i+1).getPoints()){
-                            UserGame tmp = usersGames.get(i+1);
-                            usersGames.set(i+1, usersGames.get(i));
-                            usersGames.set(i,tmp);
-                        }
-                        i++;
-                        if (i == limite){
-                            i = 0;
-                            limite--;
-                        }
-                    }
-                    recyclerView = mView.findViewById(R.id.rvClasificacion);
-                    recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-                    DividerItemDecoration itemDecor = new DividerItemDecoration(mView.getContext(), VERTICAL);
-                    recyclerView.addItemDecoration(itemDecor);
-                    adapter = new UserGameRecyclerAdapter(usersGames);
-                    recyclerView.setAdapter(adapter);
+            public void onEvent(@javax.annotation.Nullable DocumentSnapshot documentSnapshot, @javax.annotation.Nullable FirebaseFirestoreException e) {
+                if (e != null){
 
                 }
 
+                Partida partida = documentSnapshot.toObject(Partida.class);
+                usersGames = partida.getUsers();
+                int limite = usersGames.size()-1;
+                for (int i = 0; i < limite;) {
+                    if (usersGames.get(i).getPoints()<usersGames.get(i+1).getPoints()){
+                        UserGame tmp = usersGames.get(i+1);
+                        usersGames.set(i+1, usersGames.get(i));
+                        usersGames.set(i,tmp);
+                    }
+                    i++;
+                    if (i == limite){
+                        i = 0;
+                        limite--;
+                    }
+                }
+                recyclerView = mView.findViewById(R.id.rvClasificacion);
+                recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                DividerItemDecoration itemDecor = new DividerItemDecoration(mView.getContext(), VERTICAL);
+                recyclerView.addItemDecoration(itemDecor);
+                adapter = new UserGameRecyclerAdapter(usersGames);
+                recyclerView.setAdapter(adapter);
             }
         });
         return mView;

@@ -19,7 +19,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -51,11 +53,11 @@ public class JornadaFragment extends Fragment implements GameActivity.QueryChang
                         if (partida.getUsers().get(i).getUser().getEmail().equals(FirebaseAuth.getInstance().getCurrentUser().getEmail())) {
                             if (partida.getUsers().get(i).getCombatesID().size() > 0) {
                                 final String combateId = partida.getUsers().get(i).getCombatesID().get(partida.getUsers().get(i).getCombatesID().size() - 1);
-                                db.collection("Combates").document(combateId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                db.collection("Combates").document(combateId).addSnapshotListener(new EventListener<DocumentSnapshot>() {
                                     @Override
-                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                        if (task.isSuccessful()) {
-                                            Combate combateSacarJornada = task.getResult().toObject(Combate.class);
+                                    public void onEvent(@javax.annotation.Nullable DocumentSnapshot documentSnapshot, @javax.annotation.Nullable FirebaseFirestoreException e) {
+
+                                        Combate combateSacarJornada = documentSnapshot.toObject(Combate.class);
 //                                        if (combateSacarJornada==null)return;
                                             final int jornadaActual = combateSacarJornada.getJornada();
                                             db.collection("Combates").whereEqualTo("idGame", idPartida).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -79,7 +81,7 @@ public class JornadaFragment extends Fragment implements GameActivity.QueryChang
                                                     }
                                                 }
                                             });
-                                        }
+
                                     }
                                 });
 

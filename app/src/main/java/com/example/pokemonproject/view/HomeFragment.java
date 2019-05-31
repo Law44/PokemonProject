@@ -1,6 +1,7 @@
 package com.example.pokemonproject.view;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -26,12 +27,16 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Nullable;
 
 import static android.support.v7.widget.RecyclerView.VERTICAL;
 
@@ -68,6 +73,8 @@ public  class HomeFragment extends Fragment implements GameActivity.QueryChangeL
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         mView = inflater.inflate(R.layout.fragment_home, container, false);
+
+// To dismiss the dialog
 
         GlideApp.with(this)
                 .load(R.drawable.icons8_pokeball_80)
@@ -129,18 +136,21 @@ public  class HomeFragment extends Fragment implements GameActivity.QueryChangeL
 
                         db.collection("Equipos")
                                 .document(teamID)
-                                .get()
-                                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                .addSnapshotListener(new EventListener<DocumentSnapshot>() {
                                     @Override
-                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                        DocumentSnapshot documentSnapshot1 = task.getResult();
+                                    public void onEvent(@Nullable DocumentSnapshot documentSnapshot1, @Nullable FirebaseFirestoreException e) {
+                                        if (e != null){
+
+                                            return;
+                                        }
                                         team = documentSnapshot1.toObject(Team.class);
 
                                         for (int i = 0; i < team.getEquipo().size(); i++) {
                                             final int finalI = i;
                                             for (int j = 0; j < team.getEquipo().get(i).getMoves().size(); j++) {
                                                 final int finalJ = j;
-                                                db.collection("Movimientos").whereEqualTo("id",team.getEquipo().get(i).getMoves().get(j).move.id).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                db.collection("Movimientos").whereEqualTo("id",team.getEquipo().get(i).getMoves().get(j).move.id).get()
+                                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                                     @Override
                                                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                                         if (task.isSuccessful()){
@@ -193,11 +203,13 @@ public  class HomeFragment extends Fragment implements GameActivity.QueryChangeL
                                     }
                                 });
 
-                        db.collection("Alineaciones").document(alineationID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        db.collection("Alineaciones").document(alineationID).addSnapshotListener(new EventListener<DocumentSnapshot>() {
                             @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    DocumentSnapshot documentSnapshot = task.getResult();
+                            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+
+                                    if (e != null){
+                                        return;
+                                    }
                                     alineation = documentSnapshot.toObject(Alineation.class);
                                     if (alineation.getLista() != null) {
                                         if (alineation.getLista().get(0) != null) {
@@ -232,7 +244,6 @@ public  class HomeFragment extends Fragment implements GameActivity.QueryChangeL
                                         }
                                     }
                                 }
-                            }
                         });
                     }
                 });

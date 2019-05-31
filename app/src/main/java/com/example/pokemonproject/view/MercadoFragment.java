@@ -1,6 +1,7 @@
 package com.example.pokemonproject.view;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -29,7 +30,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -38,6 +41,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Nullable;
 
 import static android.support.v7.widget.RecyclerView.VERTICAL;
 
@@ -78,6 +83,12 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
                              final Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         final View mView = inflater.inflate(R.layout.fragment_mercado, container, false);
+
+        final ProgressDialog progress = new ProgressDialog(context);
+        progress.setTitle("Cargando datos");
+        progress.setMessage("Espere unos segundos por favor...");
+        progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+        progress.show();
 
         tvMoneyMercado = mView.findViewById(R.id.tvMoneyMercado);
         tvMoneyFuturaMercado = mView.findViewById(R.id.tvMoneyFuturaMercado);
@@ -127,13 +138,14 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
         query = rootRef.collection("Mercado").whereEqualTo("id", lastgame);
         rootRef.collection("Mercado")
                 .document(lastgame)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                .addSnapshotListener(new EventListener<DocumentSnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            if (task.getResult().toObject(ListaPujas.class) != null) {
-                                final ListaPujas listaPujas = task.getResult().toObject(ListaPujas.class);
+                    public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                            if (e != null){
+                                return;
+                            }
+                            if (documentSnapshot.toObject(ListaPujas.class) != null) {
+                                final ListaPujas listaPujas = documentSnapshot.toObject(ListaPujas.class);
                                 listaPokemon = listaPujas.getLista();
 
                                 rootRef.collection("Partidas").document(lastgame).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -220,12 +232,10 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
 
                                                                     }
 
-                                                                    rootRef.collection("PiedrasMercado").document(lastgame).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                                    rootRef.collection("PiedrasMercado").document(lastgame).addSnapshotListener(new EventListener<DocumentSnapshot>() {
                                                                         @Override
-                                                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                                            if (task.isSuccessful()){
-                                                                                DocumentSnapshot documentSnapshot = task.getResult();
-                                                                                ListaPujasPiedras listaPujasPiedras = documentSnapshot.toObject(ListaPujasPiedras.class);
+                                                                        public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                                                                            ListaPujasPiedras listaPujasPiedras = documentSnapshot.toObject(ListaPujasPiedras.class);
                                                                                 if (listaPujasPiedras != null) {
                                                                                     piedrasEvo = listaPujasPiedras.getLista();
                                                                                 }
@@ -259,13 +269,11 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
                                                                                             pujasAdapter.setPokemonPujas(listaPokemon);
 
                                                                                             recyclerViewPokemon.setAdapter(pujasAdapter);
+                                                                                            progress.dismiss();
                                                                                         }
                                                                                     }
                                                                                 });
 
-
-
-                                                                            }
                                                                         }
                                                                     });
                                                                 }
@@ -280,7 +288,6 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
                                     }
                                 });
                             }
-                        }
                     }
                 });
 

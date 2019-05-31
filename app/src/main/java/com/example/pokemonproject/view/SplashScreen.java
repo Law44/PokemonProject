@@ -5,7 +5,9 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.ImageView;
 
+import com.example.pokemonproject.GlideApp;
 import com.example.pokemonproject.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -64,6 +66,10 @@ public class SplashScreen extends AppCompatActivity {
 
                 }
             },3000);
+
+        GlideApp.with(this)
+                .load(R.drawable.load)
+                .into((ImageView) findViewById(R.id.loadGif));
 
 
     }
