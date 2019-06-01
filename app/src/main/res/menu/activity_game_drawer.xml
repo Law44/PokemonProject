@@ -10,6 +10,11 @@
             android:title="Prueba"
             />
         <item
+            android:id="@+id/inventario"
+            android:icon="@drawable/ic_shopping_basket_black_24dp"
+            android:title="Inventario"
+            />
+        <item
             android:id="@+id/invite"
             android:icon="@drawable/ic_share_black_24dp"
             android:title="Invitar a jugadores" />

@@ -3,8 +3,8 @@
     <color name="colorPrimary">#000</color>
     <color name="colorPrimaryDark">#000</color>
     <color name="colorAccent"> #cc0000 </color>
-    <color name="colorLose">#A6D83A3A</color>
-    <color name="colorWin">#55C24F</color>
+    <color name="colorLose">#A6E68282</color>
+    <color name="colorWin">#A0D19B</color>
     <color name="colorBuy">#964d9191</color>
     <color name="searchWhite">#FFF</color>
     <color name="searchFondoGris">#5b000000</color>

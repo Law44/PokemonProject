@@ -27,6 +27,7 @@ import com.example.pokemonproject.model.Pokemon;
 import com.example.pokemonproject.model.Pujas;
 import com.example.pokemonproject.model.PujasPiedras;
 import com.example.pokemonproject.model.Team;
+import com.example.pokemonproject.model.Type;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -54,7 +55,6 @@ public class ServerActivity extends AppCompatActivity {
     TextView estado ;
     List<String> idPujas;
     PokemonApi pokemonApi;
-    Alineation alineation1, alineation2;
     Partida partida;
     ArrayList<String> partidas;
     final Executor executor = Executors.newFixedThreadPool(2);
@@ -62,7 +62,7 @@ public class ServerActivity extends AppCompatActivity {
     int jornada = 0;
     boolean calculojornada;
     ArrayList<PiedrasEvoFirebase> listaPiedras;
-    ArrayList<PiedrasEvoUser> listaPiedrasMercado;
+
 
 
 
@@ -76,7 +76,7 @@ public class ServerActivity extends AppCompatActivity {
         movementList = new ArrayList<>();
         pokemonApi = PokemonModule.getAPI();
         listaPiedras = new ArrayList<>();
-        listaPiedrasMercado = new ArrayList<>();
+
 
         Button btnCombates = findViewById(R.id.Combates);
         Button btnRefrescarMercado = findViewById(R.id.Mercado);
@@ -276,6 +276,7 @@ public class ServerActivity extends AppCompatActivity {
                                             Combate combate = snapshot.toObject(Combate.class);
                                             if (combate.getJornada() == jornadaActual) {
                                                 combate = lucharCombate(combate);
+                                                combate.setFinalizado("si");
                                                 db.collection("Combates").document(snapshot.getId()).set(combate);
                                                 int cantidad = 0;
                                                 for (int i = 0; i <combate.getEquipo1().getAlineacion().getLista().size();  i++) {
@@ -362,7 +363,10 @@ public class ServerActivity extends AppCompatActivity {
     }
 
     private void consultarPartidasPiedras(Iterator<QueryDocumentSnapshot> a){
-        if (!a.hasNext())return;
+        if (!a.hasNext()){
+
+            return;
+        }
         Map<Integer,String> idjugadores = new HashMap<>();
         Map<Integer,Integer> pujas = new HashMap<>();
 
@@ -415,7 +419,7 @@ public class ServerActivity extends AppCompatActivity {
 
     private void subirDatosPujasPiedras(final Partida partida, final int i, final Map<Integer, String> idjugadores, final Map<Integer, Integer> pujas) {
         if (i>=idjugadores.size()){
-            refrescarMercadPiedras();
+
             estado.setText("Done");
             return;
         }
@@ -516,7 +520,7 @@ public class ServerActivity extends AppCompatActivity {
 
     private void subirDatos(final Partida partida, final int i, final Map<Integer, String> idjugadores, final Map<Integer, Integer> pujas) {
         if (i>=idjugadores.size()){
-            refrescarMercado();
+
             estado.setText("Done");
             return;
         }
@@ -615,22 +619,24 @@ public class ServerActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()){
-                    for (QueryDocumentSnapshot snapshot: task.getResult()) {
-                        hacerListaPiedras(snapshot.getId());
-
-                    }
+                    Iterator<QueryDocumentSnapshot> a = task.getResult().iterator();
+                        hacerListaPiedras(a);
                 }
             }
         });
     }
 
-    private void hacerListaPiedras(final String id){
+    private void hacerListaPiedras(final Iterator<QueryDocumentSnapshot> id){
         final Random random = new Random();
         final ArrayList<String> totalIDS = new ArrayList<>();
         final ArrayList<String> idsFinales = new ArrayList<>();
-        listaPiedrasMercado = new ArrayList<>();
 
 
+        if (!id.hasNext()){
+            estado.setText("Ready");
+            return;
+        }
+        final DocumentSnapshot snapshot = id.next();
         db.collection("PiedrasEvolucion").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -643,21 +649,23 @@ public class ServerActivity extends AppCompatActivity {
                             int position = random.nextInt(totalIDS.size());
                             idsFinales.add(totalIDS.get(position));
                         }
-
-                        randomPiedras(idsFinales, 0, id);
-
+                        final ArrayList<PiedrasEvoUser> listaPiedrasMercado = new ArrayList<>();
+                        randomPiedras(idsFinales, 0, snapshot,listaPiedrasMercado);
+                        hacerListaPiedras(id);
                     }
             }
         });
     }
 
-    private void randomPiedras(final ArrayList<String> idsFinales, final int i, final String id) {
+    private void randomPiedras(final ArrayList<String> idsFinales, final int i, final DocumentSnapshot snapshot, final ArrayList<PiedrasEvoUser> listaPiedrasMercado) {
         final Random random = new Random();
 
+
         if (i == idsFinales.size()){
+
             ListaPujasPiedras lista = new ListaPujasPiedras();
             lista.setLista(listaPiedrasMercado);
-            db.collection("PiedrasMercado").document(id).set(lista);
+            db.collection("PiedrasMercado").document(snapshot.getId()).set(lista);
             estado.setText("Ready");
             return;
         }
@@ -670,8 +678,7 @@ public class ServerActivity extends AppCompatActivity {
                     PiedrasEvoFirebase piedrasEvoFirebase = documentSnapshot.toObject(PiedrasEvoFirebase.class);
                     int cantidad = random.nextInt(3) + 1;
                     listaPiedrasMercado.add(new PiedrasEvoUser(piedrasEvoFirebase.getId(), piedrasEvoFirebase.getName(), cantidad, piedrasEvoFirebase.getSprite()));
-
-                    randomPiedras(idsFinales, i+1, id);
+                    randomPiedras(idsFinales, i+1, snapshot, listaPiedrasMercado);
                 }
             }
         });
@@ -680,7 +687,10 @@ public class ServerActivity extends AppCompatActivity {
 
     private void pokemon1vs1(Pokemon atacante, Pokemon defensor) {
         Random random = new Random();
+        int statAtk = 0,statDef = 0;
+        Log.e("Lucha",atacante.getName());
         int idMovAtk = atacante.getMoves().get(random.nextInt(atacante.getMoves().size())).move.id;
+//        float calculodano = eleccionMovimientoAtacante(atacante,defensor);
         int danoAtk = movementList.get(idMovAtk).power;
         double stab = 1;
         for (int i = 0; i < atacante.getTypes().size(); i++) {
@@ -688,11 +698,26 @@ public class ServerActivity extends AppCompatActivity {
                 stab = 1.5;
             }
         }
-        int statAtk = atacante.getStats().get(2).base_stat;
-        int statDef = defensor.getStats().get(1).base_stat;
+
+        if (movementList.get(idMovAtk-1).categoria.equals("physical")) {
+            statAtk = atacante.getStats().get(4).base_stat;
+            statDef = defensor.getStats().get(3).base_stat;
+            Log.e("Mov","fisico");
+
+        }else if (movementList.get(idMovAtk-1).categoria.equals("special")){
+            statAtk = atacante.getStats().get(2).base_stat;
+            statDef = defensor.getStats().get(1).base_stat;
+            Log.e("Mov","special");
+        }else {
+            Log.e("Mov",""+idMovAtk);
+            statDef =1;
+        }
+
         int variable = random.nextInt(17)+84;
 
         int dano = (int) (0.01*variable*((11*statAtk*danoAtk)/(25*statDef))*stab);
+
+//        int dano2 = (int) (0.01*variable*calculodano);
         defensor.setLife(defensor.getLife()-dano);
 
 
@@ -744,10 +769,12 @@ public class ServerActivity extends AppCompatActivity {
                     }
                 }
             }
-            Log.e("Pokemon", pokemon.getName());
+            boolean acabar = false;
             do {
-                pokemon.getMoves().remove( pokemon.getMoves().get(random.nextInt(pokemon.getMoves().size())));
-            }while (pokemon.getMoves().size()>4);
+
+                    pokemon.getMoves().remove( pokemon.getMoves().get(random.nextInt(pokemon.getMoves().size())));
+
+            }while (pokemon.getMoves().size()>4 );
             listaMercado.add(pkemonList.get(idCogidos[i]));
         }
 
@@ -771,7 +798,10 @@ public class ServerActivity extends AppCompatActivity {
     }
 
     private void sacarPartidaParaCombate(final Iterator<QueryDocumentSnapshot> a, final int i) {
-        if (!a.hasNext())return;
+        if (!a.hasNext()){
+            estado.setText("Ready");
+            return;
+        }
 
         calculojornada = false;
         jornada = 0;
@@ -783,20 +813,21 @@ public class ServerActivity extends AppCompatActivity {
                 if (task.isSuccessful()){
                     DocumentSnapshot snapshot = task.getResult();
                     partida = snapshot.toObject(Partida.class);
-                    sacarAlineacion(partida,0,partida.getUsers().size()-1,0);
+                    sacarAlineacion(partida,0,partida.getUsers().size()-1,0,a,i);
+                    sacarPartidaParaCombate(a,i+1);
                 }
-                sacarPartidaParaCombate(a,i+1);
+
             }
         });
     }
 
-    private void sacarAlineacion(final Partida partida, final int primerJugador, final int segundoJguador, int limite) {
+    private void sacarAlineacion(final Partida partida, final int primerJugador, final int segundoJguador, int limite, final Iterator<QueryDocumentSnapshot> a, final int numpart) {
         if (segundoJguador<=primerJugador){
             limite++;
             if (limite>=partida.getUsers().size()-1){
-                estado.setText("Ready");
+
             }else {
-                sacarAlineacion(partida, limite, partida.getUsers().size() - 1, limite);
+                sacarAlineacion(partida, limite, partida.getUsers().size() - 1, limite, a, numpart);
             }
         }else {
             final int finalLimite = limite;
@@ -804,19 +835,23 @@ public class ServerActivity extends AppCompatActivity {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if (task.isSuccessful()) {
+                        Alineation alineation1 = new Alineation();
+
                         DocumentSnapshot documentSnapshot = task.getResult();
                         alineation1 = documentSnapshot.toObject(Alineation.class);
+                        final Alineation finalAlineation = alineation1;
                         db.collection("Alineaciones").document(partida.getUsers().get(segundoJguador).getAlineationID()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                 if (task.isSuccessful()) {
                                     final String idCombate = db.collection("Combates").document().getId();
-
+                                    Alineation alineation2 = new Alineation();
                                     DocumentSnapshot documentSnapshot = task.getResult();
                                     alineation2 = documentSnapshot.toObject(Alineation.class);
                                     partida.getUsers().get(primerJugador).getCombatesID().add(idCombate);
                                     partida.getUsers().get(segundoJguador).getCombatesID().add(idCombate);
                                     db.collection("Partidas").document(partida.getId()).set(partida);
+                                    final Alineation finalAlineation2 = alineation2;
                                     db.collection("Combates").whereEqualTo("idGame", partida.getId()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                         @Override
                                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -831,11 +866,11 @@ public class ServerActivity extends AppCompatActivity {
                                                     calculojornada = true;
                                                     jornada++;
                                                 }
-                                                Equipo equipo1 = new Equipo(partida.getUsers().get(primerJugador).getUser().getUsername(), partida.getUsers().get(primerJugador).getUser().getEmail(), alineation1, partida.getUsers().get(primerJugador).getUser().getImgurl());
-                                                Equipo equipo2 = new Equipo(partida.getUsers().get(segundoJguador).getUser().getUsername(), partida.getUsers().get(segundoJguador).getUser().getEmail(), alineation2, partida.getUsers().get(segundoJguador).getUser().getImgurl());
+                                                Equipo equipo1 = new Equipo(partida.getUsers().get(primerJugador).getUser().getUsername(), partida.getUsers().get(primerJugador).getUser().getEmail(), finalAlineation, partida.getUsers().get(primerJugador).getUser().getImgurl());
+                                                Equipo equipo2 = new Equipo(partida.getUsers().get(segundoJguador).getUser().getUsername(), partida.getUsers().get(segundoJguador).getUser().getEmail(), finalAlineation2, partida.getUsers().get(segundoJguador).getUser().getImgurl());
                                                 Combate nextCombate = new Combate(equipo1, equipo2, jornada, partida.getId());
                                                 db.collection("Combates").document(idCombate).set(nextCombate);
-                                                sacarAlineacion(partida, primerJugador, segundoJguador - 1, finalLimite);
+                                                sacarAlineacion(partida, primerJugador, segundoJguador - 1, finalLimite, a, numpart);
                                             }
                                         }
                                     });
@@ -1694,5 +1729,417 @@ public class ServerActivity extends AppCompatActivity {
             estado.setText("Ready");
 
         }
+    private float eleccionMovimientoAtacante(Pokemon atacante, Pokemon defensor) {
+        ArrayList<String> superEficaces = new ArrayList<>();
+        ArrayList<String> pocoEficaz = new ArrayList<>();
+        ArrayList<String> ineficaz = new ArrayList<>();
+        final String fire = "fire";
+        final String fairy = "fairy";
+        final String ground = "ground";
+        final String rock = "rock";
+        final String water = "water";
+        final String bug = "bug";
+        final String steel = "steel";
+        final String grass = "grass";
+        final String ice = "ice";
+        final String normal = "normal";
+        final String fight = "fight";
+        final String flying = "flying";
+        final String poison = "poison";
+        final String ghost = "ghost";
+        final String electric = "electric";
+        final String psychic = "psychic";
+        final String dragon = "dragon";
+        final String dark = "dark";
+
+
+        Type typePrimaDef = defensor.getTypes().get(0).getType();
+        Type typeSecDef = new Type();
+        if (defensor.getTypes().size()==2)typeSecDef = defensor.getTypes().get(1).getType();
+
+
+        switch (typePrimaDef.getName()){
+            case fire:
+                superEficaces.add(ground);
+                superEficaces.add(rock);
+                superEficaces.add(water);
+                pocoEficaz.add(bug);
+                pocoEficaz.add(steel);
+                pocoEficaz.add(fire);
+                pocoEficaz.add(grass);
+                pocoEficaz.add(ice);
+                pocoEficaz.add(fairy);
+                break;
+            case normal:
+                superEficaces.add(fight);
+                ineficaz.add(ghost);
+                break;
+            case fight:
+                superEficaces.add(flying);
+                superEficaces.add(psychic);
+                superEficaces.add(fairy);
+                pocoEficaz.add(rock);
+                pocoEficaz.add(bug);
+                pocoEficaz.add(dark);
+                break;
+            case flying:
+                superEficaces.add(rock);
+                superEficaces.add(electric);
+                superEficaces.add(ice);
+                pocoEficaz.add(fight);
+                pocoEficaz.add(bug);
+                pocoEficaz.add(grass);
+                ineficaz.add(ground);
+                break;
+            case poison:
+                superEficaces.add(ground);
+                superEficaces.add(psychic);
+                pocoEficaz.add(fight);
+                pocoEficaz.add(poison);
+                pocoEficaz.add(bug);
+                pocoEficaz.add(grass);
+                pocoEficaz.add(fairy);
+                break;
+            case ground:
+                superEficaces.add(water);
+                superEficaces.add(grass);
+                superEficaces.add(ice);
+                pocoEficaz.add(poison);
+                pocoEficaz.add(rock);
+                ineficaz.add(electric);
+                break;
+            case rock:
+                superEficaces.add(fight);
+                superEficaces.add(ground);
+                superEficaces.add(steel);
+                superEficaces.add(water);
+                superEficaces.add(grass);
+                pocoEficaz.add(normal);
+                pocoEficaz.add(flying);
+                pocoEficaz.add(poison);
+                pocoEficaz.add(fire);
+                break;
+            case bug:
+                superEficaces.add(flying);
+                superEficaces.add(rock);
+                superEficaces.add(fire);
+                pocoEficaz.add(fight);
+                pocoEficaz.add(ground);
+                pocoEficaz.add(grass);
+                break;
+            case ghost:
+                ineficaz.add(normal);
+                ineficaz.add(fight);
+                pocoEficaz.add(poison);
+                pocoEficaz.add(bug);
+                superEficaces.add(ghost);
+                superEficaces.add(dark);
+                break;
+            case steel:
+                superEficaces.add(fight);
+                superEficaces.add(ground);
+                superEficaces.add(fire);
+                pocoEficaz.add(normal);
+                pocoEficaz.add(flying);
+                pocoEficaz.add(rock);
+                pocoEficaz.add(bug);
+                pocoEficaz.add(steel);
+                pocoEficaz.add(grass);
+                pocoEficaz.add(psychic);
+                pocoEficaz.add(ice);
+                pocoEficaz.add(dragon);
+                pocoEficaz.add(fairy);
+                ineficaz.add(poison);
+                break;
+            case water:
+                superEficaces.add(grass);
+                superEficaces.add(electric);
+                pocoEficaz.add(steel);
+                pocoEficaz.add(fire);
+                pocoEficaz.add(water);
+                pocoEficaz.add(ice);
+                break;
+            case grass:
+                superEficaces.add(flying);
+                superEficaces.add(poison);
+                superEficaces.add(bug);
+                superEficaces.add(fire);
+                superEficaces.add(ice);
+                pocoEficaz.add(ground);
+                pocoEficaz.add(water);
+                pocoEficaz.add(grass);
+                pocoEficaz.add(electric);
+                break;
+            case electric:
+                superEficaces.add(ground);
+                pocoEficaz.add(flying);
+                pocoEficaz.add(steel);
+                pocoEficaz.add(electric);
+                break;
+            case psychic:
+                superEficaces.add(bug);
+                superEficaces.add(ghost);
+                superEficaces.add(dark);
+                pocoEficaz.add(fight);
+                pocoEficaz.add(psychic);
+                break;
+            case ice:
+                superEficaces.add(fight);
+                superEficaces.add(rock);
+                superEficaces.add(steel);
+                superEficaces.add(fire);
+                pocoEficaz.add(ice);
+                break;
+            case dragon:
+                superEficaces.add(ice);
+                superEficaces.add(dragon);
+                superEficaces.add(fairy);
+                pocoEficaz.add(fire);
+                pocoEficaz.add(water);
+                pocoEficaz.add(grass);
+                pocoEficaz.add(electric);
+                break;
+            case dark:
+                superEficaces.add(fight);
+                superEficaces.add(bug);
+                superEficaces.add(fairy);
+                pocoEficaz.add(ghost);
+                pocoEficaz.add(dark);
+                ineficaz.add(psychic);
+                break;
+            case fairy:
+                superEficaces.add(poison);
+                superEficaces.add(steel);
+                pocoEficaz.add(fight);
+                pocoEficaz.add(bug);
+                pocoEficaz.add(dark);
+                ineficaz.add(dragon);
+                break;
+        }
+
+        if (defensor.getTypes().size()==2) {
+            switch (typeSecDef.getName()) {
+                case fire:
+                    superEficaces.add(ground);
+                    superEficaces.add(rock);
+                    superEficaces.add(water);
+                    pocoEficaz.add(bug);
+                    pocoEficaz.add(steel);
+                    pocoEficaz.add(fire);
+                    pocoEficaz.add(grass);
+                    pocoEficaz.add(ice);
+                    pocoEficaz.add(fairy);
+                    break;
+                case normal:
+                    superEficaces.add(fight);
+                    ineficaz.add(ghost);
+                    break;
+                case fight:
+                    superEficaces.add(flying);
+                    superEficaces.add(psychic);
+                    superEficaces.add(fairy);
+                    pocoEficaz.add(rock);
+                    pocoEficaz.add(bug);
+                    pocoEficaz.add(dark);
+                    break;
+                case flying:
+                    superEficaces.add(rock);
+                    superEficaces.add(electric);
+                    superEficaces.add(ice);
+                    pocoEficaz.add(fight);
+                    pocoEficaz.add(bug);
+                    pocoEficaz.add(grass);
+                    ineficaz.add(ground);
+                    break;
+                case poison:
+                    superEficaces.add(ground);
+                    superEficaces.add(psychic);
+                    pocoEficaz.add(fight);
+                    pocoEficaz.add(poison);
+                    pocoEficaz.add(bug);
+                    pocoEficaz.add(grass);
+                    pocoEficaz.add(fairy);
+                    break;
+                case ground:
+                    superEficaces.add(water);
+                    superEficaces.add(grass);
+                    superEficaces.add(ice);
+                    pocoEficaz.add(poison);
+                    pocoEficaz.add(rock);
+                    ineficaz.add(electric);
+                    break;
+                case rock:
+                    superEficaces.add(fight);
+                    superEficaces.add(ground);
+                    superEficaces.add(steel);
+                    superEficaces.add(water);
+                    superEficaces.add(grass);
+                    pocoEficaz.add(normal);
+                    pocoEficaz.add(flying);
+                    pocoEficaz.add(poison);
+                    pocoEficaz.add(fire);
+                    break;
+                case bug:
+                    superEficaces.add(flying);
+                    superEficaces.add(rock);
+                    superEficaces.add(fire);
+                    pocoEficaz.add(fight);
+                    pocoEficaz.add(ground);
+                    pocoEficaz.add(grass);
+                    break;
+                case ghost:
+                    ineficaz.add(normal);
+                    ineficaz.add(fight);
+                    pocoEficaz.add(poison);
+                    pocoEficaz.add(bug);
+                    superEficaces.add(ghost);
+                    superEficaces.add(dark);
+                    break;
+                case steel:
+                    superEficaces.add(fight);
+                    superEficaces.add(ground);
+                    superEficaces.add(fire);
+                    pocoEficaz.add(normal);
+                    pocoEficaz.add(flying);
+                    pocoEficaz.add(rock);
+                    pocoEficaz.add(bug);
+                    pocoEficaz.add(steel);
+                    pocoEficaz.add(grass);
+                    pocoEficaz.add(psychic);
+                    pocoEficaz.add(ice);
+                    pocoEficaz.add(dragon);
+                    pocoEficaz.add(fairy);
+                    ineficaz.add(poison);
+                    break;
+                case water:
+                    superEficaces.add(grass);
+                    superEficaces.add(electric);
+                    pocoEficaz.add(steel);
+                    pocoEficaz.add(fire);
+                    pocoEficaz.add(water);
+                    pocoEficaz.add(ice);
+                    break;
+                case grass:
+                    superEficaces.add(flying);
+                    superEficaces.add(poison);
+                    superEficaces.add(bug);
+                    superEficaces.add(fire);
+                    superEficaces.add(ice);
+                    pocoEficaz.add(ground);
+                    pocoEficaz.add(water);
+                    pocoEficaz.add(grass);
+                    pocoEficaz.add(electric);
+                    break;
+                case electric:
+                    superEficaces.add(ground);
+                    pocoEficaz.add(flying);
+                    pocoEficaz.add(steel);
+                    pocoEficaz.add(electric);
+                    break;
+                case psychic:
+                    superEficaces.add(bug);
+                    superEficaces.add(ghost);
+                    superEficaces.add(dark);
+                    pocoEficaz.add(fight);
+                    pocoEficaz.add(psychic);
+                    break;
+                case ice:
+                    superEficaces.add(fight);
+                    superEficaces.add(rock);
+                    superEficaces.add(steel);
+                    superEficaces.add(fire);
+                    pocoEficaz.add(ice);
+                    break;
+                case dragon:
+                    superEficaces.add(ice);
+                    superEficaces.add(dragon);
+                    superEficaces.add(fairy);
+                    pocoEficaz.add(fire);
+                    pocoEficaz.add(water);
+                    pocoEficaz.add(grass);
+                    pocoEficaz.add(electric);
+                    break;
+                case dark:
+                    superEficaces.add(fight);
+                    superEficaces.add(bug);
+                    superEficaces.add(fairy);
+                    pocoEficaz.add(ghost);
+                    pocoEficaz.add(dark);
+                    ineficaz.add(psychic);
+                    break;
+                case fairy:
+                    superEficaces.add(poison);
+                    superEficaces.add(steel);
+                    pocoEficaz.add(fight);
+                    pocoEficaz.add(bug);
+                    pocoEficaz.add(dark);
+                    ineficaz.add(dragon);
+                    break;
+            }
+        }
+        Map<String,Float> atkEficaces = new HashMap<>();
+        atkEficaces.put(normal,1f);
+        atkEficaces.put(fight,1f);
+        atkEficaces.put(flying,1f);
+        atkEficaces.put(poison,1f);
+        atkEficaces.put(ground,1f);
+        atkEficaces.put(rock,1f);
+        atkEficaces.put(bug,1f);
+        atkEficaces.put(ghost,1f);
+        atkEficaces.put(steel,1f);
+        atkEficaces.put(fire,1f);
+        atkEficaces.put(water,1f);
+        atkEficaces.put(grass,1f);
+        atkEficaces.put(electric,1f);
+        atkEficaces.put(psychic,1f);
+        atkEficaces.put(ice,1f);
+        atkEficaces.put(dragon,1f);
+        atkEficaces.put(dark,1f);
+        atkEficaces.put(fairy,1f);
+
+
+
+
+        for (int i = 0; i < superEficaces.size(); i++) {
+            atkEficaces.put(superEficaces.get(i), atkEficaces.get(superEficaces.get(i)) * 2f);
+        }
+        for (int i = 0; i < pocoEficaz.size(); i++) {
+           atkEficaces.put(superEficaces.get(i),atkEficaces.get(pocoEficaz.get(i))/2);
+        }
+        for (int i = 0; i < ineficaz.size(); i++) {
+            atkEficaces.put(superEficaces.get(i),0f);
+        }
+
+        atkEficaces.put(atacante.getTypes().get(0).getType().getName(), atkEficaces.get(atacante.getTypes().get(0).getType().getName()) * 1.5f);
+        if (atacante.getTypes().size() > 1) {
+            atkEficaces.put(atacante.getTypes().get(1).getType().getName(), atkEficaces.get(atacante.getTypes().get(1).getType().getName()) * 1.5f);
+        }
+        float[] posicionatk = new float[4];
+        for (int i = 0; i < atacante.getMoves().size(); i++) {
+
+                if (movementList.get(atacante.getMoves().get(i).move.id).getType().equals("special")){
+                    posicionatk[i] = movementList.get(atacante.getMoves().get(i).move.id).getPower()* atacante.getStats().get(2).base_stat*11/25f* defensor.getStats().get(1).base_stat;
+                }
+                else{
+                    posicionatk[i] = movementList.get(atacante.getMoves().get(i).move.id).getPower()* atacante.getStats().get(4).base_stat/25f* defensor.getStats().get(3).base_stat;
+                }
+
+            posicionatk[i] *= atkEficaces.get(movementList.get(atacante.getMoves().get(i).move.id).type);
+
+        }
+        int atkElegido = 0;
+        for (int i = 0; i < posicionatk.length - 1; i++) {
+            if (posicionatk[i]<posicionatk[i+1]){
+                atkElegido = i+1;
+            }else {
+                posicionatk[i+1] = posicionatk[i];
+            }
+        }
+
+        Log.e("Atake",atacante.getMoves().get(atkElegido).move.name);
+
+
+        return posicionatk[atkElegido];
+    }
 }
 

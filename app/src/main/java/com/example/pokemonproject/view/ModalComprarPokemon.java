@@ -57,6 +57,7 @@ class ModalComprarPokemon {
         dialog.setCancelable(false);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.setContentView(R.layout.activity_modal_compra);
+        dialog.setCanceledOnTouchOutside(true);
         GlideApp.with(context).load(model.getSprites().front_default).into((ImageView) dialog.findViewById(R.id.imgPokemonModal));
         GlideApp.with(context).load(R.drawable.boxpokemonmodal).centerCrop().into((ImageView) dialog.findViewById(R.id.imgModalBoxFondo));
         final TextView mov1 = dialog.findViewById(R.id.comprarMov1);

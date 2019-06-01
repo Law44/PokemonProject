@@ -1,12 +1,14 @@
 package com.example.pokemonproject.view;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +31,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -39,9 +43,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nullable;
+
 import static android.support.v7.widget.RecyclerView.VERTICAL;
 
-@SuppressLint("ValidFragment")
 public class MercadoFragment extends Fragment implements GameActivity.QueryChangeListener {
     private Query query;
     private RecyclerView recyclerViewPokemon, recyclerViewObjetos;
@@ -79,6 +84,12 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
         super.onCreateView(inflater, container, savedInstanceState);
         final View mView = inflater.inflate(R.layout.fragment_mercado, container, false);
 
+        final ProgressDialog progress = new CustomProgressDialog(context);
+//        progress.setTitle("Cargando datos");
+//        progress.setMessage("Espere unos segundos por favor...");
+//        progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+        progress.show();
+
         tvMoneyMercado = mView.findViewById(R.id.tvMoneyMercado);
         tvMoneyFuturaMercado = mView.findViewById(R.id.tvMoneyFuturaMercado);
 
@@ -102,19 +113,10 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
                     if (isChecked) {
                         recyclerViewObjetos.setVisibility(View.INVISIBLE);
                         recyclerViewPokemon.setVisibility(View.VISIBLE);
-                        PujasAdapter pujasAdapter = new PujasAdapter(context, lastgame, MercadoFragment.this, team, totalPujas, pujas, movimientos);
-                        pujasAdapter.setPokemonPujas(listaPokemon);
-
-                        recyclerViewPokemon.setAdapter(pujasAdapter);
 
                     } else {
                         recyclerViewPokemon.setVisibility(View.INVISIBLE);
                         recyclerViewObjetos.setVisibility(View.VISIBLE);
-                        PujasAdapterPiedras pujasAdapterPiedras = new PujasAdapterPiedras(context, lastgame, MercadoFragment.this, totalPujasPiedras, pujasPiedras);
-                        pujasAdapterPiedras.setPiedrasPujas(piedrasEvo);
-                        recyclerViewObjetos.setAdapter(pujasAdapterPiedras);
-
-
                     }
                 }
             });
@@ -123,24 +125,39 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
 
         DividerItemDecoration itemDecor = new DividerItemDecoration(mView.getContext(), VERTICAL);
         recyclerViewPokemon.addItemDecoration(itemDecor);
+        recyclerViewObjetos.addItemDecoration(itemDecor);
         final FirebaseFirestore rootRef = FirebaseFirestore.getInstance();
+
         query = rootRef.collection("Mercado").whereEqualTo("id", lastgame);
         rootRef.collection("Mercado")
                 .document(lastgame)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                .addSnapshotListener(new EventListener<DocumentSnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            if (task.getResult().toObject(ListaPujas.class) != null) {
-                                final ListaPujas listaPujas = task.getResult().toObject(ListaPujas.class);
-                                listaPokemon = listaPujas.getLista();
+                    public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                            if (e != null){
+                                return;
+                            }
+                            if (documentSnapshot.toObject(ListaPujas.class) != null) {
+                                totalPujas = new HashMap<>();
+                                for (int i = 0; i < 10; i++) {
+                                    totalPujas.put(i,0);
+                                }
+                                totalPujasPiedras = new HashMap<>();
+                                for (int i = 0; i < 10; i++) {
+                                    totalPujasPiedras.put(i,0);
+                                }
 
-                                rootRef.collection("Partidas").document(lastgame).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                final ListaPujas listaPujas = documentSnapshot.toObject(ListaPujas.class);
+                                listaPokemon = listaPujas.getLista();
+                                rootRef.collection("Partidas").document(lastgame).addSnapshotListener(new EventListener<DocumentSnapshot>() {
                                     @Override
-                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                        if (task.isSuccessful()){
-                                            Partida partida = task.getResult().toObject(Partida.class);
+                                    public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+
+                                            if (e != null){
+                                                return;
+                                            }
+
+                                            Partida partida = documentSnapshot.toObject(Partida.class);
                                             for (int i = 0; i < partida.getUsers().size(); i++) {
                                                 if (partida.getUsers().get(i).getUser().getEmail().equals(FirebaseAuth.getInstance().getCurrentUser().getEmail())){
                                                     teamID = partida.getUsers().get(i).getTeamID();
@@ -152,25 +169,36 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
                                                 }
                                             }
 
-                                            rootRef.collection("Pujas").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                @SuppressLint("NewApi")
+                                            rootRef.collection("Pujas").addSnapshotListener(new EventListener<QuerySnapshot>() {
                                                 @Override
-                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                    if (task.isSuccessful()) {
-                                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                                                    boolean first = true;
+                                                    if (e != null){
+                                                            return;
+                                                        }
+                                                        for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                                                             if (document.getId().equals(pujasID)){
                                                                 pujas = (ArrayList<Integer>) document.get("pujas");
+                                                                saldofuturo = money;
                                                                 for (int i = 0; i < pujas.size(); i++) {
                                                                     saldofuturo -= Integer.parseInt(String.valueOf(pujas.get(i)));
                                                                 }
                                                                 tvMoneyFuturaMercado.setText(String.valueOf(saldofuturo));
+                                                                if (first) {
+                                                                    totalPujas = new HashMap<>();
+                                                                    for (int i = 0; i < 10; i++) {
+                                                                        totalPujas.put(i, 0);
+                                                                    }
+                                                                    totalPujasPiedras = new HashMap<>();
+                                                                    for (int i = 0; i < 10; i++) {
+                                                                        totalPujasPiedras.put(i, 0);
+                                                                    }
+                                                                    first = false;
+                                                                }
 
                                                             }
                                                             ArrayList<Integer> pujastemp = (ArrayList<Integer>) document.get("pujas");
-                                                            for (int i = 0; i < totalPujas.size(); i++) {
-                                                                totalPujas.put(i, 0);
 
-                                                            }
 
                                                             for (int i = 0; i < pujastemp.size(); i++) {
                                                                 if (Integer.parseInt(String.valueOf(pujastemp.get(i))) > 0){
@@ -183,6 +211,8 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
                                                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                                                 if (task.isSuccessful()) {
                                                                     team = task.getResult().toObject(Team.class);
+                                                                    movimientos = new ArrayList<>();
+
 
                                                                     for (int i = 0; i < listaPokemon.size(); i++) {
                                                                         final int finalI = i;
@@ -220,33 +250,44 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
 
                                                                     }
 
-                                                                    rootRef.collection("PiedrasMercado").document(lastgame).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                                    rootRef.collection("PiedrasMercado").document(lastgame).addSnapshotListener(new EventListener<DocumentSnapshot>() {
                                                                         @Override
-                                                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                                            if (task.isSuccessful()){
-                                                                                DocumentSnapshot documentSnapshot = task.getResult();
-                                                                                ListaPujasPiedras listaPujasPiedras = documentSnapshot.toObject(ListaPujasPiedras.class);
+                                                                        public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                                                                            ListaPujasPiedras listaPujasPiedras = documentSnapshot.toObject(ListaPujasPiedras.class);
                                                                                 if (listaPujasPiedras != null) {
                                                                                     piedrasEvo = listaPujasPiedras.getLista();
                                                                                 }
 
-                                                                                rootRef.collection("PujasPiedras").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                                rootRef.collection("PujasPiedras").addSnapshotListener(new EventListener<QuerySnapshot>() {
                                                                                     @Override
-                                                                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                                                        if (task.isSuccessful()) {
-                                                                                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+
+                                                                                            boolean first = true;
+
+
+                                                                                            if (e != null){
+                                                                                                return;
+                                                                                            }
+                                                                                            for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                                                                                                 if (document.getId().equals(pujasPiedrasID)) {
                                                                                                     pujasPiedras = (ArrayList<Integer>) document.get("pujas");
+                                                                                                    saldofuturo = money;
                                                                                                     for (int i = 0; i < pujasPiedras.size(); i++) {
                                                                                                         saldofuturo -= Integer.parseInt(String.valueOf(pujasPiedras.get(i)));
+                                                                                                    }
+                                                                                                    for (int i = 0; i < pujas.size(); i++) {
+                                                                                                        saldofuturo -= Integer.parseInt(String.valueOf(pujas.get(i)));
                                                                                                     }
                                                                                                     tvMoneyFuturaMercado.setText(String.valueOf(saldofuturo));
 
                                                                                                 }
                                                                                                 ArrayList<Integer> pujastemp = (ArrayList<Integer>) document.get("pujas");
-                                                                                                for (int i = 0; i < totalPujasPiedras.size(); i++) {
-                                                                                                    totalPujasPiedras.put(i, 0);
-
+                                                                                                if (first){
+                                                                                                    totalPujasPiedras = new HashMap<>();
+                                                                                                    for (int i = 0; i < 10; i++) {
+                                                                                                        totalPujasPiedras.put(i, 0);
+                                                                                                    }
+                                                                                                    first = false;
                                                                                                 }
 
                                                                                                 for (int i = 0; i < pujastemp.size(); i++) {
@@ -255,32 +296,35 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
                                                                                                     }
                                                                                                 }
                                                                                             }
+
+
                                                                                             PujasAdapter pujasAdapter = new PujasAdapter(context, lastgame, MercadoFragment.this, team, totalPujas, pujas, movimientos);
                                                                                             pujasAdapter.setPokemonPujas(listaPokemon);
 
                                                                                             recyclerViewPokemon.setAdapter(pujasAdapter);
-                                                                                        }
+
+                                                                                            PujasAdapterPiedras pujasAdapterPiedras = new PujasAdapterPiedras(context, lastgame, MercadoFragment.this, totalPujasPiedras, pujasPiedras);
+                                                                                            pujasAdapterPiedras.setPiedrasPujas(piedrasEvo);
+                                                                                            recyclerViewObjetos.setAdapter(pujasAdapterPiedras);
+
+                                                                                            progress.dismiss();
                                                                                     }
                                                                                 });
 
-
-
-                                                                            }
                                                                         }
                                                                     });
                                                                 }
                                                             }
                                                         });
-                                                    }
                                                 }
                                             });
 
-
-                                        }
                                     }
                                 });
                             }
-                        }
+                            else {
+                                progress.dismiss();
+                            }
                     }
                 });
 

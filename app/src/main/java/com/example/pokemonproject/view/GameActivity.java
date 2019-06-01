@@ -93,6 +93,7 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
+
         numbergames = getIntent().getIntExtra("games", 0);
         id = getIntent().getStringExtra("lastGame");
         listGames = getIntent().getStringArrayListExtra("listGames");
@@ -235,6 +236,14 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
         }
 
 
+
+        if (id.equals("")){
+            nav_Menu.findItem(R.id.inventario).setVisible(false);
+            nav_Menu.findItem(R.id.invite).setVisible(false);
+            nav_Menu.findItem(R.id.gamesList).setVisible(false);
+        }
+
+
         View header = navigationView.getHeaderView(0);
         header.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
         ImageView photo = header.findViewById(R.id.userPhoto);
@@ -306,12 +315,17 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
 
-
-
         switch (item.getItemId()) {
 
             case R.id.gamesList:{
                 new ModalSelectGame(GameActivity.this, id);
+                break;
+            }
+
+            case R.id.inventario:{
+                Intent intent = new Intent(GameActivity.this, InventarioActivity.class);
+                intent.putExtra("idGame", id);
+                startActivity(intent);
                 break;
             }
 
@@ -361,7 +375,7 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
             Intent waIntent = new Intent(Intent.ACTION_SEND);
             waIntent.setType("text/plain");
 
-            String text = "Utiliza este codigo para unirte a la liga " + nameGame + " creada por " + user + ":\n" + id;
+            String text = id;
 
             PackageInfo info= pm.getPackageInfo("com.whatsapp", PackageManager.GET_META_DATA);
             waIntent.setPackage("com.whatsapp");

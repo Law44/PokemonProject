@@ -10,12 +10,24 @@
         android:id="@+id/titulo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="96dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="24dp"
+        android:layout_marginEnd="8dp"
         android:text="Nueva Partida"
         android:textSize="30dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView17"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:text="Dinero Inicial"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etTeamName" />
 
     <EditText
         android:id="@+id/etGameName"
@@ -25,6 +37,8 @@
         android:layout_marginTop="36dp"
         android:layout_marginEnd="8dp"
         android:hint="Nombre de partida"
+        android:padding="5dip"
+        android:background="@drawable/edit_text_recuadro"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -33,41 +47,42 @@
 
     <Spinner
         android:id="@+id/etInitialMoney"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="36dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="28dp"
         android:hint="Presupuesto inicial de equipo"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etGameName"
-        android:singleLine="true"/>
+        android:singleLine="true"
+        app:layout_constraintStart_toEndOf="@+id/textView17"
+        app:layout_constraintTop_toBottomOf="@+id/etTeamName" />
 
     <EditText
         android:id="@+id/etTeamName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
+        android:background="@drawable/edit_text_recuadro"
         android:hint="Nombre de tu equipo"
+        android:padding="5dip"
+        android:singleLine="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etInitialMoney"
-        android:singleLine="true"/>
+        app:layout_constraintTop_toBottomOf="@+id/etGameName" />
 
     <Button
         android:id="@+id/crear"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="44dp"
         android:layout_marginEnd="8dp"
         android:text="Crear"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etTeamName"/>
+        app:layout_constraintHorizontal_bias="0.67"
+        app:layout_constraintStart_toEndOf="@+id/etInitialMoney"
+        app:layout_constraintTop_toBottomOf="@+id/etTeamName" />
 
 </android.support.constraint.ConstraintLayout>

@@ -16,12 +16,9 @@ import android.widget.Toast;
 
 import com.example.pokemonproject.GlideApp;
 import com.example.pokemonproject.R;
-import com.example.pokemonproject.model.Moves;
 import com.example.pokemonproject.model.Partida;
 import com.example.pokemonproject.model.PiedrasEvoUser;
-import com.example.pokemonproject.model.Pujas;
 import com.example.pokemonproject.model.PujasPiedras;
-import com.example.pokemonproject.model.Team;
 import com.example.pokemonproject.model.UserGame;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -30,7 +27,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 class ModalComprarPiedra {
@@ -52,7 +48,10 @@ class ModalComprarPiedra {
         dialog.setCancelable(false);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.setContentView(R.layout.activity_modal_compra_piedra);
-        GlideApp.with(context).load(R.drawable.boxpokemonmodal).centerCrop().into((ImageView) dialog.findViewById(R.id.imgModalBoxFondo));
+        dialog.setCanceledOnTouchOutside(true);
+        GlideApp.with(context).load(R.drawable.fondo_piedras).centerCrop().into((ImageView) dialog.findViewById(R.id.imgModalBoxFondo));
+        GlideApp.with(context).load(R.drawable.stonemega).circleCrop().into((ImageView) dialog.findViewById(R.id.imgPiedraModal));
+        GlideApp.with(context).load(model.getSprite()).into((ImageView) dialog.findViewById(R.id.imgPiedraPokemonModal));
 
         TextView tipoPiedra = dialog.findViewById(R.id.tipoPiedra);
         if (model.getCantidad() == 1) {
@@ -97,7 +96,7 @@ class ModalComprarPiedra {
         btnMin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (Integer.parseInt(etCoste.getText().toString()) > model.getPrecio()){
+                if (Integer.parseInt(etCoste.getText().toString()) > (model.getPrecio() * model.getCantidad())){
                     etCoste.setText(String.valueOf(Integer.parseInt(etCoste.getText().toString())-10));
                 }
                 else {
@@ -117,7 +116,7 @@ class ModalComprarPiedra {
         btnPujarModal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                if (Integer.parseInt(etCoste.getText().toString()) >= model.getPrecio()) {
+                if (Integer.parseInt(etCoste.getText().toString()) >= (model.getPrecio() * model.getCantidad())) {
                     if (Integer.parseInt(etCoste.getText().toString()) > MercadoFragment.saldofuturo) {
                         Toast.makeText(context, "No puedes pujar mas de tu saldo actual o tu futuro saldo", Toast.LENGTH_LONG).show();
                     }

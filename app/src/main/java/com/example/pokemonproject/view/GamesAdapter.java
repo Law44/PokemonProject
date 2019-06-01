@@ -36,6 +36,7 @@ public class GamesAdapter extends RecyclerView.Adapter<GamesAdapter.GamesViewHol
     ArrayList<String> listGame;
     Username creator;
     String lastgame;
+    String userID;
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -70,6 +71,7 @@ public class GamesAdapter extends RecyclerView.Adapter<GamesAdapter.GamesViewHol
                                 games = document.get("games").toString();
                                 creator = document.toObject(Username.class);
                                 listGame = creator.getListGames();
+                                userID = document.getId();
                             }
                         }
                     }
@@ -85,6 +87,7 @@ public class GamesAdapter extends RecyclerView.Adapter<GamesAdapter.GamesViewHol
                 else {
                     context.finish();
                     Intent intent = new Intent(v.getContext(), GameActivity.class);
+                    db.collection("Users").document(userID).update("lastGame", gamesInfoArrayList.get(i).getId());
                     intent.putExtra("lastGame", gamesInfoArrayList.get(i).getId());
                     intent.putExtra("games", Integer.parseInt(games));
                     intent.putExtra("listGames", listGame);
