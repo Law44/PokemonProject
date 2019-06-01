@@ -99,7 +99,10 @@ public class CombatesAdapter extends RecyclerView.Adapter<CombatesAdapter.Combat
             GlideApp.with(holder.itemView.getContext()).load(0).into(holder.winnerRight.get(i));
 
             holder.pokesTvIzq.get(i).setText("");
+            holder.pokesImgIzq.get(i).setBackgroundColor(0);
+
             holder.pokesTvDer.get(i).setText("");
+            holder.pokesImgDer.get(i).setBackgroundColor(0);
         }
     }
 
