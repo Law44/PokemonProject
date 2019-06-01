@@ -158,7 +158,7 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
                 //Do some magic
             }
         });
-        title.setText("INCIO");
+        title.setText("INICIO");
 
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
