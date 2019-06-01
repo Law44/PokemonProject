@@ -149,11 +149,15 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
 
                                 final ListaPujas listaPujas = documentSnapshot.toObject(ListaPujas.class);
                                 listaPokemon = listaPujas.getLista();
-                                rootRef.collection("Partidas").document(lastgame).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                rootRef.collection("Partidas").document(lastgame).addSnapshotListener(new EventListener<DocumentSnapshot>() {
                                     @Override
-                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                        if (task.isSuccessful()){
-                                            Partida partida = task.getResult().toObject(Partida.class);
+                                    public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+
+                                            if (e != null){
+                                                return;
+                                            }
+
+                                            Partida partida = documentSnapshot.toObject(Partida.class);
                                             for (int i = 0; i < partida.getUsers().size(); i++) {
                                                 if (partida.getUsers().get(i).getUser().getEmail().equals(FirebaseAuth.getInstance().getCurrentUser().getEmail())){
                                                     teamID = partida.getUsers().get(i).getTeamID();
@@ -165,18 +169,32 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
                                                 }
                                             }
 
-                                            rootRef.collection("Pujas").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                @SuppressLint("NewApi")
+                                            rootRef.collection("Pujas").addSnapshotListener(new EventListener<QuerySnapshot>() {
                                                 @Override
-                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                    if (task.isSuccessful()) {
-                                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                                                    boolean first = true;
+                                                    if (e != null){
+                                                            return;
+                                                        }
+                                                        for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                                                             if (document.getId().equals(pujasID)){
                                                                 pujas = (ArrayList<Integer>) document.get("pujas");
+                                                                saldofuturo = money;
                                                                 for (int i = 0; i < pujas.size(); i++) {
                                                                     saldofuturo -= Integer.parseInt(String.valueOf(pujas.get(i)));
                                                                 }
                                                                 tvMoneyFuturaMercado.setText(String.valueOf(saldofuturo));
+                                                                if (first) {
+                                                                    totalPujas = new HashMap<>();
+                                                                    for (int i = 0; i < 10; i++) {
+                                                                        totalPujas.put(i, 0);
+                                                                    }
+                                                                    totalPujasPiedras = new HashMap<>();
+                                                                    for (int i = 0; i < 10; i++) {
+                                                                        totalPujasPiedras.put(i, 0);
+                                                                    }
+                                                                    first = false;
+                                                                }
 
                                                             }
                                                             ArrayList<Integer> pujastemp = (ArrayList<Integer>) document.get("pujas");
@@ -238,20 +256,37 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
                                                                                     piedrasEvo = listaPujasPiedras.getLista();
                                                                                 }
 
-                                                                                rootRef.collection("PujasPiedras").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                                rootRef.collection("PujasPiedras").addSnapshotListener(new EventListener<QuerySnapshot>() {
                                                                                     @Override
-                                                                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                                                        if (task.isSuccessful()) {
-                                                                                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+
+                                                                                            boolean first = true;
+
+
+                                                                                            if (e != null){
+                                                                                                return;
+                                                                                            }
+                                                                                            for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                                                                                                 if (document.getId().equals(pujasPiedrasID)) {
                                                                                                     pujasPiedras = (ArrayList<Integer>) document.get("pujas");
+                                                                                                    saldofuturo = money;
                                                                                                     for (int i = 0; i < pujasPiedras.size(); i++) {
                                                                                                         saldofuturo -= Integer.parseInt(String.valueOf(pujasPiedras.get(i)));
+                                                                                                    }
+                                                                                                    for (int i = 0; i < pujas.size(); i++) {
+                                                                                                        saldofuturo -= Integer.parseInt(String.valueOf(pujas.get(i)));
                                                                                                     }
                                                                                                     tvMoneyFuturaMercado.setText(String.valueOf(saldofuturo));
 
                                                                                                 }
                                                                                                 ArrayList<Integer> pujastemp = (ArrayList<Integer>) document.get("pujas");
+                                                                                                if (first){
+                                                                                                    totalPujasPiedras = new HashMap<>();
+                                                                                                    for (int i = 0; i < 10; i++) {
+                                                                                                        totalPujasPiedras.put(i, 0);
+                                                                                                    }
+                                                                                                    first = false;
+                                                                                                }
 
                                                                                                 for (int i = 0; i < pujastemp.size(); i++) {
                                                                                                     if (Integer.parseInt(String.valueOf(pujastemp.get(i))) > 0) {
@@ -271,7 +306,6 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
                                                                                             recyclerViewObjetos.setAdapter(pujasAdapterPiedras);
 
                                                                                             progress.dismiss();
-                                                                                        }
                                                                                     }
                                                                                 });
 
@@ -280,12 +314,9 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
                                                                 }
                                                             }
                                                         });
-                                                    }
                                                 }
                                             });
 
-
-                                        }
                                     }
                                 });
                             }
