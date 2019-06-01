@@ -37,6 +37,7 @@ public class CombatesAdapter extends RecyclerView.Adapter<CombatesAdapter.Combat
 
     @Override
     public void onBindViewHolder(@NonNull CombateViewHolder holder, int i) {
+        vaciarDatos(holder);
         Equipo equipoIzquierda = combateList.get(i).getEquipo1();
         Equipo equipoDerecha = combateList.get(i).getEquipo2();
 
@@ -87,6 +88,19 @@ public class CombatesAdapter extends RecyclerView.Adapter<CombatesAdapter.Combat
         }
 
 
+    }
+
+    private void vaciarDatos(CombateViewHolder holder) {
+        for (int i = 0; i < holder.winnerRight.size(); i++) {
+            GlideApp.with(holder.itemView.getContext()).load(0).into(holder.pokesImgIzq.get(i));
+            GlideApp.with(holder.itemView.getContext()).load(0).into(holder.pokesImgDer.get(i));
+
+            GlideApp.with(holder.itemView.getContext()).load(0).into(holder.winnerLeft.get(i));
+            GlideApp.with(holder.itemView.getContext()).load(0).into(holder.winnerRight.get(i));
+
+            holder.pokesTvIzq.get(i).setText("");
+            holder.pokesTvDer.get(i).setText("");
+        }
     }
 
     private void loadEquipoDerecha(CombateViewHolder holder, Equipo equipoDerecha, String finalizado) {
