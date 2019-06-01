@@ -211,6 +211,8 @@ public class MercadoFragment extends Fragment implements GameActivity.QueryChang
                                                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                                                 if (task.isSuccessful()) {
                                                                     team = task.getResult().toObject(Team.class);
+                                                                    movimientos = new ArrayList<>();
+
 
                                                                     for (int i = 0; i < listaPokemon.size(); i++) {
                                                                         final int finalI = i;
