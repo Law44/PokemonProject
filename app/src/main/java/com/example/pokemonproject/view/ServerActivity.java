@@ -55,7 +55,6 @@ public class ServerActivity extends AppCompatActivity {
     TextView estado ;
     List<String> idPujas;
     PokemonApi pokemonApi;
-    Alineation alineation1, alineation2;
     Partida partida;
     ArrayList<String> partidas;
     final Executor executor = Executors.newFixedThreadPool(2);
@@ -689,7 +688,7 @@ public class ServerActivity extends AppCompatActivity {
     private void pokemon1vs1(Pokemon atacante, Pokemon defensor) {
         Random random = new Random();
         int statAtk = 0,statDef = 0;
-
+        Log.e("Lucha",atacante.getName());
         int idMovAtk = atacante.getMoves().get(random.nextInt(atacante.getMoves().size())).move.id;
 //        float calculodano = eleccionMovimientoAtacante(atacante,defensor);
         int danoAtk = movementList.get(idMovAtk).power;
@@ -752,7 +751,7 @@ public class ServerActivity extends AppCompatActivity {
                     }
                 }
             }
-        }while (cantidad>18000 && !igualdad);
+        }while (cantidad>18000 || igualdad);
         List<Pokemon> listaMercado = new ArrayList<>();
         List<MovementFirebase> listaTemp = new ArrayList<>();
         for (int i = 0; i <10 ; i++) {
@@ -770,10 +769,12 @@ public class ServerActivity extends AppCompatActivity {
                     }
                 }
             }
-
+            boolean acabar = false;
             do {
-                pokemon.getMoves().remove( pokemon.getMoves().get(random.nextInt(pokemon.getMoves().size())));
-            }while (pokemon.getMoves().size()>4);
+
+                    pokemon.getMoves().remove( pokemon.getMoves().get(random.nextInt(pokemon.getMoves().size())));
+
+            }while (pokemon.getMoves().size()>4 );
             listaMercado.add(pkemonList.get(idCogidos[i]));
         }
 
@@ -797,7 +798,10 @@ public class ServerActivity extends AppCompatActivity {
     }
 
     private void sacarPartidaParaCombate(final Iterator<QueryDocumentSnapshot> a, final int i) {
-        if (!a.hasNext())return;
+        if (!a.hasNext()){
+            estado.setText("Ready");
+            return;
+        }
 
         calculojornada = false;
         jornada = 0;
@@ -809,20 +813,21 @@ public class ServerActivity extends AppCompatActivity {
                 if (task.isSuccessful()){
                     DocumentSnapshot snapshot = task.getResult();
                     partida = snapshot.toObject(Partida.class);
-                    sacarAlineacion(partida,0,partida.getUsers().size()-1,0);
+                    sacarAlineacion(partida,0,partida.getUsers().size()-1,0,a,i);
+                    sacarPartidaParaCombate(a,i+1);
                 }
-                sacarPartidaParaCombate(a,i+1);
+
             }
         });
     }
 
-    private void sacarAlineacion(final Partida partida, final int primerJugador, final int segundoJguador, int limite) {
+    private void sacarAlineacion(final Partida partida, final int primerJugador, final int segundoJguador, int limite, final Iterator<QueryDocumentSnapshot> a, final int numpart) {
         if (segundoJguador<=primerJugador){
             limite++;
             if (limite>=partida.getUsers().size()-1){
-                estado.setText("Ready");
+
             }else {
-                sacarAlineacion(partida, limite, partida.getUsers().size() - 1, limite);
+                sacarAlineacion(partida, limite, partida.getUsers().size() - 1, limite, a, numpart);
             }
         }else {
             final int finalLimite = limite;
@@ -830,19 +835,23 @@ public class ServerActivity extends AppCompatActivity {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if (task.isSuccessful()) {
+                        Alineation alineation1 = new Alineation();
+
                         DocumentSnapshot documentSnapshot = task.getResult();
                         alineation1 = documentSnapshot.toObject(Alineation.class);
+                        final Alineation finalAlineation = alineation1;
                         db.collection("Alineaciones").document(partida.getUsers().get(segundoJguador).getAlineationID()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                 if (task.isSuccessful()) {
                                     final String idCombate = db.collection("Combates").document().getId();
-
+                                    Alineation alineation2 = new Alineation();
                                     DocumentSnapshot documentSnapshot = task.getResult();
                                     alineation2 = documentSnapshot.toObject(Alineation.class);
                                     partida.getUsers().get(primerJugador).getCombatesID().add(idCombate);
                                     partida.getUsers().get(segundoJguador).getCombatesID().add(idCombate);
                                     db.collection("Partidas").document(partida.getId()).set(partida);
+                                    final Alineation finalAlineation2 = alineation2;
                                     db.collection("Combates").whereEqualTo("idGame", partida.getId()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                         @Override
                                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -857,11 +866,11 @@ public class ServerActivity extends AppCompatActivity {
                                                     calculojornada = true;
                                                     jornada++;
                                                 }
-                                                Equipo equipo1 = new Equipo(partida.getUsers().get(primerJugador).getUser().getUsername(), partida.getUsers().get(primerJugador).getUser().getEmail(), alineation1, partida.getUsers().get(primerJugador).getUser().getImgurl());
-                                                Equipo equipo2 = new Equipo(partida.getUsers().get(segundoJguador).getUser().getUsername(), partida.getUsers().get(segundoJguador).getUser().getEmail(), alineation2, partida.getUsers().get(segundoJguador).getUser().getImgurl());
+                                                Equipo equipo1 = new Equipo(partida.getUsers().get(primerJugador).getUser().getUsername(), partida.getUsers().get(primerJugador).getUser().getEmail(), finalAlineation, partida.getUsers().get(primerJugador).getUser().getImgurl());
+                                                Equipo equipo2 = new Equipo(partida.getUsers().get(segundoJguador).getUser().getUsername(), partida.getUsers().get(segundoJguador).getUser().getEmail(), finalAlineation2, partida.getUsers().get(segundoJguador).getUser().getImgurl());
                                                 Combate nextCombate = new Combate(equipo1, equipo2, jornada, partida.getId());
                                                 db.collection("Combates").document(idCombate).set(nextCombate);
-                                                sacarAlineacion(partida, primerJugador, segundoJguador - 1, finalLimite);
+                                                sacarAlineacion(partida, primerJugador, segundoJguador - 1, finalLimite, a, numpart);
                                             }
                                         }
                                     });

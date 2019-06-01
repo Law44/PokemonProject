@@ -4,8 +4,10 @@
 
     <application
         android:allowBackup="true"
+        android:hardwareAccelerated="false"
         android:icon="@drawable/pokeball"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:roundIcon="@drawable/pokeball"
         android:screenOrientation="portrait"
         android:supportsRtl="true"
