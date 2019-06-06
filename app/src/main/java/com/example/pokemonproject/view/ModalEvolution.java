@@ -8,9 +8,11 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +37,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 class ModalEvolution {
     private Pokemon pokemon, pokemonEvolucionado;
@@ -44,6 +47,7 @@ class ModalEvolution {
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     ArrayList<UserGame> listUsers;
     int piedras = 0;
+    int idevo = 0;
 
     public ModalEvolution(final Context context, final Pokemon model, final ArrayList<PiedrasEvoUser> piedrasEvoUsers, final String teamID, final int position, final ArrayList<Pokemon> pokemonsArrayList, final String alineationID, final String piedrasID) {
         this.context = context;
@@ -57,6 +61,9 @@ class ModalEvolution {
         dialog.setCanceledOnTouchOutside(true);
         GlideApp.with(context).load(model.getSprites().front_default).into((ImageView) dialog.findViewById(R.id.imgPokemonModal));
         GlideApp.with(context).load(R.drawable.boxpokemonmodal).centerCrop().into((ImageView) dialog.findViewById(R.id.imgModalBoxFondo));
+
+        final Spinner spinner = dialog.findViewById(R.id.evolucionEevee);
+        spinner.setVisibility(View.GONE);
 
 
         if (model.getTypes().size()==2){
@@ -102,17 +109,53 @@ class ModalEvolution {
             btnEvolucionar.setEnabled(false);
         }
 
+        if (model.getIdEvo() == 134135136){
+
+            spinner.setVisibility(View.VISIBLE);
+
+            String[] opcionesSpinner = new String[] {
+                    "Jolteon", "Flareon", "Vaporeon"};
+            ArrayAdapter<String> spinneroptions = new ArrayAdapter<String>(context,
+                    android.R.layout.simple_spinner_item, opcionesSpinner);
+            spinneroptions.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+            spinner.setAdapter(spinneroptions);
+
+
+            if (spinner.getSelectedItem().equals("Jolteon")){
+                idevo = 135;
+            }
+            else if (spinner.getSelectedItem().equals("Vaporeon")){
+                idevo = 134;
+            }
+            else if (spinner.getSelectedItem().equals("Flareon")){
+                idevo = 136;
+            }
+        }
+        else {
+            idevo = pokemon.getIdEvo();
+        }
+
         btnEvolucionar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (piedras >= pokemon.getPiedrasEvo().getCantidad()){
-                    db.collection("ListaPokemon").whereEqualTo("id", pokemon.getIdEvo()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    db.collection("ListaPokemon").whereEqualTo("id", idevo).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             if (task.isSuccessful()){
                                 for (QueryDocumentSnapshot snapshot : task.getResult()) {
                                     pokemonEvolucionado = snapshot.toObject(Pokemon.class);
-                                    pokemonEvolucionado.setMoves(model.getMoves());
+                                    if (idevo > 133 && idevo < 137){
+                                        Random random = new Random();
+                                        do {
+                                            pokemonEvolucionado.getMoves().remove( pokemonEvolucionado.getMoves().get(random.nextInt(pokemonEvolucionado.getMoves().size())));
+
+                                        }while (pokemonEvolucionado.getMoves().size()>4 );
+                                    }
+                                    else {
+                                        pokemonEvolucionado.setMoves(model.getMoves());
+                                    }
                                 }
 
                                 db.collection("Equipos").document(teamID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
