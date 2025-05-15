@@ -1,17 +1,15 @@
 package com.example.pokemonproject.view;
 
-import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.pokemonproject.GlideApp;
 import com.example.pokemonproject.R;
@@ -23,8 +21,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-
-import java.util.ArrayList;
 
 import java.util.ArrayList;
 
@@ -52,7 +48,8 @@ public class GamesAdapter extends RecyclerView.Adapter<GamesAdapter.GamesViewHol
     }
 
     @Override
-    public void onBindViewHolder(@NonNull GamesAdapter.GamesViewHolder viewHolder, final int i) {
+    public void onBindViewHolder(@NonNull GamesAdapter.GamesViewHolder viewHolder, int position) {
+        int i = position;
         viewHolder.textViewNameLeague.setText(gamesInfoArrayList.get(i).getNameLeague());
         viewHolder.textViewTeamName.setText(gamesInfoArrayList.get(i).getTeamName());
         viewHolder.money.setText(String.valueOf((int)gamesInfoArrayList.get(i).getMoney()));

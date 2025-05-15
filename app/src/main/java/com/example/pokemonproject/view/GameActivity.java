@@ -3,51 +3,35 @@ package com.example.pokemonproject.view;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-
-
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.text.Html;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+
 import com.example.pokemonproject.GlideApp;
 import com.example.pokemonproject.R;
-import com.example.pokemonproject.api.PokemonApi;
-import com.example.pokemonproject.api.PokemonModule;
-import com.example.pokemonproject.model.Movement;
-import com.example.pokemonproject.model.MovementFirebase;
 import com.example.pokemonproject.model.Partida;
-import com.example.pokemonproject.model.Pokemon;
-import com.example.pokemonproject.model.Stats;
-import com.example.pokemonproject.model.Team;
-import com.example.pokemonproject.model.UserGame;
-import com.example.pokemonproject.model.Username;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -56,14 +40,6 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class GameActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -227,8 +203,8 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
 
 
 
-        if (FirebaseAuth.getInstance().getCurrentUser().getEmail().equals("tlaw4444@gmail.com") ||
-                FirebaseAuth.getInstance().getCurrentUser().getEmail().equals("ymoralesa96@elpuig.xeill.net")){
+        if (FirebaseAuth.getInstance().getCurrentUser().getEmail().equals("dtomasg95@elpuig.xeill.net") ||
+                FirebaseAuth.getInstance().getCurrentUser().getEmail().equals("yago.morales@elpuig.xeill.net")){
             nav_Menu.findItem(R.id.createDatabase).setVisible(true);
         }
         else {
@@ -281,23 +257,25 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
         tabLayout.getTabAt(4).setIcon(R.drawable.icons8_pokedex_52);
     }
 
+
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        if (findViewById(R.id.search_view)!= null) {
+        if (findViewById(R.id.search_view) != null) {
             MaterialSearchView searchView = findViewById(R.id.search_view);
-                if (drawer.isDrawerOpen(GravityCompat.START) || searchView.isSearchOpen() ) {
-                    drawer.closeDrawer(GravityCompat.START);
-                    searchView.closeSearch();
-                    searchView.clearFocus();
-                } else {
+            if (drawer.isDrawerOpen(GravityCompat.START) || searchView.isSearchOpen()) {
+                drawer.closeDrawer(GravityCompat.START);
+                searchView.closeSearch();
+                searchView.clearFocus();
+            } else {
                 Intent startMain = new Intent(Intent.ACTION_MAIN);
                 startMain.addCategory(Intent.CATEGORY_HOME);
                 startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(startMain);
             }
-        }else{
-            if (drawer.isDrawerOpen(GravityCompat.START) ) {
+        } else {
+            if (drawer.isDrawerOpen(GravityCompat.START)) {
                 drawer.closeDrawer(GravityCompat.START);
 
             } else {
@@ -315,50 +293,31 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
 
-        switch (item.getItemId()) {
 
-            case R.id.gamesList:{
-                new ModalSelectGame(GameActivity.this, id);
-                break;
-            }
-
-            case R.id.inventario:{
-                Intent intent = new Intent(GameActivity.this, InventarioActivity.class);
-                intent.putExtra("idGame", id);
-                startActivity(intent);
-                break;
-            }
-
-            case R.id.invite: {
-                sendInvitation();
-                break;
-            }
-            case R.id.create: {
-                startActivity(new Intent(GameActivity.this, NewLeagueActivity.class));
-                break;
-            }
-            case R.id.join: {
-                startActivity(new Intent(GameActivity.this, JoinLeagueActivity.class));
-                break;
-            }
-
-            case R.id.sign_out: {
-
-                AuthUI.getInstance()
-                        .signOut(GameActivity.this)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            public void onComplete(@NonNull Task<Void> task) {
-                                startActivity(new Intent(GameActivity.this, MainActivity.class));
-                                finish();
-                            }
-                        });
-                break;
-
-            }
-
-            case R.id.createDatabase: {
-                startActivity(new Intent(GameActivity.this, ServerActivity.class));
-            }
+        int itemId = item.getItemId();
+        if (itemId == R.id.gamesList) {
+            new ModalSelectGame(GameActivity.this, id);
+        } else if (itemId == R.id.inventario) {
+            Intent intent = new Intent(GameActivity.this, InventarioActivity.class);
+            intent.putExtra("idGame", id);
+            startActivity(intent);
+        } else if (itemId == R.id.invite) {
+            sendInvitation();
+        } else if (itemId == R.id.create) {
+            startActivity(new Intent(GameActivity.this, NewLeagueActivity.class));
+        } else if (itemId == R.id.join) {
+            startActivity(new Intent(GameActivity.this, JoinLeagueActivity.class));
+        } else if (itemId == R.id.sign_out) {
+            AuthUI.getInstance()
+                    .signOut(GameActivity.this)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        public void onComplete(@NonNull Task<Void> task) {
+                            startActivity(new Intent(GameActivity.this, MainActivity.class));
+                            finish();
+                        }
+                    });
+        } else if (itemId == R.id.createDatabase) {
+            startActivity(new Intent(GameActivity.this, ServerActivity.class));
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -395,7 +354,7 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
         this.menu = menu;
         getMenuInflater().inflate(R.menu.menu_game,menu);
         MenuItem item = menu.findItem(R.id.action_search);
-        searchView.setMenuItem(item);
+        //searchView.setMenuItem(item);
         item.setVisible(false);
 
         return true;

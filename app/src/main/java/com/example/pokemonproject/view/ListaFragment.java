@@ -1,26 +1,21 @@
 package com.example.pokemonproject.view;
 
-import android.arch.paging.PagedList;
-import android.graphics.drawable.Drawable;
+import static androidx.recyclerview.widget.RecyclerView.VERTICAL;
+
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.example.pokemonproject.GlideApp;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.paging.PagingConfig;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.pokemonproject.R;
 import com.example.pokemonproject.model.Pokemon;
 import com.firebase.ui.firestore.paging.FirestorePagingAdapter;
@@ -28,13 +23,6 @@ import com.firebase.ui.firestore.paging.FirestorePagingOptions;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.miguelcatalan.materialsearchview.MaterialSearchView;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static android.support.v7.widget.RecyclerView.HORIZONTAL;
-import static android.support.v7.widget.RecyclerView.VERTICAL;
 
 public class ListaFragment extends Fragment implements GameActivity.QueryChangeListener {
 
@@ -72,11 +60,13 @@ public class ListaFragment extends Fragment implements GameActivity.QueryChangeL
             String namePokemon = newText.substring(0, 1).toUpperCase() + newText.substring(1).toLowerCase();
             Query query = productsRef.whereEqualTo("name",namePokemon );
             Log.e("name", newText);
-            final PagedList.Config config = new PagedList.Config.Builder()
+            final PagingConfig config = new PagingConfig(151,151,true);
+
+                    /*new PagingConfig.Builder()
                     .setEnablePlaceholders(true)
                     .setPrefetchDistance(151)
                     .setPageSize(151)
-                    .build();
+                    .build();*/
             options = new FirestorePagingOptions.Builder<Pokemon>()
                     .setLifecycleOwner(getViewLifecycleOwner())
                     .setQuery(query, config, Pokemon.class)
@@ -104,11 +94,7 @@ public class ListaFragment extends Fragment implements GameActivity.QueryChangeL
 
     private RecyclerView loadList(RecyclerView recyclerView, CollectionReference productsRef) {
         Query query = productsRef.orderBy("id");
-        final PagedList.Config config = new PagedList.Config.Builder()
-                .setEnablePlaceholders(true)
-                .setPrefetchDistance(151)
-                .setPageSize(151)
-                .build();
+        final PagingConfig config = new PagingConfig(151,151,true);
         options = new FirestorePagingOptions.Builder<Pokemon>()
                 .setLifecycleOwner(getViewLifecycleOwner())
                 .setQuery(query, config, Pokemon.class)

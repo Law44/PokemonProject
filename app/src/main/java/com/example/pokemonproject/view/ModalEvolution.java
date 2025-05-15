@@ -4,37 +4,30 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import com.example.pokemonproject.GlideApp;
 import com.example.pokemonproject.R;
 import com.example.pokemonproject.model.Alineation;
-import com.example.pokemonproject.model.Moves;
-import com.example.pokemonproject.model.Partida;
 import com.example.pokemonproject.model.PiedrasEvoUser;
 import com.example.pokemonproject.model.Pokemon;
-import com.example.pokemonproject.model.Pujas;
 import com.example.pokemonproject.model.Team;
 import com.example.pokemonproject.model.UserGame;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 class ModalEvolution {
     private Pokemon pokemon, pokemonEvolucionado;

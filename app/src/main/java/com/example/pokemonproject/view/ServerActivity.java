@@ -1,12 +1,13 @@
 package com.example.pokemonproject.view;
 
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.pokemonproject.R;
 import com.example.pokemonproject.api.PokemonApi;

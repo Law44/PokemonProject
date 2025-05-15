@@ -18,4 +18,5 @@
     <string name="mercadoCaps">MERCADO</string>
     <string name="combateCaps">COMBATE</string>
     <string name="pokemonsCaps">POKÉMONS</string>
+    <string name="default_web_client_id" translatable="false">webClientId.apps.googleusercontent.com</string>
 </resources>

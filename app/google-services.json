@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "22042085639",
+    "project_id": "pokemonproject-8b74d",
+    "storage_bucket": "pokemonproject-8b74d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:22042085639:android:bad936df03ba1049ee5da2",
+        "android_client_info": {
+          "package_name": "com.example.pokemonproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "22042085639-tm3df7oshjki0pjcnn1sgavkhlc078lg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.pokemonproject",
+            "certificate_hash": "d121afaa93b050965848597efcbbc94d246a564b"
+          }
+        },
+        {
+          "client_id": "22042085639-r85e7u34cusepa7lvbv8m57mlra49kb7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDP89ifSPgn6yoyM6xmggoQMvGpN3XGQj8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "22042085639-r85e7u34cusepa7lvbv8m57mlra49kb7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

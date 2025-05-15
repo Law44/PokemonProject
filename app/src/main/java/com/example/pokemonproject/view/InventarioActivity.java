@@ -1,14 +1,16 @@
 package com.example.pokemonproject.view;
 
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.pokemonproject.R;
 import com.example.pokemonproject.model.Partida;
 import com.example.pokemonproject.model.PiedrasUser;
+import com.firebase.ui.firestore.paging.FirestorePagingAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -20,6 +22,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import javax.annotation.Nullable;
 
 public class InventarioActivity extends AppCompatActivity {
+
 
     String inventarioID;
     private RecyclerView recyclerViewObjetos;

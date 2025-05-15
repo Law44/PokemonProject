@@ -3,14 +3,12 @@ package com.example.pokemonproject.view;
 import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Window;
-import android.widget.ImageView;
 
-import com.example.pokemonproject.GlideApp;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.pokemonproject.R;
 import com.example.pokemonproject.model.GamesInfo;
 import com.example.pokemonproject.model.Partida;

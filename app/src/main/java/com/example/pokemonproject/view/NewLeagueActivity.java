@@ -3,23 +3,20 @@ package com.example.pokemonproject.view;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.pokemonproject.R;
 import com.example.pokemonproject.model.Alineation;
-import com.example.pokemonproject.model.ListaPujas;
 import com.example.pokemonproject.model.Partida;
 import com.example.pokemonproject.model.PiedrasUser;
-import com.example.pokemonproject.model.Pokemon;
 import com.example.pokemonproject.model.Pujas;
 import com.example.pokemonproject.model.PujasPiedras;
 import com.example.pokemonproject.model.Team;
@@ -33,7 +30,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class NewLeagueActivity extends AppCompatActivity {
 
