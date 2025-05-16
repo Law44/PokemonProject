@@ -758,10 +758,8 @@ public class ServerActivity extends AppCompatActivity {
         for (int i = 0; i <10 ; i++) {
             Pokemon pokemon = pkemonList.get(idCogidos[i]);
             for (int j = 0; j < pokemon.getMoves().size(); j++) {
-                if (pokemon.getMoves().get(j).move.id - 1 < movementList.size()) {
-                    if (movementList.get(pokemon.getMoves().get(j).move.id - 1).power == 0) {
-                        listaTemp.add(movementList.get(pokemon.getMoves().get(j).move.id - 1));
-                    }
+                if (movementList.get(pokemon.getMoves().get(j).move.id - 1).power == 0) {
+                    listaTemp.add(movementList.get(pokemon.getMoves().get(j).move.id - 1));
                 }
             }
 
@@ -1695,7 +1693,7 @@ public class ServerActivity extends AppCompatActivity {
     }
 
     public void readApiMovements() {
-            for (int i = 1; i < 729; i++) {
+            for (int i = 1; i < 938; i++) {
                 pokemonApi.getMovement(i).enqueue(new Callback<Movement>() {
                     @Override
                     public void onResponse(Call<Movement> call, final Response<Movement> response) {

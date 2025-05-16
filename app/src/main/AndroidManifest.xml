@@ -32,5 +32,8 @@
         <activity android:name=".view.JoinLeagueActivity" />
         <activity android:name=".view.ServerActivity" />
     </application>
-
+    <queries>
+        <package android:name="com.whatsapp" />
+        <package android:name="com.whatsapp.w4b" />
+    </queries>
 </manifest>

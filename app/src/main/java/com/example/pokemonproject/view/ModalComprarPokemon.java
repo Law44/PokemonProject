@@ -135,7 +135,10 @@ class ModalComprarPokemon {
         btnPujarModal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Integer.parseInt(etCoste.getText().toString()) >= pokemon.getPrice()) {
+                if(etCoste.getText().toString().isEmpty()){
+                    Toast.makeText(context, "No puedes dejar el campo vacío", Toast.LENGTH_LONG).show();
+                }
+                else if (Integer.parseInt(etCoste.getText().toString()) >= pokemon.getPrice()) {
                     if (Integer.parseInt(etCoste.getText().toString()) > MercadoFragment.saldofuturo) {
                         Toast.makeText(context, "No puedes pujar mas de tu saldo actual o tu futuro saldo", Toast.LENGTH_LONG).show();
                     }
