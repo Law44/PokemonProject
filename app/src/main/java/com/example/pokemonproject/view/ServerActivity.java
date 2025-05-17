@@ -314,7 +314,6 @@ public class ServerActivity extends AppCompatActivity {
                                                 db.collection("Partidas").document(partida.getId()).set(partida);
                                             }
                                         }
-                                        consultarCombates(a);
                                     }
                                 }
                             });
@@ -324,6 +323,7 @@ public class ServerActivity extends AppCompatActivity {
                 });
             }
         }
+        consultarCombates(a);
     }
 
     private Combate lucharCombate(Combate combate) {
